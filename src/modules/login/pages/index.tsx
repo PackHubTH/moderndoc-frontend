@@ -4,7 +4,7 @@ import LoginContainer from '../components/LoginContainer'
 const Login = () => {
   return (
     <LoginContainer>
-      <LoginButton label="Login" onClick={() => {}} />
+      <LoginButton />
     </LoginContainer>
   )
 }
