@@ -25,9 +25,7 @@ function App() {
         <Route path="/" element={<NavbarWrapper />}>
           <Route index element={<Home />} />
         </Route>
-      </Routes>
-      <Routes>
-        <Route path="/document" element={<Document />} />
+        <Route path="document" element={<Document />} />
       </Routes>
     </BrowserRouter>
   )
