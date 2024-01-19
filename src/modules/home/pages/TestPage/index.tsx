@@ -1,6 +1,7 @@
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
+import Tabs from '@/components/Tabs'
 import { RiEyeCloseFill } from 'react-icons/ri'
 
 const TestPage = () => {
@@ -49,6 +50,13 @@ const TestPage = () => {
               },
             ],
           },
+        ]}
+      />
+      <Tabs
+        tabs={[
+          { title: 'Tab 1', content: <div>Tab 1</div> },
+          { title: 'Tab 2', content: <div>Tab 2</div> },
+          { title: 'Tab 3', content: <div>Tab 3</div> },
         ]}
       />
     </div>
