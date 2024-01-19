@@ -1,11 +1,33 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
 import Home from './modules/home/pages'
+import Document from './modules/document/pages'
+import { pdfjs } from 'react-pdf'
+import Navbar from './modules/navbar/pages'
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url
+).toString()
+
+function NavbarWrapper() {
+  return (
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  )
+}
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<NavbarWrapper />}>
+          <Route index element={<Home />} />
+        </Route>
+      </Routes>
+      <Routes>
+        <Route path="/document" element={<Document />} />
       </Routes>
     </BrowserRouter>
   )
