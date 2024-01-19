@@ -5,7 +5,6 @@ module.exports = {
   singleQuote: true,
   printWidth: 80,
   bracketSpacing: true,
-  bracketLine: false,
   arrowParens: 'always',
-  plugins: ['prettier-plugin-tailwindcss', 'prettier-plugin-twin.macro'],
+  plugins: ['prettier-plugin-tailwindcss'],
 }
