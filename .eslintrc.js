@@ -7,7 +7,15 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:import/typescript',
+    'plugin:import/recommended',
   ],
+  setting: {
+    'import/resolver': {
+      typescript: true,
+      node: true,
+    },
+  },
   overrides: [],
   parser: '@typescript-eslint/parser',
   parserOptions: {

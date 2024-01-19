@@ -1,21 +1,14 @@
-import React from 'react'
-import tw from 'twin.macro'
+import { ReactNode } from 'react'
 import colors from 'tailwindcss/colors'
-
-type VariantType = 'blue' | 'yellow' | 'red' | 'green' | 'gray' | 'outline-blue'
-type ButtonColor = {
-  color: string
-  bgColor: string
-  hoverColor?: string
-  hoverBgColor?: string
-}
+import tw from 'twin.macro'
+import { ButtonStyle, VariantType } from './types'
 
 type PropsType = {
   label: string
   onClick?: () => void
   color?: string
   backgroundColor?: string
-  leftIcon?: React.ReactNode
+  leftIcon?: ReactNode
   disabled?: boolean
   width?: string
   height?: string
@@ -30,7 +23,7 @@ const Button: React.FC<PropsType> = ({
   disabled = false,
   variant: colorVariant = 'blue',
 }) => {
-  const BUTTON_VARIANTS: Record<VariantType, ButtonColor> = {
+  const BUTTON_STYLES: Record<VariantType, ButtonStyle> = {
     blue: {
       color: colors.white,
       bgColor: colors.blue[500],
@@ -71,15 +64,15 @@ const Button: React.FC<PropsType> = ({
         tw`inline-flex items-center gap-x-2 rounded-2xl border border-transparent py-2 px-6 text-center font-semibold text-sm disabled:(pointer-events-none opacity-50)`,
         {
           backgroundColor:
-            backgroundColor ?? BUTTON_VARIANTS[colorVariant].bgColor,
-          color: color ?? BUTTON_VARIANTS[colorVariant].color,
+            backgroundColor ?? BUTTON_STYLES[colorVariant].bgColor,
+          color: color ?? BUTTON_STYLES[colorVariant].color,
           '&:hover': {
             backgroundColor:
-              BUTTON_VARIANTS[colorVariant].hoverBgColor ??
-              BUTTON_VARIANTS[colorVariant].bgColor,
+              BUTTON_STYLES[colorVariant].hoverBgColor ??
+              BUTTON_STYLES[colorVariant].bgColor,
             color:
-              BUTTON_VARIANTS[colorVariant].hoverColor ??
-              BUTTON_VARIANTS[colorVariant].color,
+              BUTTON_STYLES[colorVariant].hoverColor ??
+              BUTTON_STYLES[colorVariant].color,
           },
         },
       ]}
