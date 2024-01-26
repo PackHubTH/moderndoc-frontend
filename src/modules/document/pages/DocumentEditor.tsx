@@ -11,7 +11,7 @@ const DocumentEditor = () => {
   }
 
   return (
-    <div className="flex w-3/4 justify-center overflow-auto bg-green-200">
+    <div className="flex h-[calc(100vh-122px)] justify-center overflow-auto bg-green-200">
       <Document
         file={exampleFile}
         // renderMode="svg"
