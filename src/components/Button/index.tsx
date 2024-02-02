@@ -13,6 +13,7 @@ type PropsType = {
   width?: string
   height?: string
   variant?: VariantType
+  borderColor?: string
 }
 const Button: React.FC<PropsType> = ({
   label,
@@ -22,6 +23,7 @@ const Button: React.FC<PropsType> = ({
   leftIcon,
   disabled = false,
   variant: colorVariant = 'blue',
+  borderColor,
 }) => {
   const BUTTON_STYLES: Record<VariantType, ButtonStyle> = {
     blue: {
@@ -34,6 +36,7 @@ const Button: React.FC<PropsType> = ({
       bgColor: colors.white,
       hoverColor: colors.white,
       hoverBgColor: colors.blue[600],
+      borderColor: colors.blue[500],
     },
     yellow: {
       color: colors.white,
@@ -66,6 +69,8 @@ const Button: React.FC<PropsType> = ({
           backgroundColor:
             backgroundColor ?? BUTTON_STYLES[colorVariant].bgColor,
           color: color ?? BUTTON_STYLES[colorVariant].color,
+          borderColor: borderColor ?? BUTTON_STYLES[colorVariant].borderColor,
+
           '&:hover': {
             backgroundColor:
               BUTTON_STYLES[colorVariant].hoverBgColor ??
