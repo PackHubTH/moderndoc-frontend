@@ -7,20 +7,22 @@ import { useDocumentStore } from '../stores/documentStore'
 const DocumentEditor = () => {
   const canvasRef = useRef<HTMLDivElement>(null)
   const [numPages, setNumPages] = useState<number>()
-  const setPageSize = useDocumentStore((state) => state.setPageSizes)
+  const setCanvasSize = useDocumentStore((state) => state.setCanvasSize)
+  const setPageTotal = useDocumentStore((state) => state.setPageTotal)
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages)
+    setPageTotal(numPages)
   }
 
   const onPageLoadSuccess = (pageNumber: number) => {
     const pages = canvasRef.current?.children[0]
     if (pages)
-      setPageSize({
-        id: `${pageNumber - 1}`,
-        h: pages.children[pageNumber - 1].clientHeight,
-        w: pages.children[pageNumber - 1].clientWidth,
-      })
+      setCanvasSize(
+        `${pageNumber - 1}`,
+        pages.children[pageNumber - 1].clientHeight,
+        pages.children[pageNumber - 1].clientWidth
+      )
   }
 
   return (

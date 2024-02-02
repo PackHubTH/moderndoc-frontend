@@ -7,33 +7,42 @@ interface DocumentCanvasProps {
 }
 
 const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
-  const [canvas, setCanvas] = useState<Fabric.Canvas | null>(null)
-  const pageSizes = useDocumentStore((state) => state.pageSizes)
+  const canvasList = useDocumentStore((state) => state.canvasList)
+  const canvasSizes = useDocumentStore((state) => state.canvasSizes)
+  const setCanvasList = useDocumentStore((state) => state.setCanvasList)
 
   useEffect(() => {
-    if (pageSizes.length && pageSizes.find((page) => page.id === id) && !canvas)
-      initCanvas()
+    const isHasPage = canvasSizes.findIndex((page) => page.id === id) !== -1
+    const isHasCanvas =
+      canvasList.findIndex((canvas) => canvas.id === id) !== -1
+
+    if (isHasPage && !isHasCanvas) initCanvas()
+
     return () => {
       const cleanup = async () => {
-        if (canvas) await canvas.dispose()
+        if (isHasCanvas)
+          await canvasList.find((canvas) => canvas.id === id)?.canvas?.dispose()
+        console.log('cleanup')
       }
       cleanup()
     }
-  }, [pageSizes])
+  }, [canvasSizes])
+
+  console.log('canvasList', canvasList)
 
   const initCanvas = async () => {
     const newCanvas = new Fabric.Canvas(id)
     const text = new Fabric.Textbox('fabric.js sandbox' + id)
     newCanvas.add(text)
-    setCanvas(newCanvas)
+    setCanvasList(id, newCanvas)
   }
 
   return (
     <div className="absolute z-10 border-2 border-black">
       <canvas
         id={id}
-        width={pageSizes.find((page) => page.id === id)?.w}
-        height={pageSizes.find((page) => page.id === id)?.h}
+        width={canvasSizes.find((page) => page.id === id)?.w}
+        height={canvasSizes.find((page) => page.id === id)?.h}
       />
     </div>
   )
