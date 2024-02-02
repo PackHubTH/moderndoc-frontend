@@ -30,6 +30,18 @@ const StudentSection = () => {
           />
         )}
       />
+      <Controller
+        control={methods.control}
+        name="phone"
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            label="เบอร์โทรศัพท์"
+            onChange={onChange}
+            value={value}
+            patternFormat="###-###-####"
+          />
+        )}
+      />
     </div>
   )
 }

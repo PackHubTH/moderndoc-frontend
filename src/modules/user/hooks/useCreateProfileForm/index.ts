@@ -6,7 +6,6 @@ const useCreateProfileForm = () => {
   const methods = useForm<CreateProfileForm>({
     defaultValues: {
       role: UserRole.STUDENT,
-      emails: [''],
     },
   })
 

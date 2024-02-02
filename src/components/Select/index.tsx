@@ -28,7 +28,7 @@ const Select: React.FC<PropsType> = ({
       <select
         id={label}
         css={[
-          tw`py-3 px-4 block w-full border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none`,
+          tw`py-3 px-4 block w-full border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none text-gray-500`,
           isError && tw`border-red-500 focus:border-red-500 focus:ring-red-500`,
         ]}
         value={value}

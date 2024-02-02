@@ -45,31 +45,35 @@ const EmailInput: React.FC<PropsType> = ({
         {label}
       </label>
       <div className="flex flex-col gap-2.5">
-        {value.map((email, index) => (
+        {value?.map((email, index) => (
           <div key={index} className="flex gap-2.5 relative">
             <input
               type="email"
               id={label}
               css={[
-                tw`py-3 px-4 block w-full border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none`,
+                tw`py-3 px-4 block w-full border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none text-gray-500`,
+                index === 0 && tw`cursor-not-allowed`,
               ]}
               value={email}
               onChange={(e) => onChangeEmail(e.target.value, index)}
               onMouseEnter={() => setIndexHover(index)}
               onMouseLeave={() => setIndexHover(null)}
+              readOnly={index === 0}
             />
             {indexHover === index && (
               <div
                 className="absolute right-6 top-[13px] flex gap-4"
                 onMouseEnter={() => setIndexHover(index)}
               >
-                <div
-                  className="text-blue-500 cursor-pointer text-sm"
-                  onClick={() => setDefaultEmail(index)}
-                >
-                  ตั้งเป็นค่าเริ่มต้น
-                </div>
                 {index !== defaultEmailIndex && (
+                  <div
+                    className="text-blue-500 cursor-pointer text-sm"
+                    onClick={() => setDefaultEmail(index)}
+                  >
+                    ตั้งเป็นค่าเริ่มต้น
+                  </div>
+                )}
+                {index !== defaultEmailIndex && index !== 0 && (
                   <div
                     className="text-red-500 cursor-pointer text-sm"
                     onClick={() => deleteEmail(index)}
@@ -79,7 +83,7 @@ const EmailInput: React.FC<PropsType> = ({
                 )}
               </div>
             )}
-            {indexHover !== index && index === defaultEmailIndex && (
+            {index === defaultEmailIndex && (
               <div
                 className="absolute right-3 top-[8px]"
                 onMouseEnter={() => setDefaultEmail(index)}
@@ -92,21 +96,14 @@ const EmailInput: React.FC<PropsType> = ({
                 </div>
               </div>
             )}
-
-            {/* <div
-              className="text-red-500 cursor-pointer"
-              onClick={() => deleteEmail(index)}
-            >
-              ลบ
-            </div> */}
           </div>
         ))}
       </div>
       <div
-        className="flex gap-2.5 text-blue-600 items-center cursor-pointer mt-2.5"
+        className="flex gap-2 text-blue-600 items-center cursor-pointer mt-2.5"
         onClick={onAddEmail}
       >
-        <GoPlusCircle color="rgb(59 130 246)" />
+        <GoPlusCircle className="-mt-[2px]" color="rgb(59 130 246)" />
         <span className="font-normal">เพิ่มอีเมล</span>
       </div>
     </div>
