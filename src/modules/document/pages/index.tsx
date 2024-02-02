@@ -1,5 +1,7 @@
-import DocumentEditor from '../components/DocumentEditor'
+import { useRef, useState } from 'react'
+import DocumentEditor from './DocumentEditor'
 import DocumentToolbar from '../components/DocumentToolbar'
+import { useDocumentStore } from '../stores/documentStore'
 
 const DocumentPage = () => {
   return (
