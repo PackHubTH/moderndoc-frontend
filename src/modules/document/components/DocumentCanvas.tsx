@@ -1,5 +1,5 @@
 import * as Fabric from 'fabric'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useDocumentStore } from '../stores/documentStore'
 
 interface DocumentCanvasProps {
@@ -22,18 +22,18 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
       const cleanup = async () => {
         if (isHasCanvas)
           await canvasList.find((canvas) => canvas.id === id)?.canvas?.dispose()
-        console.log('cleanup')
       }
       cleanup()
     }
   }, [canvasSizes])
 
-  console.log('canvasList', canvasList)
-
   const initCanvas = async () => {
     const newCanvas = new Fabric.Canvas(id)
     const text = new Fabric.Textbox('fabric.js sandbox' + id)
     newCanvas.add(text)
+    newCanvas?.on('mouse:down', (options) => {
+      console.log('canvas event' + id)
+    })
     setCanvasList(id, newCanvas)
   }
 
