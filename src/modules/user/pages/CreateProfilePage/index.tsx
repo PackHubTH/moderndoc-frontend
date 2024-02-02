@@ -1,11 +1,10 @@
-import Select from '@/components/Select'
-import TextInput from '@/components/TextInput'
 import { Controller, FormProvider } from 'react-hook-form'
 import { UserRole } from 'types/user'
 import ProfileImageUpload from '../../components/ProfileImageUpload'
 import useCreateProfileForm from '../../hooks/useCreateProfileForm'
 import StaffSection from './StaffSection'
 import StudentSection from './StudentSection'
+import UserInfoSection from './UserInfoSection'
 
 const CreateProfilePage = () => {
   const { methods } = useCreateProfileForm()
@@ -25,55 +24,7 @@ const CreateProfilePage = () => {
               <ProfileImageUpload value={value} onChange={onChange} />
             )}
           />
-          <div className="flex flex-col gap-5 my-5">
-            <Controller
-              control={methods.control}
-              name="role"
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  label="สถานภาพ"
-                  options={[
-                    {
-                      value: UserRole.STUDENT,
-                      label: 'นักศึกษา',
-                    },
-                    {
-                      value: UserRole.TEACHER,
-                      label: 'อาจารย์',
-                    },
-                    {
-                      value: UserRole.STAFF,
-                      label: 'เจ้าหน้าที่',
-                    },
-                  ]}
-                  onChange={onChange}
-                  value={value}
-                />
-              )}
-            />
-            <Controller
-              control={methods.control}
-              name="nameTh"
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  label="ชื่อ-นามสกุล (ภาษาไทย)"
-                  onChange={onChange}
-                  value={value}
-                />
-              )}
-            />
-            <Controller
-              control={methods.control}
-              name="nameEn"
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  label="ชื่อ-นามสกุล (ภาษาอังกฤษ)"
-                  onChange={onChange}
-                  value={value}
-                />
-              )}
-            />
-          </div>
+          <UserInfoSection />
           {methods.watch('role') === UserRole.STUDENT ? (
             <StudentSection />
           ) : (
