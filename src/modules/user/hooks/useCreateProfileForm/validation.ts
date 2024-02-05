@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const createProfileFormSchema = z.object({
   profileImg: z.string(),
+  profileImgFile: z.any().optional(),
   role: z.enum(['STUDENT', 'TEACHER', 'ADMIN', 'STAFF']),
   nameTh: z.string(),
   nameEn: z.string(),

@@ -28,7 +28,13 @@ const CreateProfilePage = () => {
             control={methods.control}
             name="profileImg"
             render={({ field: { onChange, value } }) => (
-              <ProfileImageUpload value={value} onChange={onChange} />
+              <ProfileImageUpload
+                urlValue={value}
+                onChange={(url, file) => {
+                  onChange(url)
+                  methods.setValue('profileImgFile', file)
+                }}
+              />
             )}
           />
           <UserInfoSection />

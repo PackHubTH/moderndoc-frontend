@@ -35,7 +35,7 @@ const StudentSection = () => {
         name="phone"
         render={({ field: { onChange, value } }) => (
           <TextInput
-            label="เบอร์โทรศัพท์"
+            label="Phone"
             onChange={onChange}
             value={value}
             patternFormat="###-###-####"
