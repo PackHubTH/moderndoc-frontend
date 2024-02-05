@@ -1,3 +1,5 @@
+import Button from '@/components/Button'
+import { useDisclosure } from '@/hooks/useDisclosure'
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { UserRole } from 'types/user'
@@ -10,6 +12,7 @@ import UserInfoSection from './UserInfoSection'
 const CreateProfilePage = () => {
   const { methods } = useCreateProfileForm()
 
+  const { isOpen, toggle } = useDisclosure(true)
   useEffect(() => {
     // This is mock email
     methods.setValue('emails', ['apicha.oap@mail.kmutt.ac.th'])
@@ -43,6 +46,11 @@ const CreateProfilePage = () => {
           ) : (
             <StaffSection />
           )}
+          <div className="mt-8 w-full">
+            <div className="text-right">
+              <Button label="บันทึกข้อมูลส่วนตัว" onClick={() => {}} />
+            </div>
+          </div>
         </form>
       </FormProvider>
     </div>

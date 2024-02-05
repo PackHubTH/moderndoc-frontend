@@ -1,7 +1,9 @@
 import EmailInput from '@/components/EmailInput'
+import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
 import { CreateProfileForm } from '@/modules/user/hooks/useCreateProfileForm/validation'
 import { Controller, useFormContext } from 'react-hook-form'
+import { Level } from 'types/user'
 
 const StudentSection = () => {
   const methods = useFormContext<CreateProfileForm>()
@@ -42,6 +44,76 @@ const StudentSection = () => {
           />
         )}
       />
+      <Controller
+        control={methods.control}
+        name="level"
+        render={({ field: { onChange, value } }) => (
+          <Select
+            className="w-full"
+            label="ระดับการศึกษา"
+            onChange={onChange}
+            value={value}
+            options={[
+              { label: 'ปริญญาตรี', value: Level.BACHELOR },
+              { label: 'ปริญญาโท', value: Level.MASTER },
+              { label: 'ปริญญาเอก', value: Level.DOCTOR },
+            ]}
+          />
+        )}
+      />
+      <div className="flex w-full justify-between">
+        <Controller
+          control={methods.control}
+          name="facultyId"
+          render={({ field: { onChange, value } }) => (
+            <Select
+              className="w-1/3"
+              label="คณะ"
+              onChange={onChange}
+              value={value}
+              options={[
+                { label: 'ปริญญาตรี', value: Level.BACHELOR },
+                { label: 'ปริญญาโท', value: Level.MASTER },
+                { label: 'ปริญญาเอก', value: Level.DOCTOR },
+              ]}
+            />
+          )}
+        />
+        <Controller
+          control={methods.control}
+          name="departmentId"
+          render={({ field: { onChange, value } }) => (
+            <Select
+              className="w-1/3"
+              label="สาขาวิชา"
+              onChange={onChange}
+              value={value}
+              options={[
+                { label: 'ปริญญาตรี', value: Level.BACHELOR },
+                { label: 'ปริญญาโท', value: Level.MASTER },
+                { label: 'ปริญญาเอก', value: Level.DOCTOR },
+              ]}
+            />
+          )}
+        />
+        <Controller
+          control={methods.control}
+          name="courseId"
+          render={({ field: { onChange, value } }) => (
+            <Select
+              className="w-1/3"
+              label="หลักสูตร"
+              onChange={onChange}
+              value={value}
+              options={[
+                { label: 'ปริญญาตรี', value: Level.BACHELOR },
+                { label: 'ปริญญาโท', value: Level.MASTER },
+                { label: 'ปริญญาเอก', value: Level.DOCTOR },
+              ]}
+            />
+          )}
+        />
+      </div>
     </div>
   )
 }

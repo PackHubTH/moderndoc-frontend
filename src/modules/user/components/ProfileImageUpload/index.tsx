@@ -1,27 +1,24 @@
 import Button from '@/components/Button'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { DEFAULT_PROFILE_IMG } from '../../constants'
 
 type PropsType = {
-  urlValue: string | null
-  onChange: (url: string | null, file: File | null) => void
+  urlValue: string | undefined
+  onChange: (url: string | undefined, file: File | undefined) => void
 }
 
 const ProfileImageUpload: React.FC<PropsType> = ({ urlValue, onChange }) => {
-  const [file, setFile] = useState<File | null>(null)
   const uploadButtonRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      setFile(file)
       onChange(URL.createObjectURL(file), file)
     }
   }
 
   const resetFile = () => {
-    setFile(null)
-    onChange(null, null)
+    onChange(undefined, undefined)
   }
 
   const onClickUpload = () => {
