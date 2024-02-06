@@ -88,10 +88,7 @@ const EmailInput: React.FC<PropsType> = ({
                 className="absolute right-3 top-[8px]"
                 onMouseEnter={() => setDefaultEmail(index)}
               >
-                <div
-                  className="text-blue-500 cursor-pointer border-blue-500 border-[1px] px-3 py-1 rounded-full text-sm"
-                  onClick={() => deleteEmail(index)}
-                >
+                <div className="text-blue-500 cursor-default border-blue-500 border-[1px] px-3 py-1 rounded-full text-sm">
                   ค่าเริ่มต้น
                 </div>
               </div>

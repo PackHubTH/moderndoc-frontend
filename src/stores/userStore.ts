@@ -5,7 +5,8 @@ type UserStore = {
   isLogin: boolean
   user: Person
   setIsLogin: (isLogin: boolean) => void
-  setUser: (user: Person) => void
+  setUser: (user: Person, token: string) => void
+  token: string
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -16,5 +17,6 @@ export const useUserStore = create<UserStore>((set) => ({
     username: '',
   },
   setIsLogin: (isLogin) => set({ isLogin }),
-  setUser: (user) => set({ user }),
+  setUser: (user, token) => set({ user, token }),
+  token: 'my-token',
 }))

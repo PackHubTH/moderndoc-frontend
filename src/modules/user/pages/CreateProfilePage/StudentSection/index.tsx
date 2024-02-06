@@ -2,11 +2,21 @@ import EmailInput from '@/components/EmailInput'
 import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
 import { CreateProfileForm } from '@/modules/user/hooks/useCreateProfileForm/validation'
+import useGetAllFaculties from '@/modules/user/hooks/useGetAllFaculties'
+import useGetCourses from '@/modules/user/hooks/useGetCourses'
+import useGetDepartments from '@/modules/user/hooks/useGetDepartment'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Level } from 'types/user'
 
 const StudentSection = () => {
   const methods = useFormContext<CreateProfileForm>()
+
+  const { data: faculties } = useGetAllFaculties()
+  const { data: departments } = useGetDepartments(methods.watch('facultyId'))
+  const { data: courses } = useGetCourses(
+    methods.watch('departmentId'),
+    methods.watch('level')
+  )
 
   return (
     <div className="flex flex-col gap-5 mt-5">
@@ -71,11 +81,12 @@ const StudentSection = () => {
               label="คณะ"
               onChange={onChange}
               value={value}
-              options={[
-                { label: 'ปริญญาตรี', value: Level.BACHELOR },
-                { label: 'ปริญญาโท', value: Level.MASTER },
-                { label: 'ปริญญาเอก', value: Level.DOCTOR },
-              ]}
+              options={
+                faculties?.data.map((faculty) => ({
+                  label: faculty.name,
+                  value: faculty.id,
+                })) ?? []
+              }
             />
           )}
         />
@@ -88,11 +99,12 @@ const StudentSection = () => {
               label="สาขาวิชา"
               onChange={onChange}
               value={value}
-              options={[
-                { label: 'ปริญญาตรี', value: Level.BACHELOR },
-                { label: 'ปริญญาโท', value: Level.MASTER },
-                { label: 'ปริญญาเอก', value: Level.DOCTOR },
-              ]}
+              options={
+                departments?.data.map((department) => ({
+                  label: department.name,
+                  value: department.id,
+                })) ?? []
+              }
             />
           )}
         />
@@ -105,11 +117,12 @@ const StudentSection = () => {
               label="หลักสูตร"
               onChange={onChange}
               value={value}
-              options={[
-                { label: 'ปริญญาตรี', value: Level.BACHELOR },
-                { label: 'ปริญญาโท', value: Level.MASTER },
-                { label: 'ปริญญาเอก', value: Level.DOCTOR },
-              ]}
+              options={
+                courses?.data.map((course) => ({
+                  label: course.name,
+                  value: course.id,
+                })) ?? []
+              }
             />
           )}
         />
