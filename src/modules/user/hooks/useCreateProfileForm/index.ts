@@ -1,18 +1,17 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { UserRole } from 'types/user'
-import { CreateProfileForm } from './validation'
+import { CreateProfileForm, createProfileFormSchema } from './validation'
 
 const useCreateProfileForm = () => {
   const methods = useForm<CreateProfileForm>({
+    resolver: zodResolver(createProfileFormSchema),
     defaultValues: {
       role: UserRole.STUDENT,
     },
   })
 
-  const onSubmit = (data: CreateProfileForm) => {
-    console.log(data)
-  }
-  return { methods, onSubmit } as const
+  return { methods } as const
 }
 
 export default useCreateProfileForm

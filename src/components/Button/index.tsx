@@ -5,7 +5,7 @@ import { ButtonStyle, VariantType } from './types'
 
 type PropsType = {
   label: string
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   color?: string
   backgroundColor?: string
   leftIcon?: ReactNode
@@ -14,6 +14,7 @@ type PropsType = {
   height?: string
   variant?: VariantType
   borderColor?: string
+  type?: 'button' | 'submit' | 'reset'
 }
 const Button: React.FC<PropsType> = ({
   label,
@@ -24,6 +25,7 @@ const Button: React.FC<PropsType> = ({
   disabled = false,
   variant: colorVariant = 'blue',
   borderColor,
+  type,
 }) => {
   const BUTTON_STYLES: Record<VariantType, ButtonStyle> = {
     blue: {
@@ -62,7 +64,7 @@ const Button: React.FC<PropsType> = ({
 
   return (
     <button
-      type="button"
+      type={type ?? 'button'}
       css={[
         tw`disabled:(pointer-events-none opacity-50) inline-flex items-center gap-x-2 rounded-2xl border border-transparent px-6 py-2 text-center text-sm font-semibold`,
         {
@@ -82,7 +84,7 @@ const Button: React.FC<PropsType> = ({
         },
       ]}
       disabled={disabled}
-      onClick={onClick}
+      onClick={!disabled ? onClick : undefined}
     >
       {leftIcon}
       {label}

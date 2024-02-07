@@ -25,7 +25,10 @@ const TextInput: React.FC<PropsType> = ({
 }) => {
   return (
     <div className={className}>
-      <label htmlFor={label} className="block text-sm font-medium mb-2">
+      <label
+        htmlFor={label}
+        className="block text-sm font-medium mb-2 text-gray-800"
+      >
         {label}
       </label>
       {patternFormat ? (

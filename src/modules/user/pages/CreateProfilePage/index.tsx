@@ -1,21 +1,44 @@
 import Button from '@/components/Button'
+import { useUserStore } from '@/stores/userStore'
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { UserRole } from 'types/user'
 import ProfileImageUpload from '../../components/ProfileImageUpload'
 import useCreateProfileForm from '../../hooks/useCreateProfileForm'
+import { useRegister } from '../../hooks/useRegister'
 import StaffSection from './StaffSection'
 import StudentSection from './StudentSection'
 import UserInfoSection from './UserInfoSection'
 
 const CreateProfilePage = () => {
+  const navigate = useNavigate()
+
   const { methods } = useCreateProfileForm()
+  const { mutate: registerUser } = useRegister()
+
+  const { email } = useUserStore()
+
+  const onSubmit = () => {
+    const data = methods.getValues()
+    registerUser(data, {
+      onSuccess: (response) => {
+        console.log(response)
+      },
+      onError: (error) => {
+        console.log(error)
+      },
+    })
+  }
 
   useEffect(() => {
-    // This is mock email
-    methods.setValue('emails', ['apicha.oap@mail.kmutt.ac.th'])
-    methods.setValue('defaultEmailIndex', 0)
+    if (email === '') navigate('/login')
+
+    methods.setValue('emails', [email], { shouldDirty: true })
+    methods.setValue('defaultEmailIndex', 0, { shouldDirty: true })
   }, [])
+
+  console.log('click', methods.watch(), methods.formState)
 
   return (
     <div className="bg-blue-100 w-full p-6 h-full min-h-[100vh]">
@@ -46,7 +69,15 @@ const CreateProfilePage = () => {
           )}
           <div className="mt-8 w-full">
             <div className="text-right">
-              <Button label="บันทึกข้อมูลส่วนตัว" onClick={() => {}} />
+              <Button
+                label="บันทึกข้อมูลส่วนตัว"
+                type="submit"
+                disabled={!methods.formState.isValid}
+                onClick={(e) => {
+                  e.preventDefault()
+                  onSubmit()
+                }}
+              />
             </div>
           </div>
         </form>
