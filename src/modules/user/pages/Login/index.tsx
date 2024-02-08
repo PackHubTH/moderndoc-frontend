@@ -23,6 +23,7 @@ const Login = () => {
 
         setUser(data.data, data.data.token!)
         setIsLogin(true)
+        navigate('/')
       },
       onError: (error) => {
         console.log(error)

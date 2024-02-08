@@ -1,31 +1,33 @@
 import { useUserStore } from '@/stores/userStore'
-import { useGoogleLogin } from '@react-oauth/google'
 import bellIcon from '../assets/bell.svg'
 import LoginButton from '../components/LoginButton'
 import ProfileButton from '../components/ProfileButton'
 
 const Navbar = () => {
-  const setIsLogin = useUserStore((state) => state.setIsLogin)
-  const isLogin = useUserStore((state) => state.isLogin)
+  const { isLogin, setIsLogin, user } = useUserStore()
 
-  const handleLogin = useGoogleLogin({
-    onSuccess: async ({ code }) => {
-      console.log('code', code)
-      //TODO: send code to backend for authentication
-      setIsLogin(true)
-    },
-    flow: 'auth-code',
-  })
+  // const handleLogin = useGoogleLogin({
+  //   onSuccess: async ({ code }) => {
+  //     console.log('code', code)
+  //     //TODO: send code to backend for authentication
+  //     setIsLogin(true)
+  //   },
+  //   flow: 'auth-code',
+  // })
+
+  const handleLogin = () => {
+    window.location.assign('/login')
+  }
 
   return (
-    <header className="z-50 flex w-full flex-wrap border-b border-gray-200 bg-white py-3 text-sm dark:border-gray-700 dark:bg-gray-800 sm:flex-nowrap sm:justify-start sm:py-0">
+    <header className="z-50 flex w-full flex-wrap border-b border-gray-200 bg-white py-3 text-sm sm:flex-nowrap sm:justify-start sm:py-0">
       <nav
         className="relative mx-auto w-full max-w-7xl px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
         aria-label="Global"
       >
         <div className="flex items-center justify-between">
           <a
-            className="flex-none text-xl font-semibold dark:text-white"
+            className="flex-none text-xl font-semibold"
             href="#"
             aria-label="Brand"
           >
@@ -34,7 +36,7 @@ const Navbar = () => {
           <div className="sm:hidden">
             <button
               type="button"
-              className="hs-collapse-toggle flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-sm font-semibold text-gray-800 hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+              className="hs-collapse-toggle flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-sm font-semibold text-gray-800 hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-50 "
               data-hs-collapse="#navbar-collapse-with-animation"
               aria-controls="navbar-collapse-with-animation"
               aria-label="Toggle navigation"
@@ -69,7 +71,7 @@ const Navbar = () => {
         >
           <div className="mt-5 flex flex-col gap-x-0 gap-y-4 sm:mt-0 sm:flex-row sm:items-center sm:justify-end sm:gap-x-7 sm:gap-y-0 sm:ps-7">
             <a
-              className="font-medium text-gray-500 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-500 sm:py-6"
+              className="font-medium text-gray-500 hover:text-gray-400 sm:py-6"
               href="#"
             >
               Blog
@@ -77,7 +79,7 @@ const Navbar = () => {
 
             <img alt="bell-icon" src={bellIcon} />
             {isLogin ? (
-              <ProfileButton />
+              <ProfileButton profileImg={user.profileImg} name={user.nameEn} />
             ) : (
               <LoginButton onClick={handleLogin} />
             )}
