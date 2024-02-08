@@ -16,7 +16,7 @@ const Login = () => {
   const handleLogin = (email: string) => {
     login(email, {
       onSuccess: (data) => {
-        if (data.data === null) {
+        if (data.data === null || !data.data.isFinishRegister) {
           setUserEmail(email)
           return navigate('/create-profile', { replace: true })
         }

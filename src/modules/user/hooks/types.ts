@@ -52,4 +52,5 @@ export type User = {
   teacher?: any
   staff?: any
   token?: string
+  isFinishRegister: boolean
 }

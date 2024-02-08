@@ -3,6 +3,7 @@ import { useUserStore } from '@/stores/userStore'
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { UserRole } from 'types/user'
 import ProfileImageUpload from '../../components/ProfileImageUpload'
 import useCreateProfileForm from '../../hooks/useCreateProfileForm'
@@ -17,16 +18,17 @@ const CreateProfilePage = () => {
   const { methods } = useCreateProfileForm()
   const { mutate: registerUser } = useRegister()
 
-  const { email } = useUserStore()
+  const { email, setUser } = useUserStore()
 
   const onSubmit = () => {
     const data = methods.getValues()
     registerUser(data, {
       onSuccess: (response) => {
-        console.log(response)
+        setUser(response.data!, response.data!.token!)
+        navigate('/')
       },
       onError: (error) => {
-        console.log(error)
+        toast('เกิดข้อผิดพลาดในการสร้างข้อมูลส่วนตัว', { type: 'error' })
       },
     })
   }
