@@ -101,7 +101,7 @@ const EmailInput: React.FC<PropsType> = ({
       </div>
       <div
         className="flex gap-2 text-blue-600 items-center cursor-pointer mt-2.5"
-        onClick={onAddEmail}
+        onClick={() => onAddEmail()}
       >
         <GoPlusCircle className="-mt-[2px]" color="rgb(59 130 246)" />
         <span className="font-normal">เพิ่มอีเมล</span>

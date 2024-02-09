@@ -9,6 +9,7 @@ const useCreateProfileForm = () => {
     defaultValues: {
       role: UserRole.STUDENT,
     },
+    reValidateMode: 'onChange',
   })
 
   return { methods } as const

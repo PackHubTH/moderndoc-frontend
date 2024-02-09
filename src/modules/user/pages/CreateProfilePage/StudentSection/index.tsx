@@ -30,12 +30,15 @@ const StudentSection = () => {
       <Controller
         control={methods.control}
         name="emails"
-        render={({ field: { value } }) => (
+        render={({ field: { value, onChange } }) => (
           <EmailInput
             label="E-mail"
             onChange={(value, defaultEmailIndex) => {
-              methods.setValue('emails', value)
-              methods.setValue('defaultEmailIndex', defaultEmailIndex)
+              onChange(value)
+              methods.setValue('defaultEmailIndex', defaultEmailIndex, {
+                shouldDirty: true,
+              })
+              methods.trigger()
             }}
             value={value}
             defaultEmailIndex={methods.watch('defaultEmailIndex')}
