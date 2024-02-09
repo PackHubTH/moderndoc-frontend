@@ -1,0 +1,11 @@
+import PageContainer from '@/components/PageContainer'
+
+const EditUserInfo = () => {
+  return (
+    <PageContainer className="px-36 pt-7">
+      <h1>ข้อมูลส่วนตัว</h1>
+    </PageContainer>
+  )
+}
+
+export default EditUserInfo

@@ -7,6 +7,7 @@ type PropsType = {
   children: React.ReactNode
   showSidebar?: boolean
   showNavbar?: boolean
+  className?: string
 }
 
 const SIDE_BAR_WIDTH = '260px'
@@ -16,6 +17,7 @@ const PageContainer: React.FC<PropsType> = ({
   children,
   showSidebar = true,
   showNavbar = true,
+  className,
 }) => {
   const { isLogin } = useUserStore()
 
@@ -32,7 +34,7 @@ const PageContainer: React.FC<PropsType> = ({
           showNavbar && tw`pt-[${NAVBAR_HEIGHT}]`,
         ]}
       >
-        {children}
+        <div className={className}>{children}</div>
       </div>
     </>
   )
