@@ -1,4 +1,5 @@
 import Button from '@/components/Button'
+import PageContainer from '@/components/PageContainer'
 import TextInput from '@/components/TextInput'
 import { useUserStore } from '@/stores/userStore'
 import { useState } from 'react'
@@ -32,20 +33,22 @@ const Login = () => {
   }
 
   return (
-    <form className="max-w-xs p-8">
-      <TextInput
-        label="Email"
-        placeholder="Enter your email"
-        type="email"
-        onChange={setEmail}
-      />
-      <Button
-        label="Login"
-        onClick={() => {
-          handleLogin(email)
-        }}
-      />
-    </form>
+    <PageContainer>
+      <form className="max-w-xs p-8">
+        <TextInput
+          label="Email"
+          placeholder="Enter your email"
+          type="email"
+          onChange={setEmail}
+        />
+        <Button
+          label="Login"
+          onClick={() => {
+            handleLogin(email)
+          }}
+        />
+      </form>
+    </PageContainer>
   )
 }
 

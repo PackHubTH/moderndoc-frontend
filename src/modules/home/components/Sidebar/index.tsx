@@ -2,11 +2,11 @@ const Sidebar = () => {
   return (
     <div
       id="docs-sidebar"
-      className="hs-overlay fixed bottom-0 start-0 top-0 z-[60] hidden w-64 -translate-x-full transform overflow-y-auto border-e border-gray-200 bg-white pb-10 pt-7 transition-all duration-300 hs-overlay-open:translate-x-0 dark:border-gray-700 dark:bg-gray-800 lg:bottom-0 lg:end-auto lg:block lg:translate-x-0 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-slate-700 [&::-webkit-scrollbar]:w-2"
+      className="hs-overlay fixed bottom-0 start-0 top-0 z-[60] hidden w-[260px] -translate-x-full transform overflow-y-auto border-e border-gray-200 bg-white pb-10 pt-7 transition-all duration-300 hs-overlay-open:translate-x-0 :border-gray-700  lg:bottom-0 lg:end-auto lg:block lg:translate-x-0 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar]:w-2 mt-[68px]"
     >
       <div className="px-6">
         <a
-          className="flex-none text-xl font-semibold dark:text-white"
+          className="flex-none text-xl font-semibold "
           href="#"
           aria-label="Brand"
         >
@@ -20,7 +20,7 @@ const Sidebar = () => {
         <ul className="space-y-1.5">
           <li>
             <a
-              className="flex items-center gap-x-3.5 rounded-lg bg-gray-100 px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-900 dark:text-white dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+              className="flex items-center gap-x-3.5 rounded-lg bg-gray-100 px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
               href="#"
             >
               <svg
@@ -45,7 +45,7 @@ const Sidebar = () => {
           <li className="hs-accordion" id="users-accordion">
             <button
               type="button"
-              className="hs-accordion-toggle flex w-full items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-start text-sm text-slate-700 hover:bg-gray-100 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent dark:bg-gray-800 dark:text-slate-400 dark:hover:bg-gray-900 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:hs-accordion-active:text-white"
+              className="hs-accordion-toggle flex w-full items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-start text-sm text-slate-700 hover:bg-gray-100 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent"
             >
               <svg
                 className="h-4 w-4"
@@ -66,7 +66,7 @@ const Sidebar = () => {
               </svg>
               Users
               <svg
-                className="ms-auto hidden h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:block dark:text-gray-400"
+                className="ms-auto hidden h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:block"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -80,7 +80,7 @@ const Sidebar = () => {
                 <path d="m18 15-6-6-6 6" />
               </svg>
               <svg
-                className="ms-auto block h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:hidden dark:text-gray-400"
+                className="ms-auto block h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:hidden"
                 width="16"
                 height="16"
                 viewBox="0 0 16 16"
@@ -107,11 +107,11 @@ const Sidebar = () => {
                 <li className="hs-accordion" id="users-accordion-sub-1">
                   <button
                     type="button"
-                    className="hs-accordion-toggle flex w-full items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-start text-sm text-slate-700 hover:bg-gray-100 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent dark:bg-gray-800 dark:text-slate-400 dark:hover:bg-gray-900 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:hs-accordion-active:text-white"
+                    className="hs-accordion-toggle flex w-full items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-start text-sm text-slate-700 hover:bg-gray-100 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent"
                   >
                     ขนหมา
                     <svg
-                      className="ms-auto hidden h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:block dark:text-gray-400"
+                      className="ms-auto hidden h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:block "
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
                       height="24"
@@ -125,7 +125,7 @@ const Sidebar = () => {
                       <path d="m18 15-6-6-6 6" />
                     </svg>
                     <svg
-                      className="ms-auto block h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:hidden dark:text-gray-400"
+                      className="ms-auto block h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:hidden "
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
                       height="24"
@@ -147,7 +147,7 @@ const Sidebar = () => {
                     <ul className="ps-2 pt-2">
                       <li>
                         <a
-                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                           href="#"
                         >
                           Link 1
@@ -155,7 +155,7 @@ const Sidebar = () => {
                       </li>
                       <li>
                         <a
-                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                           href="#"
                         >
                           Link 2
@@ -163,7 +163,7 @@ const Sidebar = () => {
                       </li>
                       <li>
                         <a
-                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                           href="#"
                         >
                           Link 3
@@ -175,11 +175,11 @@ const Sidebar = () => {
                 <li className="hs-accordion" id="users-accordion-sub-2">
                   <button
                     type="button"
-                    className="hs-accordion-toggle flex w-full items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-start text-sm text-slate-700 hover:bg-gray-100 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent dark:bg-gray-800 dark:text-slate-400 dark:hover:bg-gray-900 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:hs-accordion-active:text-white"
+                    className="hs-accordion-toggle flex w-full items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-start text-sm text-slate-700 hover:bg-gray-100 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent"
                   >
                     Sub Menu 2
                     <svg
-                      className="ms-auto hidden h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:block dark:text-gray-400"
+                      className="ms-auto hidden h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:block "
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
                       height="24"
@@ -193,7 +193,7 @@ const Sidebar = () => {
                       <path d="m18 15-6-6-6 6" />
                     </svg>
                     <svg
-                      className="ms-auto block h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:hidden dark:text-gray-400"
+                      className="ms-auto block h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:hidden "
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
                       height="24"
@@ -215,7 +215,7 @@ const Sidebar = () => {
                     <ul className="ps-2 pt-2">
                       <li>
                         <a
-                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                           href="#"
                         >
                           Link 1
@@ -223,7 +223,7 @@ const Sidebar = () => {
                       </li>
                       <li>
                         <a
-                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                           href="#"
                         >
                           Link 2
@@ -231,7 +231,7 @@ const Sidebar = () => {
                       </li>
                       <li>
                         <a
-                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                          className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                           href="#"
                         >
                           Link 3
@@ -247,7 +247,7 @@ const Sidebar = () => {
           <li className="hs-accordion" id="account-accordion">
             <button
               type="button"
-              className="hs-accordion-toggle flex w-full items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-start text-sm text-slate-700 hover:bg-gray-100 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent dark:bg-gray-800 dark:text-slate-400 dark:hover:bg-gray-900 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:hs-accordion-active:text-white"
+              className="hs-accordion-toggle flex w-full items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-start text-sm text-slate-700 hover:bg-gray-100 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent"
             >
               <svg
                 className="h-4 w-4"
@@ -275,7 +275,7 @@ const Sidebar = () => {
               </svg>
               Account
               <svg
-                className="ms-auto hidden h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:block dark:text-gray-400"
+                className="ms-auto hidden h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:block "
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -289,7 +289,7 @@ const Sidebar = () => {
                 <path d="m18 15-6-6-6 6" />
               </svg>
               <svg
-                className="ms-auto block h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:hidden dark:text-gray-400"
+                className="ms-auto block h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:hidden "
                 width="16"
                 height="16"
                 viewBox="0 0 16 16"
@@ -312,7 +312,7 @@ const Sidebar = () => {
               <ul className="ps-2 pt-2">
                 <li>
                   <a
-                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                     href="#"
                   >
                     Link 1
@@ -320,7 +320,7 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <a
-                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                     href="#"
                   >
                     Link 2
@@ -328,7 +328,7 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <a
-                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                     href="#"
                   >
                     Link 3
@@ -341,7 +341,7 @@ const Sidebar = () => {
           <li className="hs-accordion" id="projects-accordion">
             <button
               type="button"
-              className="hs-accordion-toggle flex w-full items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-start text-sm text-slate-700 hover:bg-gray-100 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent dark:bg-gray-800 dark:text-slate-400 dark:hover:bg-gray-900 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:hs-accordion-active:text-white"
+              className="hs-accordion-toggle flex w-full items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-start text-sm text-slate-700 hover:bg-gray-100 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent"
             >
               <svg
                 className="h-4 w-4"
@@ -361,7 +361,7 @@ const Sidebar = () => {
               </svg>
               Projects
               <svg
-                className="ms-auto hidden h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:block dark:text-gray-400"
+                className="ms-auto hidden h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:block "
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -375,7 +375,7 @@ const Sidebar = () => {
                 <path d="m18 15-6-6-6 6" />
               </svg>
               <svg
-                className="ms-auto block h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:hidden dark:text-gray-400"
+                className="ms-auto block h-4 w-4 text-gray-600 group-hover:text-gray-500 hs-accordion-active:hidden "
                 width="16"
                 height="16"
                 viewBox="0 0 16 16"
@@ -398,7 +398,7 @@ const Sidebar = () => {
               <ul className="ps-2 pt-2">
                 <li>
                   <a
-                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                     href="#"
                   >
                     Link 1
@@ -406,7 +406,7 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <a
-                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                     href="#"
                   >
                     Link 2
@@ -414,7 +414,7 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <a
-                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                    className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100"
                     href="#"
                   >
                     Link 3
@@ -426,7 +426,7 @@ const Sidebar = () => {
 
           <li>
             <a
-              className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-gray-900 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+              className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 "
               href="#"
             >
               <svg
@@ -457,7 +457,7 @@ const Sidebar = () => {
           </li>
           <li>
             <a
-              className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-gray-900 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+              className="flex items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-gray-100 "
               href="#"
             >
               <svg
