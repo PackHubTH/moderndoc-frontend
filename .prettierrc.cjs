@@ -6,5 +6,5 @@ module.exports = {
   printWidth: 80,
   bracketSpacing: true,
   arrowParens: 'always',
-  plugins: ['prettier-plugin-tailwindcss'],
+  plugins: ['prettier-plugin-tailwindcss', 'prettier-plugin-organize-imports'],
 }
