@@ -1,10 +1,14 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Document, Page } from 'react-pdf'
 import exampleFile from '@/assets/example.pdf'
 import DocumentCanvas from '../components/DocumentCanvas'
 import * as Fabric from 'fabric'
 import { useDocumentStore } from '../stores/documentStore'
 import DocumentToolbar from '../components/DocumentToolbar'
+import ToolbarButton from '../components/ToolbarButton'
+import { FaMousePointer } from 'react-icons/fa'
+import { FaA } from 'react-icons/fa6'
+import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 
 const DocumentEditor = () => {
   const canvasRef = useRef<HTMLDivElement>(null)
@@ -31,6 +35,22 @@ const DocumentEditor = () => {
     const canvas = canvasList.find((canvas) => canvas.id === id)?.canvas
     const text = new Fabric.Textbox('add')
     canvas?.add(text)
+    changeCursor()
+    console.log('add', cursor)
+  }
+
+  const [cursor, setCursor] = useState('default')
+
+  const changeCursor = () => {
+    setCursor((prevState) => {
+      if (prevState === 'crosshair') {
+        return 'default'
+      }
+      return 'crosshair'
+    })
+    canvasList.forEach((canvas) => {
+      console.log('canvas', canvas.canvas)
+    })
   }
 
   return (
@@ -39,7 +59,8 @@ const DocumentEditor = () => {
       <div className="flex h-[calc(100vh-92px)] bg-red-500">
         <div className="w-3/4">
           <DocumentToolbar>
-            <button onClick={() => addTextBox('0')}>Add</button>
+            <ToolbarButton icon={<FaMousePointer />} id={ButtonId.Default} />
+            <ToolbarButton icon={<FaA />} id={ButtonId.Text} />
           </DocumentToolbar>
           {/* canvas section */}
           <div
@@ -55,7 +76,11 @@ const DocumentEditor = () => {
                 .map((x, i) => i + 1)
                 .map((page) => {
                   return (
-                    <div key={page} className="relative">
+                    <div
+                      key={page}
+                      className="relative"
+                      style={{ cursor: cursor }}
+                    >
                       <DocumentCanvas id={`${page - 1}`} />
                       <Page
                         pageNumber={page}
@@ -63,7 +88,7 @@ const DocumentEditor = () => {
                         renderAnnotationLayer={false}
                         scale={2}
                         width={400}
-                        className={'mt-2 border-black'}
+                        className="mt-2 border-black"
                         renderMode="svg"
                         onLoadSuccess={() => onPageLoadSuccess(page)}
                       />

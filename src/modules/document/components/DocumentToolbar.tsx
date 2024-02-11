@@ -3,7 +3,9 @@ interface DocumentToolbarProps {
 }
 
 const DocumentToolbar = ({ children }: DocumentToolbarProps) => {
-  return <div className="flex h-[30px] w-full bg-green-600">{children}</div>
+  return (
+    <div className="flex h-[30px] w-full bg-green-600 px-6">{children}</div>
+  )
 }
 
 export default DocumentToolbar
