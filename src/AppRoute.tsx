@@ -17,6 +17,7 @@ function NavbarWrapper() {
     </>
   )
 }
+import TestPage from './modules/home/pages/TestPage'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route index element={<Home />} />
         </Route>
         <Route path="document" element={<Document />} />
+        <Route path="/test" element={<TestPage />} />
       </Routes>
     </BrowserRouter>
   )
