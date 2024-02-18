@@ -32,7 +32,7 @@ const Badge: React.FC<PropsType> = ({ label, onClick, variant }) => {
   return (
     <span
       css={[
-        tw`inline-flex items-center gap-x-1.5 py-1 px-3 rounded-full text-xs font-medium`,
+        tw`inline-flex items-center gap-x-1.5 rounded-full px-3 py-1 text-xs font-medium`,
         {
           color: BADGE_STYLES[variant].color,
           backgroundColor: BADGE_STYLES[variant].bgColor,
