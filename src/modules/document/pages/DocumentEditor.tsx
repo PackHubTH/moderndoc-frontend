@@ -1,7 +1,10 @@
 import exampleFile from '@/assets/example.pdf'
+import Button from '@/components/Button'
+import Modal from '@/components/Modal'
 import { useRef } from 'react'
-import { FaMousePointer } from 'react-icons/fa'
+import { FaDownload, FaMousePointer } from 'react-icons/fa'
 import { FaA } from 'react-icons/fa6'
+import { IoEyeOutline } from 'react-icons/io5'
 import { Document, Page } from 'react-pdf'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
@@ -41,7 +44,22 @@ const DocumentEditor = () => {
 
   return (
     <div>
-      <div className="h-[92px] bg-yellow-200">Header</div>
+      {/* Header */}
+      <div className="flex h-[92px] border-b-2 px-5 py-6">
+        <img src="https://via.placeholder.com/150" alt="logo" />
+        <div className="flex-1">
+          <h1>ใบลงทะเบียนเพิ่ม-ลด-ถอน-เปลี่ยนกลุ่มเรียน</h1>
+          <Button label="Guideline" leftIcon={<IoEyeOutline />} />
+        </div>
+        <div className="space-x-3">
+          <Button label="Download" leftIcon={<FaDownload />} />
+          <Button label="Finalize" variant="yellow" />
+          <Button label="ดำเนินการ" variant="green" />
+          <Button label="ยกเลิก" variant="gray" />
+          <Modal />
+        </div>
+      </div>
+      {/*  */}
       <div className="flex h-[calc(100vh-92px)]">
         <div className="w-3/4">
           <DocumentToolbar>
@@ -82,7 +100,10 @@ const DocumentEditor = () => {
           {/*  */}
         </div>
         {/* sidebar */}
-        <div className="hs-accordion-group w-1/4">
+        <div
+          className="hs-accordion-group w-1/4 overflow-y-auto"
+          data-hs-accordion-always-open
+        >
           <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
             <ProfileBox {...user} />
             <div className="p-4">
