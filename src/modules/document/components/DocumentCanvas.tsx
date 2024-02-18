@@ -60,10 +60,31 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
 
   const initCanvas = async () => {
     const newCanvas = new Fabric.Canvas(id)
-    const text = new Fabric.Textbox('fabric.js sandbox' + id)
+    const text = new Fabric.Textbox('fabric.js sandbox' + id, {
+      id: id,
+    })
     newCanvas.add(text)
     setCanvasList(id, newCanvas)
+    text.get('id')
   }
+
+  const mockElements = [
+    {
+      type: 'rect',
+      left: 100,
+      top: 100,
+      width: 100,
+      height: 100,
+      fill: 'red',
+    },
+    {
+      type: 'circle',
+      left: 200,
+      top: 200,
+      radius: 50,
+      fill: 'green',
+    },
+  ]
 
   return (
     <div className="absolute z-10 border-2 border-black">
