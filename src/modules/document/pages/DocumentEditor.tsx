@@ -6,6 +6,8 @@ import { Document, Page } from 'react-pdf'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
 import DocumentToolbar from '../components/DocumentToolbar'
+import DraggableBox from '../components/DraggableBox'
+import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
 import { useDocumentStore } from '../stores/documentStore'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
@@ -29,6 +31,12 @@ const DocumentEditor = () => {
         pages.children[pageNumber - 1].clientHeight,
         pages.children[pageNumber - 1].clientWidth
       )
+  }
+
+  const user = {
+    name: 'John Doe',
+    email: 'a@a.com',
+    timestamp: 1234567890,
   }
 
   return (
@@ -76,13 +84,30 @@ const DocumentEditor = () => {
         {/* sidebar */}
         <div className="hs-accordion-group w-1/4">
           <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
-            TEST
+            <ProfileBox {...user} />
+            <div className="p-4">
+              <p>TEST</p>
+              <p>TEST</p>
+              <p>TEST</p>
+              <p>TEST</p>
+              <p>TEST</p>
+            </div>
           </DocumentAccordion>
           <DocumentAccordion title={'การแสดงความคิดเห็น'}>
-            TEST
+            <ProfileBox {...user} />
+            <p className="p-4">
+              Lorem ipsum dolor sit amet consectetur. Enim vestibulum dolor
+              libero purus habitant adipiscing tincidunt libero purus.
+            </p>
           </DocumentAccordion>
           <DocumentAccordion title={'ลากข้อมูลลงหน้ากระดาษ'}>
-            TEST
+            <div className="p-3">
+              <p>ข้อมูลเบื้องต้น</p>
+              <DraggableBox text="testtesttesttesttesttesttesttesttest testtesttesttesttest testtesttesttesttesttesttesttesttesttesttesttest" />
+              <DraggableBox text=" testtesttesttesttest testtesttesttesttesttesttesttesttesttesttesttest" />
+              <p>Date Stamp</p>
+              <p>ลายเซ็นลงนาม</p>
+            </div>
           </DocumentAccordion>
         </div>
       </div>
