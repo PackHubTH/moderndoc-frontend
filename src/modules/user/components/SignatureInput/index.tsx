@@ -2,14 +2,12 @@ import { FaPlus } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 
 type propsType = {
-  label: string
   maxSignatures: number
   value: string[]
   onChange: (value: string[]) => void
 }
 
 const SignatureInput: React.FC<propsType> = ({
-  label,
   maxSignatures,
   value,
   onChange,
@@ -27,7 +25,7 @@ const SignatureInput: React.FC<propsType> = ({
 
   return (
     <div>
-      <h1 className="font-semibold">{label}</h1>
+      <h1 className="font-semibold">ลายเซ็นต์ (ลงนามเอกสาร)</h1>
       <h2 className="text-sm">
         สามารถจดจำลายเซ็นต์ได้สูงสุด {maxSignatures} ลายเซ็นต์
       </h2>

@@ -1,8 +1,9 @@
 import AutocompleteInput from '@/components/AutocompleteInput'
 import EmailInput from '@/components/EmailInput'
 import Select from '@/components/Select'
-import SignatureInput from '@/components/SignatureInput'
 import TextInput from '@/components/TextInput'
+import NotificationConfig from '@/modules/user/components/NotificationConfig'
+import SignatureInput from '@/modules/user/components/SignatureInput'
 import { EditProfileForm } from '@/modules/user/hooks/useEditUserProfile/validation'
 import useGetAllFaculties from '@/modules/user/hooks/useGetAllFaculties'
 import useGetCourses from '@/modules/user/hooks/useGetCourses'
@@ -130,10 +131,20 @@ const StudentSection = () => {
         name="profileImg"
         render={({ field: { onChange, value } }) => (
           <SignatureInput
-            label="ลายเซ็นต์ (ลงนามเอกสาร)"
             onChange={(val) => console.log(val)}
             value={['https://www.w3schools.com/howto/img_avatar.png']}
             maxSignatures={3}
+          />
+        )}
+      />
+      <Controller
+        control={methods.control}
+        name="notificationConfig"
+        render={({ field: { onChange, value } }) => (
+          <NotificationConfig
+            label="การแจ้งเตือน"
+            value={value}
+            onChange={onChange}
           />
         )}
       />
