@@ -30,9 +30,26 @@ export type Student = {
   id: string
   userId: string
   courseId: string
-  advisorId?: any
+  advisorId?: string
   studentNumber: string
-  isApproved: boolean
+}
+
+export type Teacher = {
+  id: string
+  userId: string
+  staffNumber: string
+}
+
+export enum StaffType {
+  STAFF,
+  ADMIN,
+}
+
+export type Staff = {
+  id: string
+  userId: string
+  staffNumber: string
+  type: StaffType
 }
 
 export type User = {
@@ -49,8 +66,8 @@ export type User = {
   nameEn: string
   nameTh: string
   student: Student
-  teacher?: any
-  staff?: any
+  teacher?: Teacher
+  staff?: Staff
   token?: string
   isFinishRegister: boolean
 }
