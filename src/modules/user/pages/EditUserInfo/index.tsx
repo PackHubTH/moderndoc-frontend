@@ -13,11 +13,10 @@ const EditUserInfo = () => {
 
   return (
     <PageContainer className="px-36 pt-7">
-      <h1 className="text-2xl font-bold">ข้อมูลส่วนตัว</h1>
       <FormProvider {...methods}>
         <form className="py-11 px-12 bg-white rounded-2xl max-w-4xl mx-auto">
           <h1 className="text-xl text-gray-600 font-bold mb-6">
-            เพิ่มข้อมูลส่วนตัว
+            ข้อมูลส่วนตัว
           </h1>
           <hr className="mb-6" />
           <Controller

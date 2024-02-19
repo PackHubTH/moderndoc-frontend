@@ -71,3 +71,8 @@ export type User = {
   token?: string
   isFinishRegister: boolean
 }
+
+export type GetCourseByIdResponse = Course & {
+  department: Department
+  faculty: Faculty
+}

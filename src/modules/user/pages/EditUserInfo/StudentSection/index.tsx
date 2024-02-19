@@ -6,9 +6,10 @@ import NotificationConfig from '@/modules/user/components/NotificationConfig'
 import SignatureInput from '@/modules/user/components/SignatureInput'
 import { EditProfileForm } from '@/modules/user/hooks/useEditUserProfile/validation'
 import useGetAllFaculties from '@/modules/user/hooks/useGetAllFaculties'
+import useGetCourseById from '@/modules/user/hooks/useGetCourseById'
 import useGetCourses from '@/modules/user/hooks/useGetCourses'
 import useGetDepartments from '@/modules/user/hooks/useGetDepartment'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Level } from 'types/user'
 
@@ -18,9 +19,20 @@ const StudentSection = () => {
   const [facultyId, setFacultyId] = useState<string>('')
   const [departmentId, setDepartmentId] = useState<string>('')
 
+  const { data: courseData } = useGetCourseById(
+    methods.watch('student.courseId')
+  )
+
   const { data: faculties } = useGetAllFaculties()
   const { data: departments } = useGetDepartments(facultyId)
   const { data: courses } = useGetCourses(departmentId, methods.watch('level'))
+
+  useEffect(() => {
+    if (courseData) {
+      setFacultyId(courseData.data.department.facultyId)
+      setDepartmentId(courseData.data.department.id)
+    }
+  }, [courseData])
 
   return (
     <div className="flex flex-col gap-5 mt-5">
@@ -141,11 +153,7 @@ const StudentSection = () => {
         control={methods.control}
         name="notificationConfig"
         render={({ field: { onChange, value } }) => (
-          <NotificationConfig
-            label="การแจ้งเตือน"
-            value={value}
-            onChange={onChange}
-          />
+          <NotificationConfig value={value} onChange={onChange} />
         )}
       />
     </div>
