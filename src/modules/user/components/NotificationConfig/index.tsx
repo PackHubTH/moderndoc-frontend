@@ -1,25 +1,26 @@
 import Select from '@/components/Select'
+import { compareArray } from '@/utils/arrayUtil'
 import { useEffect } from 'react'
 
 type PropsType = {
   isDefault?: boolean
-  value: string[]
-  onChange?: (value: string[], isDefault: boolean) => void
+  value: number[]
+  onChange?: (value: number[], isDefault: boolean) => void
 }
 
 const options: {
   label: string
-  value: string
+  value: number
 }[] = []
 
 for (let i = 1; i <= 7; i++) {
   options.push({
     label: `ส่งการแจ้งเตือนหลังจากได้รับเอกสาร ${i} วัน`,
-    value: `${i}`,
+    value: i,
   })
 }
 
-const DEFAULT_VALUE = ['1', '3', '7']
+const DEFAULT_VALUE = [1, 3, 7]
 
 const NotificationConfig: React.FC<PropsType> = ({
   isDefault,
@@ -32,11 +33,18 @@ const NotificationConfig: React.FC<PropsType> = ({
     }
   }, [isDefault])
 
-  const onDayChange = (index: number, newValue: string) => {
-    const newValueArr = [...(value ?? [])]
-    newValueArr[index] = newValue
-    onChange?.(newValueArr, false)
+  const onDayChange = (index: number, newValue: number) => {
+    const tempArr = [...value]
+    tempArr[index] = newValue
+    for (let i = index + 1; i < tempArr.length; i++) {
+      if (tempArr[i] <= tempArr[i - 1]) tempArr[i] = tempArr[i - 1] + 1
+      if (tempArr[i] > 7) tempArr.splice(i, 1)
+    }
+    if (tempArr.length < 3 && tempArr[tempArr.length - 1] !== 7)
+      tempArr.push(tempArr[tempArr.length - 1] + 1)
+    onChange?.(tempArr, false)
   }
+
   return (
     <div>
       <h1 className="font-semibold">กำหนดการเตือนความจำ</h1>
@@ -47,25 +55,27 @@ const NotificationConfig: React.FC<PropsType> = ({
         <input
           className="rounded-sm accent-blue-500"
           type="checkbox"
-          onChange={(e) => onChange?.(value, e.target.checked)}
+          checked={compareArray(value, DEFAULT_VALUE)}
+          onChange={(e) => onChange?.(DEFAULT_VALUE, e.target.checked)}
         />
         <span className="text-sm">กำหนดการเตือนความจำด้วยค่าเริ่มต้น</span>
       </label>
-      {value?.map((day, index) => (
-        <div>
-          {index > 0 && <h3 className="text-sm mt-2.5">ต่อมา</h3>}
-          <Select
-            label=""
-            options={options}
-            value={day}
-            onChange={(value) => {
-              const newValue = [...(value ?? [])]
-              newValue[index] = value
-              onChange?.(newValue, false)
-            }}
-          />
-        </div>
-      ))}
+      {value?.map(
+        (day, index) =>
+          value[index - 1] !== 7 && (
+            <div>
+              {index > 0 && <h3 className="text-sm mt-2.5">ต่อมา</h3>}
+              <Select
+                label=""
+                options={options.filter(
+                  (option) => index === 0 || option.value > value[index - 1]
+                )}
+                value={day}
+                onChange={(value) => onDayChange(index, Number(value))}
+              />
+            </div>
+          )
+      )}
     </div>
   )
 }

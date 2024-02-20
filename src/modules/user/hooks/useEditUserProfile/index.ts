@@ -11,7 +11,7 @@ const useEditProfile = () => {
     defaultValues: {
       ...user,
       phone: user.phones[0] ?? '',
-      notificationConfig: ['1', '3', '7'],
+      notificationConfig: [1, 3, 7],
     },
     reValidateMode: 'onChange',
   })

@@ -27,7 +27,7 @@ export const editProfileFormSchema = z.object({
     }),
   defaultEmailIndex: z.number().default(0),
   phone: z.string().min(9).max(10),
-  notificationConfig: z.any().optional(),
+  notificationConfig: z.number().array().optional(),
   student: z.custom<Student>().optional(),
   staff: z.custom<Staff>().optional(),
   teacher: z.custom<Teacher>().optional(),

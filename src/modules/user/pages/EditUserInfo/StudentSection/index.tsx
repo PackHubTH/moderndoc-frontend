@@ -1,4 +1,3 @@
-import AutocompleteInput from '@/components/AutocompleteInput'
 import EmailInput from '@/components/EmailInput'
 import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
@@ -31,6 +30,7 @@ const StudentSection = () => {
     if (courseData) {
       setFacultyId(courseData.data.department.facultyId)
       setDepartmentId(courseData.data.department.id)
+      methods.setValue('level', courseData.data.level, { shouldDirty: true })
     }
   }, [courseData])
 
@@ -77,7 +77,7 @@ const StudentSection = () => {
         control={methods.control}
         name="level"
         render={({ field: { onChange, value } }) => (
-          <AutocompleteInput
+          <Select
             className="w-full"
             label="ระดับการศึกษา"
             onChange={onChange}
@@ -95,7 +95,7 @@ const StudentSection = () => {
           className="w-1/3"
           label="คณะ"
           onChange={(val) => {
-            setFacultyId(val)
+            setFacultyId(val as string)
           }}
           value={facultyId}
           options={
@@ -109,7 +109,7 @@ const StudentSection = () => {
           className="w-1/3"
           label="ภาควิชา"
           onChange={(val) => {
-            setDepartmentId(val)
+            setDepartmentId(val as string)
           }}
           value={departmentId}
           options={
@@ -153,7 +153,7 @@ const StudentSection = () => {
         control={methods.control}
         name="notificationConfig"
         render={({ field: { onChange, value } }) => (
-          <NotificationConfig value={value} onChange={onChange} />
+          <NotificationConfig value={value ?? []} onChange={onChange} />
         )}
       />
     </div>

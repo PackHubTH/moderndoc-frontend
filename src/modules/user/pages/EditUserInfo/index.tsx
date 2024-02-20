@@ -14,7 +14,7 @@ const EditUserInfo = () => {
   return (
     <PageContainer className="px-36 pt-7">
       <FormProvider {...methods}>
-        <form className="py-11 px-12 bg-white rounded-2xl max-w-4xl mx-auto">
+        <form className="bg-white rounded-2xl max-w-4xl mx-auto">
           <h1 className="text-xl text-gray-600 font-bold mb-6">
             ข้อมูลส่วนตัว
           </h1>
