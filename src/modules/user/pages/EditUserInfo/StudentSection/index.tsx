@@ -140,11 +140,11 @@ const StudentSection = () => {
       </div>
       <Controller
         control={methods.control}
-        name="profileImg"
+        name="signatures"
         render={({ field: { onChange, value } }) => (
           <SignatureInput
-            onChange={(val) => console.log(val)}
-            value={['https://www.w3schools.com/howto/img_avatar.png']}
+            value={value ?? []}
+            onChange={onChange}
             maxSignatures={3}
           />
         )}

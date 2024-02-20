@@ -31,6 +31,8 @@ export const editProfileFormSchema = z.object({
   student: z.custom<Student>().optional(),
   staff: z.custom<Staff>().optional(),
   teacher: z.custom<Teacher>().optional(),
+  signatures: z.string().array().max(3).optional(),
+  signaturesFile: z.any().optional(),
 })
 
 export type EditProfileForm = z.infer<typeof editProfileFormSchema>

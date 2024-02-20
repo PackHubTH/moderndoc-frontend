@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { FaPlus } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 
@@ -12,6 +13,23 @@ const SignatureInput: React.FC<propsType> = ({
   value,
   onChange,
 }) => {
+  const uploadButtonRef = useRef<HTMLInputElement>(null)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+
+    if (file) {
+      const tempValue = value
+      tempValue.push(URL.createObjectURL(file!))
+
+      onChange(tempValue)
+    }
+  }
+
+  const onClickUpload = () => {
+    uploadButtonRef.current?.click()
+  }
+
   const addSignature = (signature: string) => {
     if (value.length < maxSignatures) {
       onChange([...value, signature])
@@ -47,8 +65,18 @@ const SignatureInput: React.FC<propsType> = ({
             />
           </div>
         ))}
+        <input
+          className="hidden"
+          type="file"
+          id="file"
+          ref={uploadButtonRef}
+          onChange={handleFileChange}
+        />
         {value.length < maxSignatures && (
-          <div className="w-32 h-32 border-[#3888FF] border-[2px] border-dashed rounded-lg flex items-center justify-center cursor-pointer">
+          <div
+            className="w-32 h-32 border-[#3888FF] border-[2px] border-dashed rounded-lg flex items-center justify-center cursor-pointer"
+            onClick={onClickUpload}
+          >
             <FaPlus
               className="p-1 border-[#3888FF] border-[2px] rounded-full"
               color="#3888FF"
