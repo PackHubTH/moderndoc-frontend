@@ -4,8 +4,8 @@ import { Controller, FormProvider } from 'react-hook-form'
 import { UserRole } from 'types/user'
 import ProfileImageUpload from '../../components/ProfileImageUpload'
 import useEditProfile from '../../hooks/useEditUserProfile'
-import StaffSection from '../CreateProfilePage/StaffSection'
 import UserInfoSection from '../CreateProfilePage/UserInfoSection'
+import StaffSection from './StaffSection'
 import StudentSection from './StudentSection'
 
 const EditUserInfo = () => {

@@ -1,10 +1,10 @@
 import EmailInput from '@/components/EmailInput'
 import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
+import useGetAllFaculties from '@/modules/user/hooks/api/useGetAllFaculties'
+import useGetCourses from '@/modules/user/hooks/api/useGetCourses'
+import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
 import { CreateProfileForm } from '@/modules/user/hooks/useCreateProfileForm/validation'
-import useGetAllFaculties from '@/modules/user/hooks/useGetAllFaculties'
-import useGetCourses from '@/modules/user/hooks/useGetCourses'
-import useGetDepartments from '@/modules/user/hooks/useGetDepartment'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Level } from 'types/user'
 
@@ -13,10 +13,7 @@ const StudentSection = () => {
 
   const { data: faculties } = useGetAllFaculties()
   const { data: departments } = useGetDepartments(methods.watch('facultyId'))
-  const { data: courses } = useGetCourses(
-    methods.watch('departmentId'),
-    methods.watch('level')
-  )
+  const { data: courses } = useGetCourses(methods.watch('departmentId'))
 
   return (
     <div className="flex flex-col gap-5 mt-5">

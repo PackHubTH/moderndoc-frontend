@@ -4,7 +4,7 @@ import TextInput from '@/components/TextInput'
 import { useUserStore } from '@/stores/userStore'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useLogin from '../../hooks/useLogin'
+import useLogin from '../../hooks/api/useLogin'
 
 const Login = () => {
   const navigate = useNavigate()

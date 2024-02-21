@@ -1,27 +1,44 @@
 import EmailInput from '@/components/EmailInput'
-import RadioGroup from '@/components/RadioGroup'
-import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
 import useGetAllFaculties from '@/modules/user/hooks/api/useGetAllFaculties'
-import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
+import useGetDepartmentById from '@/modules/user/hooks/api/useGetDepartmentById'
+import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { DepartmentType } from '@/modules/user/hooks/types'
-import { CreateProfileForm } from '@/modules/user/hooks/useCreateProfileForm/validation'
+import { EditProfileForm } from '@/modules/user/hooks/useEditUserProfile/validation'
+import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { UserRole } from 'types/user'
 
 const StaffSection = () => {
-  const methods = useFormContext<CreateProfileForm>()
+  const methods = useFormContext<EditProfileForm>()
 
-  const isAgency = methods.watch('departmentType') === DepartmentType.AGENCY
+  const [departmentType, setDepartmentType] = useState<DepartmentType>(
+    DepartmentType.DEPARTMENT
+  )
+
+  const { data: userData } = useGetUser()
+
+  const isAgency = departmentType === DepartmentType.AGENCY
 
   const { data: faculties } = useGetAllFaculties()
-  const { data: departments } = useGetDepartments(
-    isAgency ? undefined : methods.watch('facultyId')
-  )
+  // const { data: departments } = useGetDepartments(
+  //   isAgency ? undefined : methods.watch('facultyId')
+  // )
+
+  const defaultDepartmentId =
+    userData?.data.role === UserRole.STAFF
+      ? userData?.data.staff?.staffDepartments[0].departmentId
+      : userData?.data?.teacher?.teacherDepartments[0].departmentId
+
+  console.log('🚀 ~ StaffSection ~ defaultDepartmentId:', defaultDepartmentId)
+  const { data: department } = useGetDepartmentById(defaultDepartmentId!)
+  console.log('🚀 ~ StaffSection ~ department:', department)
+
   return (
     <div className="flex flex-col gap-5 mt-5">
       <Controller
         control={methods.control}
-        name="staffNumber"
+        name="staff.staffNumber"
         render={({ field: { onChange, value } }) => (
           <TextInput
             label="รหัสประจำตัวบุคลากร"
@@ -60,7 +77,7 @@ const StaffSection = () => {
           />
         )}
       />
-      <Controller
+      {/* <Controller
         control={methods.control}
         name="departmentType"
         render={({ field: { onChange, value } }) => (
@@ -74,8 +91,8 @@ const StaffSection = () => {
             ]}
           />
         )}
-      />
-      {!isAgency ? (
+      /> */}
+      {/* {!isAgency ? (
         <div className="flex w-full justify-between">
           <Controller
             control={methods.control}
@@ -132,7 +149,7 @@ const StaffSection = () => {
             />
           )}
         />
-      )}
+      )} */}
     </div>
   )
 }

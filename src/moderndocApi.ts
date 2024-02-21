@@ -8,6 +8,6 @@ const instance = axios.create({
 const token = useUserStore.getState().token
 useUserStore.subscribe(console.log)
 
-instance.defaults.headers.common['Authorization'] = token
+instance.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
 export default instance

@@ -1,7 +1,7 @@
 import moderndocApi from '@/moderndocApi'
 import { useQuery } from '@tanstack/react-query'
 import { ApiResponse } from 'types/response'
-import { User } from './types'
+import { User } from '../types'
 
 const useGetTeachersByName = (name?: string) => {
   const context = useQuery(['teachers', name], async () => {

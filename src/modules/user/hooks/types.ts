@@ -38,6 +38,7 @@ export type Teacher = {
   id: string
   userId: string
   staffNumber: string
+  teacherDepartments: TeacherDepartment[]
 }
 
 export enum StaffType {
@@ -50,6 +51,21 @@ export type Staff = {
   userId: string
   staffNumber: string
   type: StaffType
+  staffDepartments: StaffDepartment[]
+}
+
+export type StaffDepartment = {
+  id: string
+  staffId: string
+  departmentId: string
+  isApproved: boolean
+}
+
+export type TeacherDepartment = {
+  id: string
+  teacherId: string
+  departmentId: string
+  isApproved: boolean
 }
 
 export type User = {
@@ -74,5 +90,9 @@ export type User = {
 
 export type GetCourseByIdResponse = Course & {
   department: Department
+  faculty: Faculty
+}
+
+export type GetDepartmentByIdResponse = Department & {
   faculty: Faculty
 }

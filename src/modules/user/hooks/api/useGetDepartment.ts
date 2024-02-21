@@ -1,7 +1,7 @@
 import moderndocApi from '@/moderndocApi'
 import { useQuery } from '@tanstack/react-query'
 import { ApiResponse } from 'types/response'
-import { Department } from './types'
+import { Department } from '../types'
 
 const useGetDepartments = (facultyId?: string) => {
   const context = useQuery(['departments', facultyId], async () => {

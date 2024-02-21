@@ -1,12 +1,12 @@
 import moderndocApi from '@/moderndocApi'
 import { useQuery } from '@tanstack/react-query'
 import { ApiResponse } from 'types/response'
-import { GetCourseByIdResponse } from './types'
+import { GetCourseByIdResponse } from '../types'
 
-const useGetCourseById = (id: string) => {
-  const context = useQuery(['course', id], async () => {
+const useGetDepartmentById = (id: string) => {
+  const context = useQuery(['department', id], async () => {
     const response = await moderndocApi.get<ApiResponse<GetCourseByIdResponse>>(
-      `/course/${id}`
+      `/department/${id}`
     )
     return response.data
   })
@@ -14,4 +14,4 @@ const useGetCourseById = (id: string) => {
   return context
 }
 
-export default useGetCourseById
+export default useGetDepartmentById
