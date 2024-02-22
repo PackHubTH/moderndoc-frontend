@@ -2,6 +2,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import React, { Fragment } from 'react'
 import { IoClose } from 'react-icons/io5'
 import tw from 'twin.macro'
+import { VariantType } from './types'
 
 type PropsType = {
   content: React.ReactNode | string
@@ -10,7 +11,7 @@ type PropsType = {
   onClose: () => void
   actions?: React.ReactNode
   leftIcon?: React.ReactNode
-  variant?: 'default' | 'confirm'
+  variant?: VariantType
 }
 
 const Modal: React.FC<PropsType> = ({
