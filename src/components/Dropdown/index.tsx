@@ -11,11 +11,11 @@ const Dropdown: React.FC<PropsType> = ({ dropdownSection, label }) => {
       <button
         id="hs-dropdown-with-title"
         type="button"
-        className="hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none "
+        className="hs-dropdown-toggle inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50 "
       >
         {label}
         <svg
-          className="hs-dropdown-open:rotate-180 w-4 h-4"
+          className="h-4 w-4 hs-dropdown-open:rotate-180"
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
@@ -31,20 +31,20 @@ const Dropdown: React.FC<PropsType> = ({ dropdownSection, label }) => {
       </button>
 
       <div
-        className="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[15rem] bg-white shadow-md rounded-lg p-2 mt-2 divide-y divide-gray-200"
+        className="hs-dropdown-menu duration mt-2 hidden min-w-[15rem] divide-y divide-gray-200 rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100"
         aria-labelledby="hs-dropdown-with-title"
       >
         {dropdownSection.map((section) => (
           <div className="py-2 first:pt-0 last:pb-0">
             {section.title && (
-              <span className="block py-2 px-3 text-xs font-medium uppercase text-gray-400">
+              <span className="block px-3 py-2 text-xs font-medium uppercase text-gray-400">
                 {section.title}
               </span>
             )}
             {section.lists.map((list, index) => (
               <a
                 key={`${list.displayText}-${index}`}
-                className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 "
+                className="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none "
                 href="#"
                 onClick={list.onClick}
               >

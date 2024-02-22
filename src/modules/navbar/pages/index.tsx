@@ -1,9 +1,8 @@
-import tw from 'twin.macro'
-import bellIcon from '../assets/bell.svg'
-import { useGoogleLogin } from '@react-oauth/google'
 import { useUserStore } from '@/stores/userStore'
-import ProfileButton from '../components/ProfileButton'
+import { useGoogleLogin } from '@react-oauth/google'
+import bellIcon from '../assets/bell.svg'
 import LoginButton from '../components/LoginButton'
+import ProfileButton from '../components/ProfileButton'
 
 const Navbar = () => {
   const setIsLogin = useUserStore((state) => state.setIsLogin)
