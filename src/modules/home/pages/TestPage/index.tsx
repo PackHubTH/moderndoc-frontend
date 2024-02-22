@@ -3,11 +3,11 @@ import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
 import Modal from '@/components/Modal'
 import Tabs from '@/components/Tabs'
-import { useState } from 'react'
+import { useDisclosure } from '@/hooks/useDisclosure'
 import { RiEyeCloseFill } from 'react-icons/ri'
 
 const TestPage = () => {
-  const [visible, setVisible] = useState(false)
+  const { isOpen, open, close, toggle } = useDisclosure(true)
 
   return (
     <div>
@@ -63,8 +63,19 @@ const TestPage = () => {
           { title: 'Tab 3', content: <div>Tab 3</div> },
         ]}
       />
-      <Button label="testModal" onClick={() => setVisible(true)} />
-      <Modal visible={visible} onClose={() => setVisible(false)} />
+      <Button label="testModal" onClick={open} />
+      <Modal
+        content={'Lorem ipsum'}
+        title="Title"
+        isOpen={isOpen}
+        onClose={close}
+        actions={
+          <>
+            <Button label="Button1" onClick={close} />
+            <Button label="Button2" onClick={close} />
+          </>
+        }
+      />
     </div>
   )
 }
