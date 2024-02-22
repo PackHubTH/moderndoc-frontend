@@ -1,10 +1,14 @@
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
+import Modal from '@/components/Modal'
 import Tabs from '@/components/Tabs'
+import { useState } from 'react'
 import { RiEyeCloseFill } from 'react-icons/ri'
 
 const TestPage = () => {
+  const [visible, setVisible] = useState(false)
+
   return (
     <div>
       <Button
@@ -59,6 +63,8 @@ const TestPage = () => {
           { title: 'Tab 3', content: <div>Tab 3</div> },
         ]}
       />
+      <Button label="testModal" onClick={() => setVisible(true)} />
+      <Modal visible={visible} onClose={() => setVisible(false)} />
     </div>
   )
 }
