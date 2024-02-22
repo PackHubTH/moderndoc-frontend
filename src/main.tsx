@@ -1,12 +1,12 @@
-import './index.css'
 import 'preline'
+import './index.css'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import AppRoute from './AppRoute'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { GoogleOAuthProvider } from '@react-oauth/google'
+import AppRoute from './AppRoute'
 import Navbar from './modules/navbar/pages'
 
 const queryClient = new QueryClient()

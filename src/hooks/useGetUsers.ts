@@ -1,6 +1,6 @@
 import Person from '@/models/Person'
-import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 
 const useGetUsers = () => {
   const context = useQuery<Person, Error, Person>(
