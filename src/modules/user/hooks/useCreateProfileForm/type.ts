@@ -10,4 +10,3 @@ export type CreateProfileForm = {
   email: string[]
   phone: string
 }
-

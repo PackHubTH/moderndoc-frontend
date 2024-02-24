@@ -27,7 +27,7 @@ const TextInput: React.FC<PropsType> = ({
     <div className={className}>
       <label
         htmlFor={label}
-        className="block text-sm font-medium mb-2 text-gray-800"
+        className="mb-2 block text-sm font-medium text-gray-800"
       >
         {label}
       </label>
@@ -35,7 +35,7 @@ const TextInput: React.FC<PropsType> = ({
         <PatternFormat
           id={label}
           css={[
-            tw`py-3 px-4 block w-full border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none text-gray-500`,
+            tw`block w-full rounded-full border-gray-200 px-4 py-3 text-sm text-gray-500 focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50`,
             isError &&
               tw`border-red-500 focus:border-red-500 focus:ring-red-500`,
           ]}
@@ -51,7 +51,7 @@ const TextInput: React.FC<PropsType> = ({
           type={type}
           id={label}
           css={[
-            tw`py-3 px-4 block w-full border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none text-gray-500`,
+            tw`block w-full rounded-full border-gray-200 px-4 py-3 text-sm text-gray-500 focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50`,
             isError &&
               tw`border-red-500 focus:border-red-500 focus:ring-red-500`,
           ]}

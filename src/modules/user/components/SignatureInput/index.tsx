@@ -47,21 +47,21 @@ const SignatureInput: React.FC<propsType> = ({
       <h2 className="text-sm">
         สามารถจดจำลายเซ็นต์ได้สูงสุด {maxSignatures} ลายเซ็นต์
       </h2>
-      <div className="flex mt-4 gap-2.5">
+      <div className="mt-4 flex gap-2.5">
         {value.map((signature, index) => (
           <div
-            className="w-32 h-32 border-gray-200 border-[2px] rounded-lg relative"
+            className="relative h-32 w-32 rounded-lg border-[2px] border-gray-200"
             key={index}
           >
             <IoClose
-              className="p-[1px] rounded-full bg-red-600 text-white absolute top-2 right-2 cursor-pointer"
+              className="absolute right-2 top-2 cursor-pointer rounded-full bg-red-600 p-[1px] text-white"
               size={18}
               onClick={() => deleteSignature(index)}
             />
             <img
               src={signature}
               alt="signature"
-              className="w-full h-full object-cover rounded-lg "
+              className="h-full w-full rounded-lg object-cover "
             />
           </div>
         ))}
@@ -74,11 +74,11 @@ const SignatureInput: React.FC<propsType> = ({
         />
         {value.length < maxSignatures && (
           <div
-            className="w-32 h-32 border-[#3888FF] border-[2px] border-dashed rounded-lg flex items-center justify-center cursor-pointer"
+            className="flex h-32 w-32 cursor-pointer items-center justify-center rounded-lg border-[2px] border-dashed border-[#3888FF]"
             onClick={onClickUpload}
           >
             <FaPlus
-              className="p-1 border-[#3888FF] border-[2px] rounded-full"
+              className="rounded-full border-[2px] border-[#3888FF] p-1"
               color="#3888FF"
               size={30}
             />

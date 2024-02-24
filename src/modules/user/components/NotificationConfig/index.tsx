@@ -51,7 +51,7 @@ const NotificationConfig: React.FC<PropsType> = ({
       <h2 className="text-sm">
         ผู้ส่งเอกสารสามารถกำหนดการเตือนความจำในแต่ละเอกสารได้เช่นเดียวกัน
       </h2>
-      <label className="flex items-center gap-2 mt-4 mb-2.5">
+      <label className="mb-2.5 mt-4 flex items-center gap-2">
         <input
           className="rounded-sm accent-blue-500"
           type="checkbox"
@@ -64,7 +64,7 @@ const NotificationConfig: React.FC<PropsType> = ({
         (day, index) =>
           value[index - 1] !== 7 && (
             <div>
-              {index > 0 && <h3 className="text-sm mt-2.5">ต่อมา</h3>}
+              {index > 0 && <h3 className="mt-2.5 text-sm">ต่อมา</h3>}
               <Select
                 label=""
                 options={options.filter(

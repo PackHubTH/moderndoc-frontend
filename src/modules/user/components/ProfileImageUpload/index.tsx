@@ -26,9 +26,9 @@ const ProfileImageUpload: React.FC<PropsType> = ({ urlValue, onChange }) => {
   }
 
   return (
-    <div className="flex gap-4 items-center">
+    <div className="flex items-center gap-4">
       <img
-        className="w-16 h-16 rounded-full mr-2 cursor-pointer"
+        className="mr-2 h-16 w-16 cursor-pointer rounded-full"
         src={urlValue || DEFAULT_PROFILE_IMG}
       />
       <input

@@ -43,18 +43,18 @@ const EmailInput: React.FC<PropsType> = ({
     <div className={className}>
       <label
         htmlFor={label}
-        className="block text-sm font-medium mb-2 text-gray-800"
+        className="mb-2 block text-sm font-medium text-gray-800"
       >
         {label}
       </label>
       <div className="flex flex-col gap-2.5">
         {value?.map((email, index) => (
-          <div key={index} className="flex gap-2.5 relative">
+          <div key={index} className="relative flex gap-2.5">
             <input
               type="email"
               id={label}
               css={[
-                tw`py-3 px-4 block w-full border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none text-gray-500`,
+                tw`block w-full rounded-full border-gray-200 px-4 py-3 text-sm text-gray-500 focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50`,
                 index === 0 && tw`cursor-not-allowed`,
               ]}
               value={email}
@@ -70,7 +70,7 @@ const EmailInput: React.FC<PropsType> = ({
               >
                 {index !== defaultEmailIndex && (
                   <div
-                    className="text-blue-500 cursor-pointer text-sm"
+                    className="cursor-pointer text-sm text-blue-500"
                     onClick={() => setDefaultEmail(index)}
                   >
                     ตั้งเป็นค่าเริ่มต้น
@@ -78,7 +78,7 @@ const EmailInput: React.FC<PropsType> = ({
                 )}
                 {index !== defaultEmailIndex && index !== 0 && (
                   <div
-                    className="text-red-500 cursor-pointer text-sm"
+                    className="cursor-pointer text-sm text-red-500"
                     onClick={() => deleteEmail(index)}
                   >
                     ลบ
@@ -91,7 +91,7 @@ const EmailInput: React.FC<PropsType> = ({
                 className="absolute right-3 top-[8px]"
                 onMouseEnter={() => setDefaultEmail(index)}
               >
-                <div className="text-blue-500 cursor-default border-blue-500 border-[1px] px-3 py-1 rounded-full text-sm">
+                <div className="cursor-default rounded-full border-[1px] border-blue-500 px-3 py-1 text-sm text-blue-500">
                   ค่าเริ่มต้น
                 </div>
               </div>
@@ -100,7 +100,7 @@ const EmailInput: React.FC<PropsType> = ({
         ))}
       </div>
       <div
-        className="flex gap-2 text-blue-600 items-center cursor-pointer mt-2.5"
+        className="mt-2.5 flex cursor-pointer items-center gap-2 text-blue-600"
         onClick={() => onAddEmail()}
       >
         <GoPlusCircle className="-mt-[2px]" color="rgb(59 130 246)" />

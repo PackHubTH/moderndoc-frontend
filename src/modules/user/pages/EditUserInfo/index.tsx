@@ -14,8 +14,8 @@ const EditUserInfo = () => {
   return (
     <PageContainer className="px-36 pt-7">
       <FormProvider {...methods}>
-        <form className="bg-white rounded-2xl max-w-4xl mx-auto">
-          <h1 className="text-xl text-gray-600 font-bold mb-6">
+        <form className="mx-auto max-w-4xl rounded-2xl bg-white">
+          <h1 className="mb-6 text-xl font-bold text-gray-600">
             ข้อมูลส่วนตัว
           </h1>
           <hr className="mb-6" />

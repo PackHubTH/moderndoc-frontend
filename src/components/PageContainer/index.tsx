@@ -29,7 +29,7 @@ const PageContainer: React.FC<PropsType> = ({
       {isLogin && showSidebar && <Sidebar />}
       <div
         css={[
-          tw`flex flex-col h-screen`,
+          tw`flex h-screen flex-col`,
           isShowSidebar && tw`pl-[${SIDE_BAR_WIDTH}]`,
           showNavbar && tw`pt-[${NAVBAR_HEIGHT}]`,
         ]}

@@ -18,7 +18,7 @@ const StaffSection = () => {
     isAgency ? undefined : methods.watch('facultyId')
   )
   return (
-    <div className="flex flex-col gap-5 mt-5">
+    <div className="mt-5 flex flex-col gap-5">
       <Controller
         control={methods.control}
         name="staffNumber"

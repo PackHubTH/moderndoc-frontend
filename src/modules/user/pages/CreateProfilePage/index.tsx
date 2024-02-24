@@ -45,10 +45,10 @@ const CreateProfilePage = () => {
 
   return (
     <PageContainer>
-      <div className="bg-blue-100 w-full p-6 h-full min-h-[100vh]">
+      <div className="h-full min-h-[100vh] w-full bg-blue-100 p-6">
         <FormProvider {...methods}>
-          <form className="py-11 px-12 bg-white rounded-2xl max-w-4xl mx-auto">
-            <h1 className="text-xl text-gray-600 font-bold mb-6">
+          <form className="mx-auto max-w-4xl rounded-2xl bg-white px-12 py-11">
+            <h1 className="mb-6 text-xl font-bold text-gray-600">
               เพิ่มข้อมูลส่วนตัว
             </h1>
             <hr className="mb-6" />
