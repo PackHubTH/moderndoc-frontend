@@ -1,21 +1,30 @@
 import exampleFile from '@/assets/example.pdf'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
+import { useDisclosure } from '@/hooks/useDisclosure'
 import { useRef } from 'react'
 import { FaDownload, FaMousePointer } from 'react-icons/fa'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
 import { Document, Page } from 'react-pdf'
+import { useNavigate } from 'react-router-dom'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
 import DocumentToolbar from '../components/DocumentToolbar'
 import DraggableBox from '../components/DraggableBox'
+import FinalizeModalContent from '../components/FinalizeModalContent'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
 import { useDocumentStore } from '../stores/documentStore'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 
 const DocumentEditor = () => {
+  const navigate = useNavigate()
+  const {
+    isOpen: isFinalizeModalOpen,
+    open: openFinalizeModal,
+    close: closeFinalizeModal,
+  } = useDisclosure()
   const canvasRef = useRef<HTMLDivElement>(null)
   const canvasList = useDocumentStore((state) => state.canvasList)
   const pageTotal = useDocumentStore((state) => state.pageTotal)
@@ -53,10 +62,30 @@ const DocumentEditor = () => {
         </div>
         <div className="space-x-3">
           <Button label="Download" leftIcon={<FaDownload />} />
-          <Button label="Finalize" variant="yellow" />
+          <Button
+            label="Finalize"
+            variant="yellow"
+            onClick={openFinalizeModal}
+          />
+          <Modal
+            actions={
+              <>
+                <Button
+                  label="ยกเลิก"
+                  variant="gray"
+                  onClick={closeFinalizeModal}
+                />
+                <Button label="ยืนยัน" variant="blue" />
+              </>
+            }
+            content={<FinalizeModalContent />}
+            isOpen={isFinalizeModalOpen}
+            title="ยืนยันการเสร็จสิ้นดำเนินการเอกสาร"
+            variant="confirm"
+            onClose={closeFinalizeModal}
+          />
           <Button label="ดำเนินการ" variant="green" />
-          <Button label="ยกเลิก" variant="gray" />
-          <Modal />
+          <Button label="ยกเลิก" variant="gray" onClick={() => navigate('/')} />
         </div>
       </div>
       {/*  */}
