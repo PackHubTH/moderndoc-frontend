@@ -1,10 +1,14 @@
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
+import Modal from '@/components/Modal'
 import Tabs from '@/components/Tabs'
+import { useDisclosure } from '@/hooks/useDisclosure'
 import { RiEyeCloseFill } from 'react-icons/ri'
 
 const TestPage = () => {
+  const { isOpen, open, close, toggle } = useDisclosure(true)
+
   return (
     <div>
       <Button
@@ -58,6 +62,19 @@ const TestPage = () => {
           { title: 'Tab 2', content: <div>Tab 2</div> },
           { title: 'Tab 3', content: <div>Tab 3</div> },
         ]}
+      />
+      <Button label="testModal" onClick={open} />
+      <Modal
+        content={'Lorem ipsum'}
+        title="Title"
+        isOpen={isOpen}
+        onClose={close}
+        actions={
+          <>
+            <Button label="Button1" onClick={close} />
+            <Button label="Button2" onClick={close} />
+          </>
+        }
       />
     </div>
   )
