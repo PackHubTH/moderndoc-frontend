@@ -57,7 +57,10 @@ const AutocompleteInput: React.FC<PropsType> = ({
         />
         <Combobox.Options>
           {filteredOptions.map((option) => (
-            <Combobox.Option value={option.value}>
+            <Combobox.Option
+              className="color-gray-800 mx-2 cursor-pointer border border-gray-200 px-4 py-2 text-sm hover:bg-gray-100"
+              value={option.value}
+            >
               {option.label}
             </Combobox.Option>
           ))}

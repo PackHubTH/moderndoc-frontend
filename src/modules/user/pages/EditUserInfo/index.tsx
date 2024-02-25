@@ -50,8 +50,24 @@ const EditUserInfo = () => {
       role: data.role,
       user: { ...data, phones: [data.phone] },
       student: data.student,
-      staff: data.staff,
-      teacher: data.teacher,
+      staff: {
+        ...data.staff,
+        staffDepartments: [
+          {
+            departmentId: data.departmentId,
+            staffNumber: data.staff?.staffNumber,
+          },
+        ],
+      },
+      teacher: {
+        ...data.teacher,
+        teacherDepartments: [
+          {
+            departmentId: data.departmentId,
+            staffNumber: data.teacher?.staffNumber,
+          },
+        ],
+      },
     }
 
     updateUser(dataToSend, {

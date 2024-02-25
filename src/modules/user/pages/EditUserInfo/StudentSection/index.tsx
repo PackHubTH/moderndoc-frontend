@@ -18,8 +18,6 @@ import { Level } from 'types/user'
 const StudentSection = () => {
   const methods = useFormContext<EditProfileForm>()
 
-  const [facultyId, setFacultyId] = useState<string>('')
-  const [departmentId, setDepartmentId] = useState<string>('')
   const [searchAdvisor, setSearchAdvisor] = useState<string>('')
 
   const { data: courseData } = useGetCourseById(
@@ -28,14 +26,21 @@ const StudentSection = () => {
   const { data: userData } = useGetUser()
 
   const { data: faculties } = useGetAllFaculties()
-  const { data: departments } = useGetDepartments(facultyId)
-  const { data: courses } = useGetCourses(departmentId, methods.watch('level'))
+  const { data: departments } = useGetDepartments(methods.watch('facultyId'))
+  const { data: courses } = useGetCourses(
+    methods.watch('departmentId'),
+    methods.watch('level')
+  )
   const { data: advisors, refetch } = useGetTeachersByName(searchAdvisor)
 
   useEffect(() => {
     if (courseData) {
-      setFacultyId(courseData.data.department.facultyId)
-      setDepartmentId(courseData.data.department.id)
+      methods.setValue('facultyId', courseData.data.department.facultyId, {
+        shouldDirty: true,
+      })
+      methods.setValue('departmentId', courseData.data.department.id, {
+        shouldDirty: true,
+      })
       methods.setValue('level', courseData.data.level, { shouldDirty: true })
     }
   }, [courseData])
@@ -45,12 +50,10 @@ const StudentSection = () => {
   }, [userData])
 
   useEffect(() => {
-    if (faculties?.data.length) {
-      setFacultyId(faculties.data[0].id)
-    }
-
     if (departments?.data.length) {
-      setDepartmentId(departments.data[0].id)
+      methods.setValue('departmentId', departments.data[0].id, {
+        shouldDirty: true,
+      })
     }
 
     if (courses?.data.length) {
@@ -61,8 +64,6 @@ const StudentSection = () => {
 
     methods.trigger()
   }, [faculties, departments, courses])
-
-  console.log(searchAdvisor)
 
   return (
     <div className="mt-5 flex flex-col gap-5">
@@ -121,33 +122,41 @@ const StudentSection = () => {
         )}
       />
       <div className="flex w-full justify-between">
-        <Select
-          className="w-1/3"
-          label="คณะ"
-          onChange={(val) => {
-            setFacultyId(val as string)
-          }}
-          value={facultyId}
-          options={
-            faculties?.data.map((faculty) => ({
-              label: faculty.name,
-              value: faculty.id,
-            })) ?? []
-          }
+        <Controller
+          control={methods.control}
+          name="facultyId"
+          render={({ field: { onChange, value } }) => (
+            <Select
+              className="w-1/3"
+              label="คณะ"
+              onChange={onChange}
+              value={value}
+              options={
+                faculties?.data.map((faculty) => ({
+                  label: faculty.name,
+                  value: faculty.id,
+                })) ?? []
+              }
+            />
+          )}
         />
-        <Select
-          className="w-1/3"
-          label="ภาควิชา"
-          onChange={(val) => {
-            setDepartmentId(val as string)
-          }}
-          value={departmentId}
-          options={
-            departments?.data.map((department) => ({
-              label: department.name,
-              value: department.id,
-            })) ?? []
-          }
+        <Controller
+          control={methods.control}
+          name="departmentId"
+          render={({ field: { onChange, value } }) => (
+            <Select
+              className="w-1/3"
+              label="ภาควิชา"
+              onChange={onChange}
+              value={value}
+              options={
+                departments?.data.map((department) => ({
+                  label: department.name,
+                  value: department.id,
+                })) ?? []
+              }
+            />
+          )}
         />
         <Controller
           control={methods.control}
@@ -176,7 +185,7 @@ const StudentSection = () => {
             label="อาจารย์ที่ปรึกษา"
             onChange={(data) => {
               const fullName = advisors?.data.find(
-                (advisor) => advisor.id === data
+                (advisor) => advisor.teacher?.id === data
               )?.nameTh
               setSearchAdvisor(fullName ?? '')
               onChange(data)
@@ -189,7 +198,7 @@ const StudentSection = () => {
             options={
               advisors?.data.map((advisor) => ({
                 label: advisor.nameTh,
-                value: advisor.teacher?.id!,
+                value: advisor.teacher?.id ?? '',
               })) ?? []
             }
           />

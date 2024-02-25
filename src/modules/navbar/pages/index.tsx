@@ -5,7 +5,7 @@ import LoginButton from '../components/LoginButton'
 import ProfileButton from '../components/ProfileButton'
 
 const Navbar = () => {
-  const { isLogin, setIsLogin, user } = useUserStore()
+  const { isLogin, setIsLogin, user, logout } = useUserStore()
 
   const navigate = useNavigate()
 
@@ -88,7 +88,7 @@ const Navbar = () => {
             )}
             <button
               onClick={() => {
-                setIsLogin(false)
+                logout()
                 navigate('/')
               }}
             >

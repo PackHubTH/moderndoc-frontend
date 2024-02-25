@@ -136,7 +136,7 @@ const StaffSection = () => {
           name="departmentId"
           render={({ field: { onChange, value } }) => (
             <Select
-              label="สาขาวิชา"
+              label="หน่วยงาน"
               onChange={onChange}
               value={value}
               options={

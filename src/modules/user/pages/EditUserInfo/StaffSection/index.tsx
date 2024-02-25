@@ -1,18 +1,23 @@
 import EmailInput from '@/components/EmailInput'
+import RadioGroup from '@/components/RadioGroup'
+import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
+import NotificationConfig from '@/modules/user/components/NotificationConfig'
+import SignatureInput from '@/modules/user/components/SignatureInput'
 import useGetAllFaculties from '@/modules/user/hooks/api/useGetAllFaculties'
+import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
 import useGetDepartmentById from '@/modules/user/hooks/api/useGetDepartmentById'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { DepartmentType } from '@/modules/user/hooks/types'
 import { EditProfileForm } from '@/modules/user/hooks/useEditUserProfile/validation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { UserRole } from 'types/user'
 
 const StaffSection = () => {
   const methods = useFormContext<EditProfileForm>()
 
-  const [departmentType, setDepartmentType] = useState<DepartmentType>(
+  const [departmentType, setDepartmentType] = useState<DepartmentType | string>(
     DepartmentType.DEPARTMENT
   )
 
@@ -21,24 +26,41 @@ const StaffSection = () => {
   const isAgency = departmentType === DepartmentType.AGENCY
 
   const { data: faculties } = useGetAllFaculties()
-  // const { data: departments } = useGetDepartments(
-  //   isAgency ? undefined : methods.watch('facultyId')
-  // )
+  const { data: departments } = useGetDepartments(
+    isAgency ? undefined : methods.watch('facultyId')
+  )
 
   const defaultDepartmentId =
     userData?.data.role === UserRole.STAFF
       ? userData?.data.staff?.staffDepartments[0].departmentId
       : userData?.data?.teacher?.teacherDepartments[0].departmentId
 
-  console.log('🚀 ~ StaffSection ~ defaultDepartmentId:', defaultDepartmentId)
-  const { data: department } = useGetDepartmentById(defaultDepartmentId!)
-  console.log('🚀 ~ StaffSection ~ department:', department)
+  const { data: departmentData } = useGetDepartmentById(defaultDepartmentId!)
+
+  const objectPrefix =
+    userData?.data.role === UserRole.STAFF ? 'staff' : 'teacher'
+
+  useEffect(() => {
+    if (departmentData) {
+      if (departmentData.data.type === DepartmentType.AGENCY) {
+        setDepartmentType(DepartmentType.AGENCY)
+      } else {
+        setDepartmentType(DepartmentType.DEPARTMENT)
+      }
+    }
+  }, [departmentData])
+
+  useEffect(() => {
+    if (departments?.data) {
+      methods.setValue('departmentId', departments.data[0].id)
+    }
+  }, [departmentType, departments])
 
   return (
     <div className="mt-5 flex flex-col gap-5">
       <Controller
         control={methods.control}
-        name="staff.staffNumber"
+        name={`${objectPrefix}.staffNumber`}
         render={({ field: { onChange, value } }) => (
           <TextInput
             label="รหัสประจำตัวบุคลากร"
@@ -77,22 +99,16 @@ const StaffSection = () => {
           />
         )}
       />
-      {/* <Controller
-        control={methods.control}
-        name="departmentType"
-        render={({ field: { onChange, value } }) => (
-          <RadioGroup
-            label="ประเภท"
-            value={value}
-            onChange={onChange}
-            options={[
-              { label: 'คณะ/ภาควิชา', value: DepartmentType.DEPARTMENT },
-              { label: 'หน่วยงาน', value: DepartmentType.AGENCY },
-            ]}
-          />
-        )}
-      /> */}
-      {/* {!isAgency ? (
+      <RadioGroup
+        label="ประเภท"
+        value={departmentType}
+        onChange={(val) => setDepartmentType(val)}
+        options={[
+          { label: 'คณะ/ภาควิชา', value: DepartmentType.DEPARTMENT },
+          { label: 'หน่วยงาน', value: DepartmentType.AGENCY },
+        ]}
+      />
+      {!isAgency ? (
         <div className="flex w-full justify-between">
           <Controller
             control={methods.control}
@@ -137,7 +153,7 @@ const StaffSection = () => {
           name="departmentId"
           render={({ field: { onChange, value } }) => (
             <Select
-              label="สาขาวิชา"
+              label="หน่วยงาน"
               onChange={onChange}
               value={value}
               options={
@@ -149,7 +165,25 @@ const StaffSection = () => {
             />
           )}
         />
-      )} */}
+      )}
+      <Controller
+        control={methods.control}
+        name="signatures"
+        render={({ field: { onChange, value } }) => (
+          <SignatureInput
+            value={value ?? []}
+            onChange={onChange}
+            maxSignatures={3}
+          />
+        )}
+      />
+      <Controller
+        control={methods.control}
+        name="notificationConfig"
+        render={({ field: { onChange, value } }) => (
+          <NotificationConfig value={value ?? []} onChange={onChange} />
+        )}
+      />
     </div>
   )
 }

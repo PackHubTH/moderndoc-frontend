@@ -20,6 +20,13 @@ for (let i = 1; i <= 7; i++) {
   })
 }
 
+const NOT_NOTIFY = 1000
+
+options.push({
+  label: 'ไม่ต้องการการแจ้งเตือน',
+  value: NOT_NOTIFY,
+})
+
 const DEFAULT_VALUE = [1, 3, 7]
 
 const NotificationConfig: React.FC<PropsType> = ({
@@ -36,8 +43,9 @@ const NotificationConfig: React.FC<PropsType> = ({
   const onDayChange = (index: number, newValue: number) => {
     const tempArr = [...value]
     tempArr[index] = newValue
-    for (let i = index + 1; i < tempArr.length; i++) {
-      if (tempArr[i] <= tempArr[i - 1]) tempArr[i] = tempArr[i - 1] + 1
+    for (let i = index + 1; i <= tempArr.length; i++) {
+      if (tempArr[i] <= tempArr[i - 1] && tempArr[i] !== NOT_NOTIFY)
+        tempArr[i] = tempArr[i - 1] + 1
       if (tempArr[i] > 7) tempArr.splice(i, 1)
     }
     if (tempArr.length < 3 && tempArr[tempArr.length - 1] !== 7)
@@ -68,7 +76,10 @@ const NotificationConfig: React.FC<PropsType> = ({
               <Select
                 label=""
                 options={options.filter(
-                  (option) => index === 0 || option.value > value[index - 1]
+                  (option) =>
+                    index === 0 ||
+                    option.value > value[index - 1] ||
+                    option.value === NOT_NOTIFY
                 )}
                 value={day}
                 onChange={(value) => onDayChange(index, Number(value))}

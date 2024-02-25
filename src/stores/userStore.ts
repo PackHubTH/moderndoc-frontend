@@ -10,6 +10,7 @@ type UserStore = {
   setIsLogin: (isLogin: boolean) => void
   setUser: (user: User, token: string) => void
   token: string
+  logout: () => void
 }
 
 type MyPersist = (
@@ -27,6 +28,7 @@ export const useUserStore = create<UserStore>(
       setIsLogin: (isLogin) => set({ isLogin }),
       setUser: (user, token) => set({ user, token }),
       token: 'my-token',
+      logout: () => set({ isLogin: false, user: {} as User, token: '' }),
     }),
     {
       name: 'user-storage',

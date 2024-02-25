@@ -34,6 +34,9 @@ export const editProfileFormSchema = z.object({
   signatures: z.string().array().max(3).optional(),
   signaturesFile: z.any().optional(),
   advisorId: z.string().uuid().optional(),
+  facultyId: z.string().uuid().optional(),
+  departmentId: z.string().uuid().optional(),
+  courseId: z.string().uuid().optional(),
 })
 
 export type EditProfileForm = z.infer<typeof editProfileFormSchema>
