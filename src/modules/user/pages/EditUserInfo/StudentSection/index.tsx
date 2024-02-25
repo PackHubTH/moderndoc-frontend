@@ -1,3 +1,4 @@
+import AutocompleteInput from '@/components/AutocompleteInput'
 import EmailInput from '@/components/EmailInput'
 import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
@@ -7,6 +8,8 @@ import useGetAllFaculties from '@/modules/user/hooks/api/useGetAllFaculties'
 import useGetCourseById from '@/modules/user/hooks/api/useGetCourseById'
 import useGetCourses from '@/modules/user/hooks/api/useGetCourses'
 import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
+import useGetTeachersByName from '@/modules/user/hooks/api/useGetTeachersByName'
+import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { EditProfileForm } from '@/modules/user/hooks/useEditUserProfile/validation'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -17,14 +20,17 @@ const StudentSection = () => {
 
   const [facultyId, setFacultyId] = useState<string>('')
   const [departmentId, setDepartmentId] = useState<string>('')
+  const [searchAdvisor, setSearchAdvisor] = useState<string>('')
 
   const { data: courseData } = useGetCourseById(
     methods.watch('student.courseId')
   )
+  const { data: userData } = useGetUser()
 
   const { data: faculties } = useGetAllFaculties()
   const { data: departments } = useGetDepartments(facultyId)
   const { data: courses } = useGetCourses(departmentId, methods.watch('level'))
+  const { data: advisors, refetch } = useGetTeachersByName(searchAdvisor)
 
   useEffect(() => {
     if (courseData) {
@@ -33,6 +39,30 @@ const StudentSection = () => {
       methods.setValue('level', courseData.data.level, { shouldDirty: true })
     }
   }, [courseData])
+
+  useEffect(() => {
+    setSearchAdvisor(userData?.data.student.advisor?.user?.nameTh ?? '')
+  }, [userData])
+
+  useEffect(() => {
+    if (faculties?.data.length) {
+      setFacultyId(faculties.data[0].id)
+    }
+
+    if (departments?.data.length) {
+      setDepartmentId(departments.data[0].id)
+    }
+
+    if (courses?.data.length) {
+      methods.setValue('student.courseId', courses.data[0].id, {
+        shouldDirty: true,
+      })
+    }
+
+    methods.trigger()
+  }, [faculties, departments, courses])
+
+  console.log(searchAdvisor)
 
   return (
     <div className="mt-5 flex flex-col gap-5">
@@ -138,6 +168,33 @@ const StudentSection = () => {
           )}
         />
       </div>
+      <Controller
+        control={methods.control}
+        name="student.advisorId"
+        render={({ field: { onChange, value } }) => (
+          <AutocompleteInput
+            label="อาจารย์ที่ปรึกษา"
+            onChange={(data) => {
+              const fullName = advisors?.data.find(
+                (advisor) => advisor.id === data
+              )?.nameTh
+              setSearchAdvisor(fullName ?? '')
+              onChange(data)
+            }}
+            onSearch={(query) => {
+              setSearchAdvisor(query)
+              refetch()
+            }}
+            value={searchAdvisor}
+            options={
+              advisors?.data.map((advisor) => ({
+                label: advisor.nameTh,
+                value: advisor.teacher?.id!,
+              })) ?? []
+            }
+          />
+        )}
+      />
       <Controller
         control={methods.control}
         name="signatures"

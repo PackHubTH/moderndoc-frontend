@@ -1,10 +1,13 @@
 import { useUserStore } from '@/stores/userStore'
+import { useNavigate } from 'react-router-dom'
 import bellIcon from '../assets/bell.svg'
 import LoginButton from '../components/LoginButton'
 import ProfileButton from '../components/ProfileButton'
 
 const Navbar = () => {
   const { isLogin, setIsLogin, user } = useUserStore()
+
+  const navigate = useNavigate()
 
   // const handleLogin = useGoogleLogin({
   //   onSuccess: async ({ code }) => {
@@ -16,7 +19,7 @@ const Navbar = () => {
   // })
 
   const handleLogin = () => {
-    window.location.assign('/login')
+    navigate('/login')
   }
 
   return (
@@ -83,7 +86,14 @@ const Navbar = () => {
             ) : (
               <LoginButton onClick={handleLogin} />
             )}
-            <button onClick={() => setIsLogin(false)}>logout</button>
+            <button
+              onClick={() => {
+                setIsLogin(false)
+                navigate('/')
+              }}
+            >
+              logout
+            </button>
           </div>
         </div>
       </nav>

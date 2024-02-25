@@ -11,6 +11,7 @@ type PropsType = {
   onChange?: (value: string | number) => void
   className?: string
   isError?: boolean
+  disabled?: boolean
 }
 
 const Select: React.FC<PropsType> = ({
@@ -20,6 +21,7 @@ const Select: React.FC<PropsType> = ({
   onChange,
   isError,
   options,
+  disabled,
 }) => {
   useEffect(() => {
     if (value === undefined && options[0]?.value) {
@@ -50,6 +52,7 @@ const Select: React.FC<PropsType> = ({
               }
             : undefined
         }
+        disabled={disabled}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

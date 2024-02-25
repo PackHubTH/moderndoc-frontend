@@ -1,15 +1,69 @@
 import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
+import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { UserRole } from 'types/user'
 import ProfileImageUpload from '../../components/ProfileImageUpload'
+import useGetUser from '../../hooks/api/useGetUser'
+import useUpdateProfile from '../../hooks/api/useUpdateProfile'
 import useEditProfile from '../../hooks/useEditUserProfile'
-import UserInfoSection from '../CreateProfilePage/UserInfoSection'
 import StaffSection from './StaffSection'
 import StudentSection from './StudentSection'
+import UserInfoSection from './UserInfoSection'
 
 const EditUserInfo = () => {
+  const navigate = useNavigate()
   const { methods } = useEditProfile()
+
+  const { data: userData } = useGetUser()
+  const { mutate: updateUser } = useUpdateProfile()
+
+  useEffect(() => {
+    if (userData?.data) {
+      methods.reset({
+        id: userData.data.id,
+        emails: userData.data.emails,
+        nameEn: userData.data.nameEn,
+        nameTh: userData.data.nameTh,
+        notificationConfig:
+          Object.keys(userData.data.notificationConfig).length === 0
+            ? [1, 3, 5]
+            : userData.data.notificationConfig,
+        phone: userData.data.phones[0],
+        profileImg: userData.data.profileImg,
+        defaultEmailIndex: userData.data.defaultEmailIndex,
+        role: userData.data.role,
+        signatures: userData.data.signatures,
+        student: userData.data.student,
+        staff: userData.data.staff,
+        teacher: userData.data.teacher,
+      })
+    }
+  }, [userData])
+
+  const onSubmit = () => {
+    const data = methods.getValues()
+
+    const dataToSend = {
+      role: data.role,
+      user: { ...data, phones: [data.phone] },
+      student: data.student,
+      staff: data.staff,
+      teacher: data.teacher,
+    }
+
+    updateUser(dataToSend, {
+      onSuccess: (response) => {
+        navigate('/')
+        toast('แก้ไขข้อมูลส่วนตัวสำเร็จ', { type: 'success' })
+      },
+      onError: (error) => {
+        toast('เกิดข้อผิดพลาดในการสร้างข้อมูลส่วนตัว', { type: 'error' })
+      },
+    })
+  }
 
   return (
     <PageContainer className="px-36 pt-7">
@@ -46,6 +100,8 @@ const EditUserInfo = () => {
                 disabled={!methods.formState.isValid}
                 onClick={(e) => {
                   e.preventDefault()
+                  console.log(methods.watch())
+                  onSubmit()
                 }}
               />
             </div>

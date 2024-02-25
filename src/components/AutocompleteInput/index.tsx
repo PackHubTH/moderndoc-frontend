@@ -12,6 +12,7 @@ type PropsType = {
   onChange?: (value: string) => void
   className?: string
   isError?: boolean
+  onSearch?: (query: string) => void
 }
 
 const AutocompleteInput: React.FC<PropsType> = ({
@@ -21,6 +22,7 @@ const AutocompleteInput: React.FC<PropsType> = ({
   onChange,
   isError,
   options,
+  onSearch,
 }) => {
   const [query, setQuery] = useState('')
 
@@ -50,6 +52,7 @@ const AutocompleteInput: React.FC<PropsType> = ({
           value={value}
           onChange={(e) => {
             setQuery(e.target.value)
+            onSearch?.(e.target.value)
           }}
         />
         <Combobox.Options>

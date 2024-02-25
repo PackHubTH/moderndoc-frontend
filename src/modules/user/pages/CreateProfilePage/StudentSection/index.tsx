@@ -5,6 +5,7 @@ import useGetAllFaculties from '@/modules/user/hooks/api/useGetAllFaculties'
 import useGetCourses from '@/modules/user/hooks/api/useGetCourses'
 import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
 import { CreateProfileForm } from '@/modules/user/hooks/useCreateProfileForm/validation'
+import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Level } from 'types/user'
 
@@ -14,6 +15,24 @@ const StudentSection = () => {
   const { data: faculties } = useGetAllFaculties()
   const { data: departments } = useGetDepartments(methods.watch('facultyId'))
   const { data: courses } = useGetCourses(methods.watch('departmentId'))
+
+  useEffect(() => {
+    if (faculties?.data.length) {
+      methods.setValue('facultyId', faculties.data[0].id, { shouldDirty: true })
+    }
+
+    if (departments?.data.length) {
+      methods.setValue('departmentId', departments.data[0].id, {
+        shouldDirty: true,
+      })
+    }
+
+    if (courses?.data.length) {
+      methods.setValue('courseId', courses.data[0].id, { shouldDirty: true })
+    }
+
+    methods.trigger()
+  }, [faculties, departments, courses])
 
   return (
     <div className="mt-5 flex flex-col gap-5">

@@ -32,6 +32,14 @@ export type Student = {
   courseId: string
   advisorId?: string
   studentNumber: string
+  advisor?: Advisor
+}
+
+export type Advisor = {
+  id: string
+  userId: string
+  staffNumber: string
+  user?: User
 }
 
 export type Teacher = {

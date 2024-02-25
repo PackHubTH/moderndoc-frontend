@@ -6,6 +6,7 @@ import useGetAllFaculties from '@/modules/user/hooks/api/useGetAllFaculties'
 import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
 import { DepartmentType } from '@/modules/user/hooks/types'
 import { CreateProfileForm } from '@/modules/user/hooks/useCreateProfileForm/validation'
+import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 const StaffSection = () => {
@@ -17,6 +18,21 @@ const StaffSection = () => {
   const { data: departments } = useGetDepartments(
     isAgency ? undefined : methods.watch('facultyId')
   )
+
+  useEffect(() => {
+    if (faculties?.data.length) {
+      methods.setValue('facultyId', faculties.data[0].id, { shouldDirty: true })
+    }
+
+    if (departments?.data.length) {
+      methods.setValue('departmentId', departments.data[0].id, {
+        shouldDirty: true,
+      })
+    }
+
+    methods.trigger()
+  }, [faculties, departments])
+
   return (
     <div className="mt-5 flex flex-col gap-5">
       <Controller
