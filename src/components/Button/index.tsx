@@ -5,7 +5,7 @@ import { ButtonStyle, VariantType } from './types'
 
 type PropsType = {
   label: string
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   color?: string
   backgroundColor?: string
   leftIcon?: ReactNode
@@ -13,6 +13,8 @@ type PropsType = {
   width?: string
   height?: string
   variant?: VariantType
+  borderColor?: string
+  type?: 'button' | 'submit' | 'reset'
 }
 const Button: React.FC<PropsType> = ({
   label,
@@ -22,6 +24,8 @@ const Button: React.FC<PropsType> = ({
   leftIcon,
   disabled = false,
   variant: colorVariant = 'blue',
+  borderColor,
+  type,
 }) => {
   const BUTTON_STYLES: Record<VariantType, ButtonStyle> = {
     blue: {
@@ -34,6 +38,7 @@ const Button: React.FC<PropsType> = ({
       bgColor: colors.white,
       hoverColor: colors.white,
       hoverBgColor: colors.blue[600],
+      borderColor: colors.blue[500],
     },
     yellow: {
       color: colors.white,
@@ -59,13 +64,15 @@ const Button: React.FC<PropsType> = ({
 
   return (
     <button
-      type="button"
+      type={type ?? 'button'}
       css={[
         tw`disabled:(pointer-events-none opacity-50) inline-flex items-center gap-x-2 rounded-2xl border border-transparent px-6 py-2 text-center text-sm font-semibold`,
         {
           backgroundColor:
             backgroundColor ?? BUTTON_STYLES[colorVariant].bgColor,
           color: color ?? BUTTON_STYLES[colorVariant].color,
+          borderColor: borderColor ?? BUTTON_STYLES[colorVariant].borderColor,
+
           '&:hover': {
             backgroundColor:
               BUTTON_STYLES[colorVariant].hoverBgColor ??
@@ -77,7 +84,7 @@ const Button: React.FC<PropsType> = ({
         },
       ]}
       disabled={disabled}
-      onClick={onClick}
+      onClick={!disabled ? onClick : undefined}
     >
       {leftIcon}
       {label}
