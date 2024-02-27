@@ -8,6 +8,7 @@ export type VariantType =
 export type ButtonStyle = {
   color: string
   bgColor: string
+  borderColor?: string
   hoverColor?: string
   hoverBgColor?: string
 }

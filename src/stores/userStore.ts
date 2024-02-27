@@ -1,20 +1,38 @@
-import Person from '@/models/Person'
-import { create } from 'zustand'
+import { User } from '@/modules/user/hooks/types'
+import { StateCreator, create } from 'zustand'
+import { PersistOptions, persist } from 'zustand/middleware'
 
 type UserStore = {
+  email: string
+  setEmail: (email: string) => void
   isLogin: boolean
-  user: Person
+  user: User
   setIsLogin: (isLogin: boolean) => void
-  setUser: (user: Person) => void
+  setUser: (user: User, token: string) => void
+  token: string
+  logout: () => void
 }
 
-export const useUserStore = create<UserStore>((set) => ({
-  isLogin: false,
-  user: {
-    id: '',
-    name: '',
-    username: '',
-  },
-  setIsLogin: (isLogin) => set({ isLogin }),
-  setUser: (user) => set({ user }),
-}))
+type MyPersist = (
+  config: StateCreator<UserStore>,
+  options: PersistOptions<UserStore>
+) => StateCreator<UserStore>
+
+export const useUserStore = create<UserStore>(
+  (persist as MyPersist)(
+    (set) => ({
+      isLogin: false,
+      email: '',
+      setEmail: (email) => set({ email }),
+      user: {} as User,
+      setIsLogin: (isLogin) => set({ isLogin }),
+      setUser: (user, token) => set({ user, token }),
+      token: 'my-token',
+      logout: () => set({ isLogin: false, user: {} as User, token: '' }),
+    }),
+    {
+      name: 'user-storage',
+      getStorage: () => localStorage,
+    }
+  )
+)
