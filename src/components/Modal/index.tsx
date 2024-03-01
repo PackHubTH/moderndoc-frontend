@@ -52,7 +52,10 @@ const Modal: React.FC<PropsType> = ({
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel
-                className={`relative w-full max-w-[${width}] transform rounded-2xl bg-white text-left align-middle shadow-xl transition-all`}
+                css={[
+                  tw`relative w-full max-w-[531px] transform rounded-2xl bg-white text-left align-middle shadow-xl transition-all`,
+                ]}
+                style={{ maxWidth: width === 'fit' ? 'fit-content' : width }}
               >
                 <IoClose
                   size="24px"

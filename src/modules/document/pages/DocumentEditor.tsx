@@ -14,6 +14,7 @@ import DocumentToolbar from '../components/DocumentToolbar'
 import DraggableBox from '../components/DraggableBox'
 import FinalizeModalContent from '../components/FinalizeModalContent'
 import GuidelineModalContent from '../components/GuidelineModalContent'
+import ProcessModalContent from '../components/ProcessModalContent'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
 import { useDocumentStore } from '../stores/documentStore'
@@ -30,6 +31,11 @@ const DocumentEditor = () => {
     isOpen: isGuidelineModalOpen,
     open: openGuidelineModal,
     close: closeGuidelineModal,
+  } = useDisclosure()
+  const {
+    isOpen: isProcessModalOpen,
+    open: openProcessModal,
+    close: closeProcessModal,
   } = useDisclosure()
   const canvasRef = useRef<HTMLDivElement>(null)
   const canvasList = useDocumentStore((state) => state.canvasList)
@@ -115,7 +121,28 @@ const DocumentEditor = () => {
             width="515px"
             onClose={closeFinalizeModal}
           />
-          <Button label="ดำเนินการ" variant="green" />
+          <Button
+            label="ดำเนินการ"
+            variant="green"
+            onClick={openProcessModal}
+          />
+          <Modal
+            actions={
+              <>
+                <Button
+                  label="ยกเลิก"
+                  variant="gray"
+                  onClick={closeProcessModal}
+                />
+                <Button label="ยืนยันการส่ง" variant="blue" />
+              </>
+            }
+            content={<ProcessModalContent />}
+            isOpen={isProcessModalOpen}
+            title="ส่งเอกสาร"
+            width="531px"
+            onClose={closeProcessModal}
+          />
           <Button label="ยกเลิก" variant="gray" onClick={() => navigate('/')} />
         </div>
       </div>

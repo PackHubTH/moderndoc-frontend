@@ -35,7 +35,7 @@ const RadioGroup: React.FC<PropsType> = ({
             />
             <label
               htmlFor={`${option.label}-${index}`}
-              className="ms-2 text-gray-500"
+              className="text-gray-6000 ms-2"
             >
               {option.label}
             </label>
