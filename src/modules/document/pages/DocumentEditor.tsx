@@ -13,6 +13,7 @@ import DocumentCanvas from '../components/DocumentCanvas'
 import DocumentToolbar from '../components/DocumentToolbar'
 import DraggableBox from '../components/DraggableBox'
 import FinalizeModalContent from '../components/FinalizeModalContent'
+import GuidelineModalContent from '../components/GuidelineModalContent'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
 import { useDocumentStore } from '../stores/documentStore'
@@ -24,6 +25,11 @@ const DocumentEditor = () => {
     isOpen: isFinalizeModalOpen,
     open: openFinalizeModal,
     close: closeFinalizeModal,
+  } = useDisclosure()
+  const {
+    isOpen: isGuidelineModalOpen,
+    open: openGuidelineModal,
+    close: closeGuidelineModal,
   } = useDisclosure()
   const canvasRef = useRef<HTMLDivElement>(null)
   const canvasList = useDocumentStore((state) => state.canvasList)
@@ -58,7 +64,31 @@ const DocumentEditor = () => {
         <img src="https://via.placeholder.com/150" alt="logo" />
         <div className="flex-1">
           <h1>ใบลงทะเบียนเพิ่ม-ลด-ถอน-เปลี่ยนกลุ่มเรียน</h1>
-          <Button label="Guideline" leftIcon={<IoEyeOutline />} />
+          <Button
+            label="Guideline"
+            leftIcon={<IoEyeOutline />}
+            onClick={openGuidelineModal}
+          />
+          <Modal
+            actions={
+              <Button
+                label="ปิด"
+                variant="gray"
+                onClick={closeGuidelineModal}
+              />
+            }
+            content={
+              <GuidelineModalContent
+                description="test"
+                fileName="test.pdf"
+                filePath="test"
+              />
+            }
+            isOpen={isGuidelineModalOpen}
+            title="รายละเอียดเอกสาร/ตัวอย่างเอกสาร"
+            width="763px"
+            onClose={closeGuidelineModal}
+          />
         </div>
         <div className="space-x-3">
           <Button label="Download" leftIcon={<FaDownload />} />
@@ -82,6 +112,7 @@ const DocumentEditor = () => {
             isOpen={isFinalizeModalOpen}
             title="ยืนยันการเสร็จสิ้นดำเนินการเอกสาร"
             variant="confirm"
+            width="515px"
             onClose={closeFinalizeModal}
           />
           <Button label="ดำเนินการ" variant="green" />

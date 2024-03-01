@@ -12,6 +12,7 @@ type PropsType = {
   actions?: React.ReactNode
   leftIcon?: React.ReactNode
   variant?: VariantType
+  width?: string
 }
 
 const Modal: React.FC<PropsType> = ({
@@ -22,6 +23,7 @@ const Modal: React.FC<PropsType> = ({
   actions,
   leftIcon,
   variant = 'default',
+  width = 'fit',
 }) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -49,7 +51,9 @@ const Modal: React.FC<PropsType> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel
+                className={`relative w-full max-w-[${width}] transform rounded-2xl bg-white text-left align-middle shadow-xl transition-all`}
+              >
                 <IoClose
                   size="24px"
                   className="absolute right-3 top-4 cursor-pointer rounded-full border border-transparent text-gray-500 hover:bg-gray-100"
@@ -58,8 +62,8 @@ const Modal: React.FC<PropsType> = ({
                 <Dialog.Title
                   as="div"
                   css={[
-                    variant === 'default' && tw`justify-center`,
-                    tw`flex items-center gap-x-4 break-all border-b px-6 py-4 pr-9 font-bold text-gray-800`,
+                    variant === 'default' && tw`justify-center text-xl`,
+                    tw`flex items-center gap-x-4 break-all border-b px-6 py-4 pr-9 font-bold text-gray-600`,
                   ]}
                 >
                   {leftIcon && leftIcon}
