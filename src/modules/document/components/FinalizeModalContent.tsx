@@ -1,3 +1,4 @@
+import RadioGroup from '@/components/RadioGroup'
 import { useState } from 'react'
 
 type PropsType = {
@@ -14,11 +15,18 @@ const FinalizeModalContent: React.FC<PropsType> = ({ onSelected }) => {
 
   return (
     <div className="px-2">
-      <p className="font-bold">ปิดจบเอกสาร (Finalize) เนื่องจาก</p>
-      test
-      <p className="text-sm text-gray-500">
-        หมายเหตุ: หากยืนยันการปิดจบ (Finalize) เอกสารแล้ว จะไม่สามารถเปลี่ยนแปลง
-        หรือดำเนินการเอกสารต่อได้
+      <RadioGroup
+        label="ปิดจบเอกสาร (Finalize) เนื่องจาก"
+        options={[
+          { value: '0', label: 'เอกสารดำเนินการเสร็จสิ้นแล้ว' },
+          { value: '1', label: 'ยกเลิกเอกสาร' },
+        ]}
+        value={selected}
+        onChange={handleSelected}
+      />
+      <p className="mt-5 text-sm text-gray-500">
+        <span className="text-red-500">หมายเหตุ:</span> หากยืนยันการปิดจบ
+        (Finalize) เอกสารแล้ว จะไม่สามารถเปลี่ยนแปลง หรือดำเนินการเอกสารต่อได้
       </p>
     </div>
   )

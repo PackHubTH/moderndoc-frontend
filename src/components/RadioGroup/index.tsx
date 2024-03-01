@@ -18,10 +18,7 @@ const RadioGroup: React.FC<PropsType> = ({
 }) => {
   return (
     <div className={className}>
-      <label
-        htmlFor={label}
-        className="mb-2 block text-sm font-medium text-gray-800"
-      >
+      <label htmlFor={label} className="block font-semibold text-gray-800">
         {label}
       </label>
       <div>
@@ -38,7 +35,7 @@ const RadioGroup: React.FC<PropsType> = ({
             />
             <label
               htmlFor={`${option.label}-${index}`}
-              className="ms-2 text-sm text-gray-500"
+              className="ms-2 text-gray-500"
             >
               {option.label}
             </label>
