@@ -1,8 +1,7 @@
-import * as Fabric from 'fabric'
 import { useEffect } from 'react'
 import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
-import { ActiveToolbarButton } from '../types/ToolbarButton'
+import { initCanvas, mouseHandler } from '../utils/documentEditorUtils'
 
 interface DocumentCanvasProps {
   id: string
@@ -15,11 +14,12 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
   const activeButton = useDocumentToolbarStore((state) => state.activeButton)
 
   useEffect(() => {
+    // pdf should be loaded first before canvas from Fabric.js
     const isHasPage = canvasSizes.findIndex((page) => page.id === id) !== -1
     const isHasCanvas =
       canvasList.findIndex((canvas) => canvas.id === id) !== -1
 
-    if (isHasPage && !isHasCanvas) initCanvas()
+    if (isHasPage && !isHasCanvas) initCanvas(id, {}, setCanvasList)
 
     return () => {
       const cleanup = async () => {
@@ -32,60 +32,36 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
 
   useEffect(() => {
     const canvas = canvasList.find((canvas) => canvas.id === id)?.canvas
-    const handler = () => {
-      if (canvas) {
-        console.log('canvas event' + id + 'active butt' + activeButton)
-        // updated cursor based on activeButton
-        if (activeButton === ActiveToolbarButton.Text) {
-          canvas.hoverCursor = 'crosshair'
-          canvas.defaultCursor = 'crosshair'
-        } else {
-          canvas.hoverCursor = 'default'
-          canvas.defaultCursor = 'default'
-        }
-      }
-      return () => {
-        canvas?.removeListeners()
-      }
-    }
+    // const handler = () => {
+    //   if (canvas) {
+    //     console.log('canvas event' + id + 'active butt' + activeButton)
+    //     // updated cursor based on activeButton
+    //     if (activeButton === ActiveToolbarButton.Text) {
+    //       canvas.hoverCursor = 'crosshair'
+    //       canvas.defaultCursor = 'crosshair'
+    //     } else {
+    //       canvas.hoverCursor = 'default'
+    //       canvas.defaultCursor = 'default'
+    //     }
+    //   }
+    //   return () => {
+    //     canvas?.removeListeners()
+    //   }
+    // }
     if (canvas) {
-      canvas?.off('mouse:over', handler)
+      // canvas?.off('mouse:over', mouseHandler(canvas, activeButton))
+      canvas.off('mouse:over', mouseHandler(canvas, activeButton))
       console.log('off')
-      canvas?.on('mouse:over', handler)
+      canvas.on('mouse:over', mouseHandler(canvas, activeButton))
       console.log('on')
+      // canvas.renderAll()
+      // canvas.off('mouse:over', () => console.log('off'))
+      // canvas.on('mouse:over', () => console.log('on'))
     }
   }, [activeButton])
 
   console.log('active', activeButton)
-
-  const initCanvas = async () => {
-    const newCanvas = new Fabric.Canvas(id)
-    const text = new Fabric.Textbox('fabric.js sandbox' + id, {
-      id: id,
-    })
-    newCanvas.add(text)
-    setCanvasList(id, newCanvas)
-    text.get('id')
-  }
-
-  const mockElements = [
-    {
-      type: 'rect',
-      left: 100,
-      top: 100,
-      width: 100,
-      height: 100,
-      fill: 'red',
-    },
-    {
-      type: 'circle',
-      left: 200,
-      top: 200,
-      radius: 50,
-      fill: 'green',
-    },
-  ]
-
+  console.log('canvasList', canvasList)
   return (
     <div className="absolute z-10 border-2 border-black">
       <canvas
