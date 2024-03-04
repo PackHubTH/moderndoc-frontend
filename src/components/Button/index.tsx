@@ -60,6 +60,12 @@ const Button: React.FC<PropsType> = ({
       bgColor: colors.gray[500],
       hoverBgColor: colors.gray[600],
     },
+    white: {
+      color: colors.gray[600],
+      bgColor: colors.white,
+      hoverBgColor: colors.gray[100],
+      borderColor: colors.gray[300],
+    },
   }
 
   return (

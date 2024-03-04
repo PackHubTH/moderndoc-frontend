@@ -1,4 +1,4 @@
-import { SendChannel } from '@/modules/types'
+import { SendChannel } from '@/modules/faq/types'
 import { z } from 'zod'
 
 export const CreateFaqFormValidation = z.object({

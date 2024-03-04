@@ -5,6 +5,7 @@ export type VariantType =
   | 'green'
   | 'gray'
   | 'outline-blue'
+  | 'white'
 export type ButtonStyle = {
   color: string
   bgColor: string

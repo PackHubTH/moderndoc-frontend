@@ -4,8 +4,10 @@ import Modal from '@/components/Modal'
 import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
-import useCreateFaqForm from '@/modules/hooks/useCreateFaqForm'
-import { SendChannel } from '@/modules/types'
+import TagsSelect from '@/modules/components/TagsSelect'
+import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
+import useCreateFaqForm from '@/modules/faq/hooks/useCreateFaqForm'
+import { SendChannel } from '@/modules/faq/types'
 import { Controller } from 'react-hook-form'
 import { FaPlus } from 'react-icons/fa6'
 
@@ -16,7 +18,9 @@ type PropsType = {
 const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
   const { methods } = useCreateFaqForm()
 
-  console.log('methods', methods.watch())
+  const { data: tags } = useGetAllTags()
+
+  console.log('data', methods.watch())
 
   return (
     <Modal
@@ -143,12 +147,28 @@ const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
               />
             )}
           />
+          <Controller
+            control={methods.control}
+            name="tagIds"
+            render={({ field }) => (
+              <TagsSelect
+                label="เพิ่ม Tag ของหมวดหมู่และหน่วยงานที่เกี่ยวข้อง"
+                tagsList={tags?.data ?? []}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
         </form>
       }
       actions={
         <div className="space-x-2">
-          <Button label="ยกเลิก" onClick={onClose} />
-          <Button label="สร้าง FAQ" onClick={onClose} />
+          <Button label="ยกเลิก" onClick={onClose} variant="white" />
+          <Button
+            label="สร้าง FAQ"
+            onClick={onClose}
+            disabled={!methods.formState.isValid}
+          />
         </div>
       }
       onClose={onClose}

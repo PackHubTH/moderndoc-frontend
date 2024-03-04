@@ -5,6 +5,9 @@ import { CreateFaqForm, CreateFaqFormValidation } from './validation'
 const useCreateFaqForm = () => {
   const methods = useForm<CreateFaqForm>({
     resolver: zodResolver(CreateFaqFormValidation),
+    defaultValues: {
+      tagIds: [],
+    },
     reValidateMode: 'onChange',
   })
 
