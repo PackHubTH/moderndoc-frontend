@@ -12,6 +12,7 @@ type PropsType = {
   actions?: React.ReactNode
   leftIcon?: React.ReactNode
   variant?: VariantType
+  width?: string
 }
 
 const Modal: React.FC<PropsType> = ({
@@ -21,6 +22,7 @@ const Modal: React.FC<PropsType> = ({
   onClose,
   actions,
   leftIcon,
+  width,
   variant = 'default',
 }) => {
   return (
@@ -49,7 +51,12 @@ const Modal: React.FC<PropsType> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel
+                css={[
+                  tw`relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all`,
+                  width && { width, maxWidth: width },
+                ]}
+              >
                 <IoClose
                   size="24px"
                   className="absolute right-3 top-4 cursor-pointer rounded-full border border-transparent text-gray-500 hover:bg-gray-100"

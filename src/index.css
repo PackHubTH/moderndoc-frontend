@@ -4,8 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '../node_modules/@mdxeditor/editor/dist/style.css';
-
 body {
   font-family: 'Sarabun', sans-serif;
   color: #4b5563;
