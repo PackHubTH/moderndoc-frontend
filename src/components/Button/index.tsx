@@ -66,7 +66,7 @@ const Button: React.FC<PropsType> = ({
     <button
       type={type ?? 'button'}
       css={[
-        tw`disabled:(pointer-events-none opacity-50) inline-flex items-center gap-x-2 rounded-2xl border border-transparent px-6 py-2 text-center text-sm font-semibold`,
+        tw`disabled:(pointer-events-none opacity-50) inline-flex items-center gap-x-2 rounded-3xl border border-transparent px-5 py-2 text-center text-sm shadow-md`,
         {
           backgroundColor:
             backgroundColor ?? BUTTON_STYLES[colorVariant].bgColor,

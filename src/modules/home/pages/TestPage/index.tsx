@@ -3,6 +3,7 @@ import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
 import Modal from '@/components/Modal'
 import Tabs from '@/components/Tabs'
+import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import { RiEyeCloseFill } from 'react-icons/ri'
 
@@ -56,6 +57,7 @@ const TestPage = () => {
           },
         ]}
       />
+      <Tag name="Tag" />
       <Tabs
         tabs={[
           { title: 'Tab 1', content: <div>Tab 1</div> },

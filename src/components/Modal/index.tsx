@@ -7,7 +7,7 @@ import { VariantType } from './types'
 type PropsType = {
   content: React.ReactNode | string
   isOpen: boolean
-  title: string
+  title: React.ReactNode | string
   onClose: () => void
   actions?: React.ReactNode
   leftIcon?: React.ReactNode
