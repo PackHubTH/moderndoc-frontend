@@ -5,11 +5,15 @@ import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
 import TagsSelect from '@/modules/components/TagsSelect'
+import useCreateFaq from '@/modules/faq/hooks/api/useCreateFaq'
 import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
 import useCreateFaqForm from '@/modules/faq/hooks/useCreateFaqForm'
+import { CreateFaqForm } from '@/modules/faq/hooks/useCreateFaqForm/validation'
 import { SendChannel } from '@/modules/faq/types'
+import { useEffect } from 'react'
 import { Controller } from 'react-hook-form'
 import { FaPlus } from 'react-icons/fa6'
+import { toast } from 'react-toastify'
 
 type PropsType = {
   isOpen: boolean
@@ -20,7 +24,25 @@ const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
 
   const { data: tags } = useGetAllTags()
 
-  console.log('data', methods.watch())
+  const { mutate: createFaq } = useCreateFaq()
+
+  const onSubmit = (data: CreateFaqForm) => {
+    createFaq(data, {
+      onSuccess: () => {
+        toast('สร้าง FAQ สำเร็จ', { type: 'success' })
+        onClose()
+      },
+      onError: (error) => {
+        toast(`เกิดข้อผิดพลาดในการสร้าง FAQ ${error}`, { type: 'error' })
+      },
+    })
+  }
+
+  useEffect(() => {
+    if (!isOpen) {
+      methods.reset()
+    }
+  }, [isOpen])
 
   return (
     <Modal
@@ -147,6 +169,7 @@ const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
               />
             )}
           />
+
           <Controller
             control={methods.control}
             name="tagIds"
@@ -154,8 +177,31 @@ const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
               <TagsSelect
                 label="เพิ่ม Tag ของหมวดหมู่และหน่วยงานที่เกี่ยวข้อง"
                 tagsList={tags?.data ?? []}
-                value={field.value}
+                value={field.value ?? []}
                 onChange={field.onChange}
+              />
+            )}
+          />
+          <Controller
+            control={methods.control}
+            name="isInternal"
+            render={({ field }) => (
+              <RadioGroup
+                label="ระดับการแชร์"
+                options={[
+                  {
+                    label: 'สาธารณะ',
+                    value: false,
+                  },
+                  {
+                    label: 'เฉพาะภายในสังกัด/หน่วยงานของตนเอง',
+                    value: true,
+                  },
+                ]}
+                onChange={(value: boolean) => {
+                  field.onChange(value)
+                }}
+                value={field.value}
               />
             )}
           />
@@ -166,8 +212,8 @@ const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
           <Button label="ยกเลิก" onClick={onClose} variant="white" />
           <Button
             label="สร้าง FAQ"
-            onClick={onClose}
             disabled={!methods.formState.isValid}
+            onClick={() => methods.handleSubmit(onSubmit)()}
           />
         </div>
       }
