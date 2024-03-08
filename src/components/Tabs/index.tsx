@@ -1,4 +1,6 @@
-import { ReactNode } from 'react'
+import { Tab } from '@headlessui/react'
+import { Fragment, ReactNode } from 'react'
+import tw from 'twin.macro'
 
 type PropsType = {
   tabs: {
@@ -10,33 +12,29 @@ type PropsType = {
 const Tabs: React.FC<PropsType> = ({ tabs }) => {
   return (
     <>
-      <nav className="flex space-x-2" aria-label="Tabs" role="tablist">
-        {tabs.map((tab, index) => (
-          <button
-            type="button"
-            className="active inline-flex items-center  gap-x-2 rounded-lg bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-500 hover:text-blue-600 disabled:pointer-events-none disabled:opacity-50 hs-tab-active:bg-blue-600 hs-tab-active:text-white hs-tab-active:hover:text-white"
-            id={`tabs-${index}`}
-            data-hs-tab={`#tabs-option-${index}`}
-            aria-controls={`tabs-option-${index}`}
-            role="tab"
-          >
-            {tab.title}
-          </button>
-        ))}
-      </nav>
-
-      <div className="mt-3">
-        {tabs.map((tab, index) => (
-          <div
-            id={`tabs-option-${index}`}
-            role="tabpanel"
-            className={index !== 0 ? 'hidden' : ''}
-            aria-labelledby={`tabs-option-${index}`}
-          >
-            {tab.content}
-          </div>
-        ))}
-      </div>
+      <Tab.Group>
+        <Tab.List className='space-x-2.5'>
+          {tabs.map((tab, index) => (
+            <Tab as={Fragment}>
+              {({ selected }) => (
+                <button
+                  css={[
+                    tw`inline-flex items-center  gap-x-2 rounded-lg bg-transparent px-7 py-3.5 text-center text-sm font-medium text-gray-600 hover:text-blue-600 disabled:pointer-events-none disabled:opacity-50`,
+                    selected && tw`bg-blue-500 text-white hover:text-white`,
+                  ]}
+                >
+                  {tab.title}
+                </button>
+              )}
+            </Tab>
+          ))}
+        </Tab.List>
+        <Tab.Panels>
+          {tabs.map((tab, index) => (
+            <Tab.Panel key={index}>{tab.content}</Tab.Panel>
+          ))}
+        </Tab.Panels>
+      </Tab.Group>
     </>
   )
 }

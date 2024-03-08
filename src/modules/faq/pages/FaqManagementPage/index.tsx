@@ -3,12 +3,18 @@ import PageContainer from '@/components/PageContainer'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import { FaPlus } from 'react-icons/fa6'
 import CreateFaqModal from './CreateFaqModal'
+import GroupManagementModal from './GroupManagementModal'
 
 const FaqManagementPage = () => {
   const {
     isOpen: isOpenCreateFaqModal,
     open: openCreateFaqModal,
     close: closeCreateFaqModal,
+  } = useDisclosure()
+  const {
+    isOpen: isOpenGroupManagementModal,
+    open: openGroupManagementModal,
+    close: closeGroupManagementModal,
   } = useDisclosure()
 
   return (
@@ -22,12 +28,20 @@ const FaqManagementPage = () => {
             leftIcon={<FaPlus size={18} />}
             onClick={openCreateFaqModal}
           />
-          <Button label="จัดการกลุ่ม FAQ" variant="yellow" />
+          <Button
+            label="จัดการกลุ่ม FAQ"
+            variant="yellow"
+            onClick={openGroupManagementModal}
+          />
         </div>
       </PageContainer>
       <CreateFaqModal
         isOpen={isOpenCreateFaqModal}
         onClose={closeCreateFaqModal}
+      />
+      <GroupManagementModal
+        isOpen={isOpenGroupManagementModal}
+        onClose={closeGroupManagementModal}
       />
     </>
   )
