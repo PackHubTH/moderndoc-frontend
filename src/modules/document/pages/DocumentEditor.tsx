@@ -2,7 +2,8 @@ import exampleFile from '@/assets/example.pdf'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import { useDisclosure } from '@/hooks/useDisclosure'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import { useDrop } from 'react-dnd'
 import { FaDownload, FaMousePointer } from 'react-icons/fa'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
@@ -18,6 +19,7 @@ import ProcessModalContent from '../components/ProcessModalContent'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
 import { useDocumentStore } from '../stores/documentStore'
+import { DnDItem } from '../types/DocumentField'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 
 const DocumentEditor = () => {
@@ -62,6 +64,19 @@ const DocumentEditor = () => {
     email: 'a@a.com',
     timestamp: 1234567890,
   }
+
+  const [dropBox, setDropBox] = useState<DnDItem[]>([])
+  const [{ isOver }, dropRef] = useDrop(() => ({
+    accept: 'box',
+
+    drop: (item: DnDItem) => {
+      console.log(item)
+      setDropBox((dropBox) => [...dropBox, item])
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }))
 
   return (
     <div>
@@ -147,6 +162,7 @@ const DocumentEditor = () => {
         </div>
       </div>
       {/*  */}
+      {/* Main */}
       <div className="flex h-[calc(100vh-92px)]">
         <div className="w-3/4">
           <DocumentToolbar>
@@ -220,6 +236,18 @@ const DocumentEditor = () => {
         </div>
       </div>
       {/*  */}
+      {/* DnD test */}
+
+      {/* <div className="h-72 w-full bg-yellow-300" ref={dropRef}>
+        {dropBox.map((item, index) => {
+          return (
+            <div key={index} className="p-4">
+              <p>{item.text}</p>
+            </div>
+          )
+        })}
+        {isOver && <p>Drop Here</p>}
+      </div> */}
     </div>
   )
 }
