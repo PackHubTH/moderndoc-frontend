@@ -3,7 +3,6 @@ import { addField, initCanvas } from '../utils/documentEditorUtils'
 
 import { useDrop } from 'react-dnd'
 import { useDocumentStore } from '../stores/documentStore'
-import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
 import { DnDItem } from '../types/DocumentField'
 
 interface DocumentCanvasProps {
@@ -14,89 +13,64 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
   const canvasList = useDocumentStore((state) => state.canvasList)
   const canvasSizes = useDocumentStore((state) => state.canvasSizes)
   const setCanvasList = useDocumentStore((state) => state.setCanvasList)
-  const setMousePosition = useDocumentStore((state) => state.setMousePosition)
-  const activeButton = useDocumentToolbarStore((state) => state.activeButton)
+  const canvasListRef = useRef(canvasList)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    canvasListRef.current = canvasList
+  }, [canvasList])
 
   useEffect(() => {
     // pdf should be loaded first before canvas from Fabric.js
     const isHasPage = canvasSizes.findIndex((page) => page.id === id) !== -1
-    const isHasCanvas =
-      canvasList.findIndex((canvas) => canvas.id === id) !== -1
-
-    if (isHasPage && !isHasCanvas)
-      initCanvas(id, {}, setCanvasList, setMousePosition)
-
+    const isHasCanvas = canvasList.findIndex((page) => page.id === id) !== -1
+    if (isHasPage && !isHasCanvas) {
+      initCanvas(id, setCanvasList)
+    }
     return () => {
       const cleanup = async () => {
-        if (isHasCanvas)
-          await canvasList.find((canvas) => canvas.id === id)?.canvas?.dispose()
+        const canvas = canvasList.find((page) => page.id === id)?.canvas
+        if (canvas) await canvas.dispose()
       }
+      console.log('cleanup')
       cleanup()
     }
   }, [canvasSizes])
 
-  // useEffect(() => {
-  //   const canvas = canvasList.find((canvas) => canvas.id === id)?.canvas
-  //   // const handler = () => {
-  //   //   if (canvas) {
-  //   //     console.log('canvas event' + id + 'active butt' + activeButton)
-  //   //     // updated cursor based on activeButton
-  //   //     if (activeButton === ActiveToolbarButton.Text) {
-  //   //       canvas.hoverCursor = 'crosshair'
-  //   //       canvas.defaultCursor = 'crosshair'
-  //   //     } else {
-  //   //       canvas.hoverCursor = 'default'
-  //   //       canvas.defaultCursor = 'default'
-  //   //     }
-  //   //   }
-  //   //   return () => {
-  //   //     canvas?.removeListeners()
-  //   //   }
-  //   // }
-  //   if (canvas) {
-  //     // canvas?.off('mouse:over', mouseHandler(canvas, activeButton))
-  //     canvas.off('mouse:over', mouseHandler(canvas, activeButton))
-  //     console.log('off')
-  //     canvas.on('mouse:over', mouseHandler(canvas, activeButton))
-  //     console.log('on')
-  //     // canvas.renderAll()
-  //     // canvas.off('mouse:over', () => console.log('off'))
-  //     // canvas.on('mouse:over', () => console.log('on'))
-  //   }
-  // }, [activeButton])
-
   const [, dropRef] = useDrop(() => ({
     accept: 'box',
-
-    drop: (item: DnDItem) => handleDrop(item),
+    drop: (item: DnDItem, monitor) => {
+      console.log(item, id)
+      const canvas = canvasListRef.current.find((page) => page.id === id)
+        ?.canvas
+      const m = monitor.getClientOffset()
+      const c = canvasRef.current?.getBoundingClientRect()
+      const posX = m!.x - c!.x
+      const posY = m!.y - c!.y
+      console.log('pos', posX, posY)
+      console.log(monitor.getClientOffset())
+      console.log(canvasRef.current?.getBoundingClientRect())
+      if (canvas) addField(canvas, posX, posY)
+    },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
   }))
 
-  const canvasListRef = useRef(canvasList)
-  useEffect(() => {
-    canvasListRef.current = canvasList
-  }, [canvasList]) // Update ref when canvasList changes
+  // const handleDrop = useCallback((item: DnDItem , monitor: ) => {
+  //   console.log(item, id)
+  //   const canvas = canvasListRef.current.find((page) => page.id === id)?.canvas
+  //   console.log('ref', canvasRef.current?.getBoundingClientRect())
+  //   const posX =
+  //   if (canvas) addField(canvas)
+  // }, [])
 
-  const handleDrop = (item: DnDItem) => {
-    console.log(item, id)
-    // Use the current value of the ref which always points to the latest state
-    const canvas = canvasListRef.current.find((canvas) => canvas.id === id)
-      ?.canvas
-    console.log('canvas', canvasListRef.current, canvas)
-    if (canvas) {
-      addField(canvas)
-      // saveCanvas(canvasList)
-    }
-  }
-
-  console.log('active', activeButton)
-  console.log('canvasList', canvasList)
+  console.log('canvas', canvasList)
   return (
     <div className="absolute z-10 border-2 border-black" ref={dropRef}>
       <canvas
         id={id}
+        ref={canvasRef}
         width={canvasSizes.find((page) => page.id === id)?.w}
         height={canvasSizes.find((page) => page.id === id)?.h}
       />

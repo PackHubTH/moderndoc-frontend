@@ -22,7 +22,6 @@ import ToolbarButton from '../components/ToolbarButton'
 import { useDocumentStore } from '../stores/documentStore'
 import { DnDItem } from '../types/DocumentField'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
-import { saveCanvas } from '../utils/documentEditorUtils'
 
 const DocumentEditor = () => {
   const navigate = useNavigate()
@@ -42,7 +41,6 @@ const DocumentEditor = () => {
     close: closeProcessModal,
   } = useDisclosure()
   const canvasRef = useRef<HTMLDivElement>(null)
-  const canvasList = useDocumentStore((state) => state.canvasList)
   const pageTotal = useDocumentStore((state) => state.pageTotal)
   const setCanvasSize = useDocumentStore((state) => state.setCanvasSize)
   const setPageTotal = useDocumentStore((state) => state.setPageTotal)
@@ -121,7 +119,7 @@ const DocumentEditor = () => {
           <Button
             label="Download"
             leftIcon={<FaDownload />}
-            onClick={() => saveCanvas(canvasList)}
+            // onClick={() => saveCanvas(canvasList)}
           />
           <Button
             label="Finalize"

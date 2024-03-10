@@ -107,15 +107,15 @@ const temp = {
   ],
 }
 
-const addField = (canvas: Fabric.Canvas) => {
+const addField = (canvas: Fabric.Canvas, x: number, y: number) => {
   console.log('addField')
   // console.log('mouse over', e?.absolutePointer)
   // add text
   const text = new Fabric.Textbox('new field', {
     // left: e?.absolutePointer?.x,
     // top: e?.absolutePointer?.y,
-    top: 0,
-    left: 0,
+    top: y,
+    left: x,
     fontSize: 40,
     fill: 'red',
     width: 200,
@@ -128,44 +128,11 @@ const addField = (canvas: Fabric.Canvas) => {
 
 const initCanvas = (
   id: string,
-  json: any,
-  setCanvasList: (id: string, canvas: Fabric.Canvas) => void,
-  setMousePosition: any
+  setCanvasList: (id: string, canvas: Fabric.Canvas) => void
 ) => {
   console.log('initCanvas')
   const newCanvas = new Fabric.Canvas(id)
-  // newCanvas?.on('object:modified', (e) => {
-  //   console.log(JSON.stringify(e.target?.canvas))
-  // })
-  newCanvas?.on('mouse:over', (e) => {
-    // check that mouse is holding
-    if (e?.e?.type === 'mousedown') {
-      console.log('mouse hold')
-    }
 
-    console.log('mouse over', e?.absolutePointer)
-    // add text
-    // const text = new Fabric.Textbox('test', {
-    //   left: e?.absolutePointer?.x,
-    //   top: e?.absolutePointer?.y,
-    //   fontSize: 40,
-    //   fill: 'red',
-    //   width: 200,
-    //   minWidth: 20,
-    //   is_locked: false,
-    // })
-    // newCanvas.add(text)
-  })
-  // newCanvas?.on('mouse:move', (e) => {
-  //   setMousePosition(e?.absolutePointer)
-  //   console.log('mouse move', e?.absolutePointer ? e?.absolutePointer : 'null')
-  // })
-  newCanvas?.on('mouse:up', (e) => {
-    console.log('mouse up')
-  })
-  newCanvas?.on('mouse:down', (e) => {
-    console.log('mouse down')
-  })
   // newCanvas.loadFromJSON(json, newCanvas.renderAll.bind(newCanvas))
   newCanvas.loadFromJSON(_json).then(() => {
     newCanvas.renderAll()
@@ -196,6 +163,16 @@ const saveCanvas = (canvasList: CanvasProps[]) => {
   console.log('saveCanvas')
   canvasList.forEach((item) => {
     console.log('canvas', item)
+    // remove active object
+    // item.canvas.remove(item.canvas.getActiveObject() as Fabric.Object)
+
+    // change color of active object
+    const activeObject = item.canvas.getActiveObject()
+    if (activeObject) {
+      activeObject.set('fill', 'yellow')
+      item.canvas.renderAll()
+    }
+
     const json = JSON.stringify(item.canvas.toJSON())
     console.log('json', json)
   })
