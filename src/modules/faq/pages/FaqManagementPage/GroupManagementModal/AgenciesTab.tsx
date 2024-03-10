@@ -5,6 +5,7 @@ import TextInput from '@/components/TextInput'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import useCreateAgencyDepartment from '@/modules/faq/hooks/api/useCreateAgency'
 import useDeleteTag from '@/modules/faq/hooks/api/useDeleteTag'
+import useUpdateDepartment from '@/modules/faq/hooks/api/useUpdateDepartment'
 import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
 import { Department } from '@/modules/user/hooks/types'
 import {
@@ -31,33 +32,86 @@ const AgenciesTab = () => {
       accessorKey: 'name',
       size: 500,
       header: 'รายการหน่วยงาน',
-      cell: (info) => (
-        <div className="flex items-center justify-between">
-          <span className="font-semibold text-blue-500">
-            {info.row.original.name}
-          </span>
-          <div className="flex gap-3">
-            <MdModeEditOutline
-              size={25}
-              className="cursor-pointer rounded-full bg-sky-500 p-1 text-white"
-            />
-            <HiTrash
-              size={25}
-              className="cursor-pointer rounded-full bg-red-500 p-1 text-white"
-              onClick={() => {
-                setSelectedDepartment(info.row.original)
-                open()
-              }}
-            />
+      cell: (info) => {
+        const [isEdit, setIsEdit] = useState(false)
+        const [editValue, setEditValue] = useState(info.row.original.name)
+
+        return (
+          <div className="flex items-center justify-between">
+            {!isEdit ? (
+              <>
+                <span className="font-semibold text-blue-500">
+                  {info.row.original.name}
+                </span>
+                <div className="flex gap-3">
+                  <MdModeEditOutline
+                    size={25}
+                    className="cursor-pointer rounded-full bg-sky-500 p-1 text-white"
+                    onClick={() => setIsEdit(true)}
+                  />
+                  <HiTrash
+                    size={25}
+                    className="cursor-pointer rounded-full bg-red-500 p-1 text-white"
+                    onClick={() => {
+                      setSelectedDeleteDepartment(info.row.original)
+                      open()
+                    }}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <TextInput
+                  value={editValue}
+                  onChange={(val) => setEditValue(val)}
+                  className="w-full "
+                />
+                <div className="ml-2 flex gap-3">
+                  <Button
+                    label="ยืนยัน"
+                    variant="blue"
+                    onClick={() => {
+                      setIsEdit(false)
+                      editDepartment(
+                        {
+                          departmentId: info.row.original.id,
+                          name: editValue,
+                        },
+                        {
+                          onSuccess: () => {
+                            toast('แก้ไขหน่วยงานสำเร็จ', { type: 'success' })
+                            refetchAgencies()
+                          },
+                          onError: (error) => {
+                            toast(`เกิดข้อผิดพลาดในการแก้ไขหน่วยงาน ${error}`, {
+                              type: 'error',
+                            })
+                          },
+                        }
+                      )
+                    }}
+                  />
+                  <Button
+                    label="ยกเลิก"
+                    variant="white"
+                    onClick={() => {
+                      setIsEdit(false)
+                      setEditValue(info.row.original.name)
+                    }}
+                  />
+                </div>
+              </>
+            )}
           </div>
-        </div>
-      ),
+        )
+      },
     },
   ]
 
   const { data: agencies, refetch: refetchAgencies } = useGetDepartments()
   const { mutate: createAgency } = useCreateAgencyDepartment()
   const { mutate: deleteTag } = useDeleteTag()
+  const { mutate: editDepartment } = useUpdateDepartment()
 
   const { isOpen, open, close } = useDisclosure()
 
@@ -68,7 +122,7 @@ const AgenciesTab = () => {
   })
 
   const [addDepartmentInputValue, setAddDepartmentInputValue] = useState('')
-  const [selectedDepartment, setSelectedDepartment] =
+  const [selectedDeleteDepartment, setSelectedDeleteDepartment] =
     useState<Department | null>(null)
 
   const onCreateAgency = () => {
@@ -125,7 +179,7 @@ const AgenciesTab = () => {
             className="rounded-full bg-red-200 p-0.5 text-red-500"
           />
         }
-        title={`ลบหน่วยงาน '${selectedDepartment?.name}' หรือไม่?`}
+        title={`ลบหน่วยงาน '${selectedDeleteDepartment?.name}' หรือไม่?`}
         isOpen={isOpen}
         onClose={close}
         content={
@@ -140,7 +194,7 @@ const AgenciesTab = () => {
             <Button
               label="ลบ"
               variant="red"
-              onClick={() => onDeleteTag(selectedDepartment!.id)}
+              onClick={() => onDeleteTag(selectedDeleteDepartment!.id)}
             />
           </div>
         }
