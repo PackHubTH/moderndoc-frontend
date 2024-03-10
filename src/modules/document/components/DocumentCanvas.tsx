@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { addField, initCanvas, saveCanvas } from '../utils/documentEditorUtils'
+import { addField, initCanvas } from '../utils/documentEditorUtils'
 
 import { useDrop } from 'react-dnd'
 import { useDocumentStore } from '../stores/documentStore'
@@ -15,8 +15,6 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
   const canvasSizes = useDocumentStore((state) => state.canvasSizes)
   const setCanvasList = useDocumentStore((state) => state.setCanvasList)
   const setMousePosition = useDocumentStore((state) => state.setMousePosition)
-  const setIsOver = useDocumentStore((state) => state.setIsOver)
-  const setIsDrop = useDocumentStore((state) => state.setIsDrop)
   const activeButton = useDocumentToolbarStore((state) => state.activeButton)
 
   useEffect(() => {
@@ -89,7 +87,7 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
     console.log('canvas', canvasListRef.current, canvas)
     if (canvas) {
       addField(canvas)
-      saveCanvas(canvas)
+      // saveCanvas(canvasList)
     }
   }
 

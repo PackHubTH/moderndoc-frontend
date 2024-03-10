@@ -1,5 +1,6 @@
 import * as Fabric from 'fabric'
 
+import { CanvasProps } from '../types/DocumentField'
 import { ActiveToolbarButton } from '../types/ToolbarButton'
 
 const _json = {
@@ -191,9 +192,13 @@ const mouseHandler = (canvas: any, activeButton: any) => {
   }
 }
 
-const saveCanvas = (canvas: Fabric.Canvas) => {
+const saveCanvas = (canvasList: CanvasProps[]) => {
   console.log('saveCanvas')
-  console.log(JSON.stringify(canvas))
+  canvasList.forEach((item) => {
+    console.log('canvas', item)
+    const json = JSON.stringify(item.canvas.toJSON())
+    console.log('json', json)
+  })
 }
 
 export { addField, initCanvas, mouseHandler, saveCanvas }

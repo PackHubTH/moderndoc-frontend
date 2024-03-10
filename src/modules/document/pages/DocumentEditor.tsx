@@ -1,13 +1,14 @@
+import { useRef, useState } from 'react'
+import { FaDownload, FaMousePointer } from 'react-icons/fa'
+import { Document, Page } from 'react-pdf'
+
 import exampleFile from '@/assets/example.pdf'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import { useDisclosure } from '@/hooks/useDisclosure'
-import { useRef, useState } from 'react'
 import { useDrop } from 'react-dnd'
-import { FaDownload, FaMousePointer } from 'react-icons/fa'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
-import { Document, Page } from 'react-pdf'
 import { useNavigate } from 'react-router-dom'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
@@ -21,6 +22,7 @@ import ToolbarButton from '../components/ToolbarButton'
 import { useDocumentStore } from '../stores/documentStore'
 import { DnDItem } from '../types/DocumentField'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
+import { saveCanvas } from '../utils/documentEditorUtils'
 
 const DocumentEditor = () => {
   const navigate = useNavigate()
@@ -81,15 +83,19 @@ const DocumentEditor = () => {
   return (
     <div>
       {/* Header */}
-      <div className="flex h-[92px] border-b-2 px-5 py-6">
+      <div className="flex h-[92px] items-center border-b-2 px-5 py-4">
         <img src="https://via.placeholder.com/150" alt="logo" />
         <div className="flex-1">
-          <h1>ใบลงทะเบียนเพิ่ม-ลด-ถอน-เปลี่ยนกลุ่มเรียน</h1>
-          <Button
-            label="Guideline"
-            leftIcon={<IoEyeOutline />}
-            onClick={openGuidelineModal}
-          />
+          <h1 className="text-xl font-semibold text-gray-600">
+            ใบลงทะเบียนเพิ่ม-ลด-ถอน-เปลี่ยนกลุ่มเรียน
+          </h1>
+          <div className="flex h-7">
+            <Button
+              label="Guideline"
+              leftIcon={<IoEyeOutline />}
+              onClick={openGuidelineModal}
+            />
+          </div>
           <Modal
             actions={
               <Button
@@ -112,7 +118,11 @@ const DocumentEditor = () => {
           />
         </div>
         <div className="space-x-3">
-          <Button label="Download" leftIcon={<FaDownload />} />
+          <Button
+            label="Download"
+            leftIcon={<FaDownload />}
+            onClick={() => saveCanvas(canvasList)}
+          />
           <Button
             label="Finalize"
             variant="yellow"

@@ -1,14 +1,10 @@
 import * as Fabric from 'fabric'
 
 import { create } from 'zustand'
+import { CanvasProps } from '../types/DocumentField'
 
 type DocumentStore = {
-  canvasList: {
-    id: string
-    canvas: Fabric.Canvas | null
-    isOver?: boolean
-    isDrop?: boolean
-  }[]
+  canvasList: CanvasProps[]
   dropField: { id: string; x: number; y: number }
   mousePosition: { x: number; y: number }
   pageTotal: number
@@ -17,8 +13,6 @@ type DocumentStore = {
   setCanvasSize: (id: string, h: number, w: number) => void
   setDropField: (id: string, x: number, y: number) => void
   setPageTotal: (pageTotal: number) => void
-  setIsDrop: (id: string, isDrop: boolean) => void
-  setIsOver: (id: string, isOver: boolean) => void
   setMousePosition: (x: number, y: number) => void
 }
 
@@ -52,23 +46,5 @@ export const useDocumentStore = create<DocumentStore>((set) => ({
   },
   setDropField: (id, x, y) => set({ dropField: { id, x, y } }),
   setPageTotal: (pageTotal) => set({ pageTotal }),
-  setIsDrop: (id, isDrop) => {
-    set((state): Partial<DocumentStore> => {
-      const index = state.canvasList.findIndex((item) => item.id === id)
-      if (index === -1) return state
-      const newCanvasList = [...state.canvasList]
-      newCanvasList[index] = { ...newCanvasList[index], isDrop }
-      return { canvasList: newCanvasList }
-    })
-  },
-  setIsOver: (id, isOver) => {
-    set((state): Partial<DocumentStore> => {
-      const index = state.canvasList.findIndex((item) => item.id === id)
-      if (index === -1) return state
-      const newCanvasList = [...state.canvasList]
-      newCanvasList[index] = { ...newCanvasList[index], isOver }
-      return { canvasList: newCanvasList }
-    })
-  },
   setMousePosition: (x, y) => set({ mousePosition: { x, y } }),
 }))
