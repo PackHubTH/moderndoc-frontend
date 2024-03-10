@@ -1,20 +1,56 @@
 import PageContainer from '@/components/PageContainer'
-import useGetUsers from '@/hooks/useGetUsers'
-import HomeContainer from '../components/HomeContainer'
+import TextInput from '@/components/TextInput'
+import FaqImage from '@/modules/Home/assets/faq-image.png'
+import useGetDepartmentFaqs from '@/modules/faq/hooks/api/useGetFaqList'
+import { useUserStore } from '@/stores/userStore'
+import { useState } from 'react'
+import { VscMortarBoard } from 'react-icons/vsc'
+import FaqAccordion from '../components/FaqAccordion'
+import GuestHomePage from './GuestHomePage'
 
 const Home = () => {
-  const { data } = useGetUsers()
+  const { isLogin } = useUserStore()
+
+  const [search, setSearch] = useState('')
+
+  if (!isLogin) return <GuestHomePage />
+
+  const { data: faqs } = useGetDepartmentFaqs(1)
 
   return (
-    <PageContainer>
-      <HomeContainer>
-        <div tw="flex gap-4">
-          <h1 tw="bg-gradient-to-r from-blue-600 to-blue-300 bg-clip-text font-extrabold text-transparent text-3xl">
-            ModernDoc
-          </h1>
-        </div>
-        <p>เข้าสู่ระบบ</p>
-      </HomeContainer>
+    <PageContainer className="p-4 ">
+      <div className="space-y-2 text-center">
+        <img src={FaqImage} alt="faq" className="mx-auto" />
+        <TextInput
+          className="relative z-10 mx-auto w-full max-w-lg"
+          value={search}
+          onChange={(val) => setSearch(val)}
+          placeholder="ค้นหาเอกสาร..."
+        />
+      </div>
+      <div className="space-y-2.5">
+        {faqs?.data.map((faq, index) => {
+          const shouldShowDepartment =
+            index === 0 ||
+            faq.department.name !== faqs.data[index - 1].department.name
+          return (
+            <div key={faq.id} className="rounded-lg ">
+              {shouldShowDepartment && (
+                <div className="mb-5 flex items-center gap-4">
+                  <VscMortarBoard
+                    size={50}
+                    className="rounded-lg bg-yellow-100 p-2 text-yellow-500"
+                  />
+                  <h1 className="text-2xl font-semibold text-gray-600">
+                    {faq.department.name}
+                  </h1>
+                </div>
+              )}
+              <FaqAccordion faq={faq} />
+            </div>
+          )
+        })}
+      </div>
     </PageContainer>
   )
 }

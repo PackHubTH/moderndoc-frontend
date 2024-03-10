@@ -1,3 +1,5 @@
+import { Department } from '../user/hooks/types'
+
 export enum SendChannel {
   ONSITE = 'ONSITE',
   ONLINE = 'ONLINE',
@@ -29,6 +31,7 @@ export type Faq = {
   files: string[]
   subFaqs: SubFaqs[]
   faqTags: FaqTags[]
+  department: Department
 }
 
 export type SubFaqs = {

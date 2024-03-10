@@ -18,8 +18,7 @@ import { Faq } from '../../types'
 const columns: ColumnDef<Faq>[] = [
   {
     id: 'index',
-    size: 20,
-    maxSize: 20,
+    size: 30,
     header: 'ที่',
     cell: (info) => (
       <span className="font-medium text-gray-500">{info.row.index + 1}</span>
@@ -27,7 +26,7 @@ const columns: ColumnDef<Faq>[] = [
   },
   {
     id: 'tags',
-    size: 80,
+    size: 60,
     header: 'ทั้งหมด 53 ข้อมูล',
     cell: (info) => (
       <div className="space-y-1">
@@ -39,7 +38,7 @@ const columns: ColumnDef<Faq>[] = [
   },
   {
     id: 'faqInfo',
-    size: 480,
+    size: 400,
     header: '',
     cell: (info) => (
       <div className="flex flex-row items-center justify-between">

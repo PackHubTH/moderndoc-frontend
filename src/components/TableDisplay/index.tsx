@@ -10,11 +10,11 @@ const TableDisplay: React.FC<PropsType> = ({ table }) => {
       <table className="w-full rounded-2xl border">
         <thead className="">
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="">
+            <tr key={headerGroup.id} className="text-left">
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className="border-gray-200 bg-gray-100 px-2.5 py-3  first:rounded-tl-2xl last:rounded-tr-2xl "
+                  className="border-gray-200 bg-gray-100 px-2.5 py-3  first:rounded-tl-2xl last:rounded-tr-2xl"
                   style={{
                     width: header.getSize(),
                   }}
