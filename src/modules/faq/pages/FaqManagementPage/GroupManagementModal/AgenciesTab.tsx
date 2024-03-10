@@ -51,10 +51,10 @@ const AgenciesTab = () => {
                   />
                   <HiTrash
                     size={25}
-                    className="cursor-pointer rounded-full bg-red-500 p-1 text-white"
+                    className="cursor-not-allowed rounded-full bg-red-500 p-1 text-white"
                     onClick={() => {
-                      setSelectedDeleteDepartment(info.row.original)
-                      open()
+                      // setSelectedDeleteDepartment(info.row.original)
+                      // open()
                     }}
                   />
                 </div>

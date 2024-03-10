@@ -3,6 +3,7 @@ import PageContainer from '@/components/PageContainer'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import { FaPlus } from 'react-icons/fa6'
 import CreateFaqModal from './CreateFaqModal'
+import FaqListTable from './FaqListTable'
 import GroupManagementModal from './GroupManagementModal'
 
 const FaqManagementPage = () => {
@@ -34,6 +35,7 @@ const FaqManagementPage = () => {
             onClick={openGroupManagementModal}
           />
         </div>
+        <FaqListTable />
       </PageContainer>
       <CreateFaqModal
         isOpen={isOpenCreateFaqModal}
