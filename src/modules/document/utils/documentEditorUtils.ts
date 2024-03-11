@@ -17,7 +17,7 @@ const _json = {
       top: 99,
       version: '6.0.0-beta9',
       // custom field
-      is_locked: false,
+      is_locked: true,
     },
     {
       fontSize: 40,
@@ -30,7 +30,7 @@ const _json = {
       top: 99,
       version: '6.0.0-beta9',
       // custom field
-      is_locked: false,
+      is_locked: true,
     },
     {
       fontSize: 40,
@@ -43,7 +43,7 @@ const _json = {
       top: 199,
       version: '6.0.0-beta9',
       // custom field
-      is_locked: false,
+      is_locked: true,
     },
   ],
 }
@@ -164,6 +164,12 @@ const initCanvas = (
 
   // newCanvas.loadFromJSON(json, newCanvas.renderAll.bind(newCanvas))
   newCanvas.loadFromJSON(_json).then(() => {
+    newCanvas.forEachObject((obj: any) => {
+      if (obj.is_locked) {
+        obj.set({ selectable: false })
+        obj.set({ evented: false })
+      }
+    })
     newCanvas.renderAll()
   })
   setCanvasList(id, newCanvas)
@@ -213,6 +219,23 @@ const mouseHandler = (
       console.log('default')
       break
   }
+  if (activeButton !== ActiveToolbarButton.Default) {
+    canvas.forEachObject((obj: any) => {
+      console.log('obj', obj, obj.is_locked)
+      obj.set({ selectable: false })
+      obj.set({ evented: false })
+    })
+    canvas.discardActiveObject()
+  } else {
+    canvas.forEachObject((obj: any) => {
+      console.log('obj', obj, obj.is_locked)
+      if (!obj.is_locked) {
+        obj.set({ selectable: true })
+        obj.set({ evented: true })
+      }
+    })
+  }
+  canvas.renderAll()
 }
 
 const saveCanvas = (canvasList: CanvasProps[]) => {
