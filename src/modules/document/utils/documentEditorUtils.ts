@@ -107,27 +107,56 @@ const temp = {
   ],
 }
 
-const addField = (canvas: Fabric.Canvas, x: number, y: number) => {
-  console.log('addField')
-  // console.log('mouse over', e?.absolutePointer)
-  // add text
-  const text = new Fabric.Textbox('new field', {
-    // left: e?.absolutePointer?.x,
-    // top: e?.absolutePointer?.y,
-    top: y,
-    left: x,
-    fontSize: 40,
-    fill: 'red',
-    width: 200,
-    minWidth: 20,
-    is_locked: false,
-  })
-  canvas.add(text)
+const addCheck = (canvas: Fabric.Canvas, x: number, y: number) => {
+  console.log('addCheck')
+  // add correct check
+  canvas.add(
+    new Fabric.Textbox('✓', {
+      top: y,
+      left: x,
+      fontSize: 40,
+      fill: 'green',
+      minWidth: 20,
+      is_locked: false,
+    })
+  )
   canvas.renderAll()
+}
+
+const addField = (
+  canvas: Fabric.Canvas,
+  text: string,
+  x: number,
+  y: number
+) => {
+  console.log('addField')
+  canvas.add(
+    new Fabric.Textbox(text, {
+      top: y,
+      left: x,
+      fontSize: 40,
+      fill: 'red',
+      width: 200,
+      minWidth: 20,
+      is_locked: false,
+    })
+  )
+  canvas.renderAll()
+}
+
+const deleteField = (canvas: Fabric.Canvas) => {
+  console.log('deleteField')
+  const activeObject = canvas.getActiveObject()
+  if (activeObject) {
+    console.log('activeObject', activeObject)
+    canvas.remove(activeObject)
+    canvas.renderAll()
+  }
 }
 
 const initCanvas = (
   id: string,
+  activeButton: ActiveToolbarButton,
   setCanvasList: (id: string, canvas: Fabric.Canvas) => void
 ) => {
   console.log('initCanvas')
@@ -141,21 +170,48 @@ const initCanvas = (
   //   newCanvas.renderAll()
 }
 
-const mouseHandler = (canvas: any, activeButton: any) => {
-  if (canvas) {
-    console.log('canvas event' + 'active butt' + activeButton)
-    // updated cursor based on activeButton
-    if (activeButton === ActiveToolbarButton.Text) {
-      canvas.defaultCursor = 'crosshair'
-      canvas.hoverCursor = 'default'
-    } else {
-      canvas.defaultCursor = 'default'
-      canvas.hoverCursor = 'default'
-    }
-  }
+// const mouseHandler = (canvas: any, activeButton: any) => {
+//   if (canvas) {
+//     console.log('canvas event' + 'active butt' + activeButton)
+//     // updated cursor based on activeButton
+//     if (activeButton === ActiveToolbarButton.Text) {
+//       canvas.defaultCursor = 'crosshair'
+//       canvas.hoverCursor = 'default'
+//     } else {
+//       canvas.defaultCursor = 'default'
+//       canvas.hoverCursor = 'default'
+//     }
+//   }
+//   console.log('mouseHandler')
+//   return () => {
+//     canvas?.removeListeners()
+//   }
+// }
+const mouseHandler = (
+  canvas: Fabric.Canvas,
+  activeButton: ActiveToolbarButton,
+  option?: any
+) => {
   console.log('mouseHandler')
-  return () => {
-    canvas?.removeListeners()
+  switch (activeButton) {
+    case ActiveToolbarButton.Text:
+      console.log('text')
+      addField(canvas, option.text, option.x, option.y)
+      break
+    case ActiveToolbarButton.Pen:
+      console.log('pen')
+      break
+    case ActiveToolbarButton.Delete:
+      console.log('delete')
+      deleteField(canvas)
+      break
+    case ActiveToolbarButton.Correct:
+      console.log('correct')
+      addCheck(canvas, option.x, option.y)
+      break
+    default:
+      console.log('default')
+      break
   }
 }
 
@@ -178,4 +234,4 @@ const saveCanvas = (canvasList: CanvasProps[]) => {
   })
 }
 
-export { addField, initCanvas, mouseHandler, saveCanvas }
+export { addCheck, addField, initCanvas, mouseHandler, saveCanvas }

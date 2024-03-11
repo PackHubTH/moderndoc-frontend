@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { FaDownload, FaMousePointer } from 'react-icons/fa'
+import { FaCheck, FaDownload, FaMousePointer, FaPenFancy } from 'react-icons/fa'
 import { Document, Page } from 'react-pdf'
 
 import exampleFile from '@/assets/example.pdf'
@@ -9,6 +9,7 @@ import { useDisclosure } from '@/hooks/useDisclosure'
 import { useDrop } from 'react-dnd'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
+import { MdOutlineDeleteForever } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
@@ -176,6 +177,12 @@ const DocumentEditor = () => {
           <DocumentToolbar>
             <ToolbarButton icon={<FaMousePointer />} id={ButtonId.Default} />
             <ToolbarButton icon={<FaA />} id={ButtonId.Text} />
+            <ToolbarButton icon={<FaPenFancy />} id={ButtonId.Pen} />
+            <ToolbarButton
+              icon={<MdOutlineDeleteForever />}
+              id={ButtonId.Delete}
+            />
+            <ToolbarButton icon={<FaCheck />} id={ButtonId.Correct} />
           </DocumentToolbar>
           {/* canvas section */}
           <div
