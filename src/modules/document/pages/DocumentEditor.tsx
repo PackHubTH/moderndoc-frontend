@@ -6,6 +6,7 @@ import exampleFile from '@/assets/example.pdf'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import { PDFDocument } from 'pdf-lib'
 import { useDrop } from 'react-dnd'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
@@ -23,6 +24,7 @@ import ToolbarButton from '../components/ToolbarButton'
 import { useDocumentStore } from '../stores/documentStore'
 import { DnDItem } from '../types/DocumentField'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
+import { saveCanvas } from '../utils/documentEditorUtils'
 
 const DocumentEditor = () => {
   const navigate = useNavigate()
@@ -43,6 +45,7 @@ const DocumentEditor = () => {
   } = useDisclosure()
   const canvasRef = useRef<HTMLDivElement>(null)
   const pageTotal = useDocumentStore((state) => state.pageTotal)
+  const canvasList = useDocumentStore((state) => state.canvasList)
   const setCanvasSize = useDocumentStore((state) => state.setCanvasSize)
   const setPageTotal = useDocumentStore((state) => state.setPageTotal)
 
@@ -78,6 +81,48 @@ const DocumentEditor = () => {
       isOver: !!monitor.isOver(),
     }),
   }))
+
+  //////////////////////////// modify pdf /////////////////////////////
+  async function handlePDFUpload() {
+    // Step 1: Retrieve the file from the input
+    // const file = event.target.files[0];
+    const file = exampleFile
+    if (!file) {
+      return
+    }
+
+    // Step 2: Convert the file into an ArrayBuffer
+    const arrayBuffer = await fetch(file).then((res) => {
+      if (res.ok) return res.arrayBuffer()
+      throw new Error('Failed to fetch PDF.')
+    })
+
+    // Step 3: Load into PDFDocument
+    const pdfDoc = await PDFDocument.load(arrayBuffer)
+    const pages = pdfDoc.getPages()
+    const firstPage = pages[0]
+
+    // Modify your PDF here
+    firstPage.drawText('This text was added with pdf-lib!', {
+      x: 5,
+      y: firstPage.getHeight() - 40,
+      size: 12,
+    })
+
+    // Step 4: Serialize the PDFDocument to bytes
+    const pdfBytes = await pdfDoc.save()
+    console.log('pdfBytes', pdfBytes)
+
+    // Step 5: Prompt the user to download the modified PDF
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' })
+    const link = document.createElement('a')
+    link.href = window.URL.createObjectURL(blob)
+    link.download = 'modified_document.pdf'
+    link.click()
+  }
+
+  // const pdfDoc = PDFDocument.load(existingPdfBytes)
+  // console.log('pdfDoc', pdfDoc)
 
   return (
     <div>
@@ -120,7 +165,7 @@ const DocumentEditor = () => {
           <Button
             label="Download"
             leftIcon={<FaDownload />}
-            // onClick={() => saveCanvas(canvasList)}
+            onClick={() => saveCanvas(canvasList, exampleFile)}
           />
           <Button
             label="Finalize"
@@ -251,18 +296,10 @@ const DocumentEditor = () => {
         </div>
       </div>
       {/*  */}
-      {/* DnD test */}
-
-      {/* <div className="h-72 w-full bg-yellow-300" ref={dropRef}>
-        {dropBox.map((item, index) => {
-          return (
-            <div key={index} className="p-4">
-              <p>{item.text}</p>
-            </div>
-          )
-        })}
-        {isOver && <p>Drop Here</p>}
-      </div> */}
+      {/* pdf lib test */}
+      <button id="a" onClick={() => handlePDFUpload()}>
+        TeSt
+      </button>
     </div>
   )
 }
