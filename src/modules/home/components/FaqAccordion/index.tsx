@@ -5,9 +5,12 @@ import { Faq } from '@/modules/faq/types'
 import { Disclosure } from '@headlessui/react'
 import { useState } from 'react'
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa6'
+import { HiTrash } from 'react-icons/hi'
+import { MdModeEditOutline } from 'react-icons/md'
 import { blue, white } from 'tailwindcss/colors'
 import tw from 'twin.macro'
 import CreateSubFaqModal from '../CreateSubFaqModal'
+import DeleteSubFaqModal from '../DeleteSubFaqModal'
 import {
   SendChannelBgColorMapper,
   SendChannelTextColorMapper,
@@ -25,10 +28,14 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
     open: createSubFaqOpen,
     close: createSubFaqClose,
   } = useDisclosure()
+  const {
+    isOpen: deleteSubFaqIsOpen,
+    open: deleteSubFaqOpen,
+    close: deleteSubFaqClose,
+  } = useDisclosure()
 
-  const [createSubFaqFaqId, setCreateSubFaqFaqId] = useState<string | null>(
-    null
-  )
+  const [actionFaqId, setActionFaqId] = useState<string | null>(null)
+  const [actionSubFaqId, setActionSubFaqId] = useState<string | null>(null)
 
   return (
     <>
@@ -109,7 +116,7 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
                       variant="green"
                       onClick={() => {
                         createSubFaqOpen()
-                        setCreateSubFaqFaqId(faq.id)
+                        setActionFaqId(faq.id)
                       }}
                     />
                     <div
@@ -124,15 +131,36 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
                             <>
                               <Disclosure.Button className="flex w-full items-center justify-between p-4">
                                 <h4>{subFaq.title}</h4>
-                                <FaChevronDown
-                                  size={14}
-                                  style={{
-                                    transform: open
-                                      ? 'rotate(180deg)'
-                                      : 'rotate(0deg)',
-                                    transition: 'all 0.3s ease',
-                                  }}
-                                />
+                                <div className="flex items-center gap-3">
+                                  {isEditable && (
+                                    <>
+                                      <MdModeEditOutline
+                                        size={25}
+                                        className="cursor-pointer rounded-full bg-sky-500 p-1 text-white"
+                                        onClick={() => {
+                                          setActionSubFaqId(subFaq.id)
+                                        }}
+                                      />
+                                      <HiTrash
+                                        size={25}
+                                        className="cursor-pointer rounded-full bg-red-500 p-1 text-white"
+                                        onClick={() => {
+                                          setActionSubFaqId(subFaq.id)
+                                          deleteSubFaqOpen()
+                                        }}
+                                      />
+                                    </>
+                                  )}
+                                  <FaChevronDown
+                                    size={14}
+                                    style={{
+                                      transform: open
+                                        ? 'rotate(180deg)'
+                                        : 'rotate(0deg)',
+                                      transition: 'all 0.3s ease',
+                                    }}
+                                  />
+                                </div>
                               </Disclosure.Button>
                               <Disclosure.Panel className="flex items-start justify-between bg-gray-100 p-4">
                                 <p>{subFaq.description}</p>
@@ -152,7 +180,12 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
       <CreateSubFaqModal
         isOpen={createSubFaqIsOpen}
         onClose={createSubFaqClose}
-        faqId={createSubFaqFaqId}
+        faqId={actionFaqId}
+      />
+      <DeleteSubFaqModal
+        isOpen={deleteSubFaqIsOpen}
+        onClose={deleteSubFaqClose}
+        subFaqId={actionSubFaqId}
       />
     </>
   )

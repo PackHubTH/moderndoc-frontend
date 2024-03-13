@@ -1,10 +1,9 @@
 import Button from '@/components/Button'
-import Modal from '@/components/Modal'
 import TableDisplay from '@/components/TableDisplay'
 import TextInput from '@/components/TextInput'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import DeleteTagModal from '@/modules/components/DeleteTagModal'
 import useCreateTag from '@/modules/faq/hooks/api/useCreateTag'
-import useDeleteTag from '@/modules/faq/hooks/api/useDeleteTag'
 import useEditTag from '@/modules/faq/hooks/api/useEditTag'
 import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
 import { Tag } from '@/modules/faq/types'
@@ -120,7 +119,6 @@ const TagsTab = () => {
 
   const { data: Tags, refetch: refetchTag } = useGetAllTags()
   const { mutate: createTag } = useCreateTag()
-  const { mutate: deleteTag } = useDeleteTag()
   const { mutate: editTag } = useEditTag()
 
   const { isOpen, open, close } = useDisclosure()
@@ -148,21 +146,6 @@ const TagsTab = () => {
     setAddTagInputValue('')
   }
 
-  const onDeleteTag = (tagId: string) => {
-    deleteTag(tagId, {
-      onSuccess: () => {
-        toast('ลบหมวดหมู่สำเร็จ', { type: 'success' })
-        refetchTag()
-      },
-      onError: (error) => {
-        toast(`เกิดข้อผิดพลาดในการลบหมวดหมู่ ${error}`, {
-          type: 'error',
-        })
-      },
-    })
-    close()
-  }
-
   return (
     <>
       <div className="mt-4 space-y-3">
@@ -180,33 +163,7 @@ const TagsTab = () => {
         </div>
         <TableDisplay table={table} />
       </div>
-      <Modal
-        leftIcon={
-          <HiTrash
-            size={25}
-            className="rounded-full bg-red-200 p-0.5 text-red-500"
-          />
-        }
-        title={`ลบหมวดหมู่ '${selectedDeleteTag?.name}' หรือไม่?`}
-        isOpen={isOpen}
-        onClose={close}
-        content={
-          <p className="text-gray-600">
-            มีรายการ FAQ ที่กำลังใช้งานอยู่ภายใต้หมวดหมู่ดังกล่าว
-            หากลบออกจะทำให้หมวดหมู่ในรายการ FAQ ที่เชื่อมถึงหายไป
-          </p>
-        }
-        actions={
-          <div className="flex gap-3">
-            <Button label="ยกเลิก" variant="white" onClick={close} />
-            <Button
-              label="ลบ"
-              variant="red"
-              onClick={() => onDeleteTag(selectedDeleteTag!.id)}
-            />
-          </div>
-        }
-      />
+      <DeleteTagModal isOpen={isOpen} onClose={close} tag={selectedDeleteTag} />
     </>
   )
 }

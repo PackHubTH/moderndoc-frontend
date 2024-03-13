@@ -1,8 +1,8 @@
 import Button from '@/components/Button'
-import Modal from '@/components/Modal'
 import TableDisplay from '@/components/TableDisplay'
 import TextInput from '@/components/TextInput'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import DeleteAgencyModal from '@/modules/components/DeleteAgencyModal'
 import useCreateAgencyDepartment from '@/modules/faq/hooks/api/useCreateAgency'
 import useDeleteTag from '@/modules/faq/hooks/api/useDeleteTag'
 import useUpdateDepartment from '@/modules/faq/hooks/api/useUpdateDepartment'
@@ -172,32 +172,10 @@ const AgenciesTab = () => {
         </div>
         <TableDisplay table={table} />
       </div>
-      <Modal
-        leftIcon={
-          <HiTrash
-            size={25}
-            className="rounded-full bg-red-200 p-0.5 text-red-500"
-          />
-        }
-        title={`ลบหน่วยงาน '${selectedDeleteDepartment?.name}' หรือไม่?`}
+      <DeleteAgencyModal
         isOpen={isOpen}
         onClose={close}
-        content={
-          <p className="text-gray-600">
-            มีรายการ FAQ ที่กำลังใช้งานอยู่ภายใต้หน่วยงานดังกล่าว
-            หากลบออกจะทำให้หน่วยงานในรายการ FAQ ที่เชื่อมถึงหายไป
-          </p>
-        }
-        actions={
-          <div className="flex gap-3">
-            <Button label="ยกเลิก" variant="white" onClick={close} />
-            <Button
-              label="ลบ"
-              variant="red"
-              onClick={() => onDeleteTag(selectedDeleteDepartment!.id)}
-            />
-          </div>
-        }
+        agency={selectedDeleteDepartment}
       />
     </>
   )
