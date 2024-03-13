@@ -12,70 +12,8 @@ import { th } from 'date-fns/locale'
 import { useState } from 'react'
 import { HiTrash } from 'react-icons/hi'
 import { MdModeEditOutline, MdRemoveRedEye } from 'react-icons/md'
-import useGetDepartmentFaqs from '../../hooks/api/useGetFaqList'
+import useGetDepartmentFaqs from '../../hooks/api/useGetDepartmentFaqs'
 import { Faq } from '../../types'
-
-const columns: ColumnDef<Faq>[] = [
-  {
-    id: 'index',
-    size: 30,
-    header: 'ที่',
-    cell: (info) => (
-      <span className="font-medium text-gray-500">{info.row.index + 1}</span>
-    ),
-  },
-  {
-    id: 'tags',
-    size: 60,
-    header: 'ทั้งหมด 53 ข้อมูล',
-    cell: (info) => (
-      <div className="space-y-1">
-        {info.row.original.faqTags.map((tag) => (
-          <Tag name={tag.tag.name} />
-        ))}
-      </div>
-    ),
-  },
-  {
-    id: 'faqInfo',
-    size: 400,
-    header: '',
-    cell: (info) => (
-      <div className="flex flex-row items-center justify-between">
-        <div>
-          <div className="space-x-2">
-            <span className="font-semibold text-blue-500 ">
-              {info.row.original.titleTh}
-            </span>
-            <span className="text-sm font-semibold text-gray-400">
-              สร้างโดย {info.row.original.createdBy}
-            </span>
-          </div>
-          <span className="text-gray-400">
-            อัพเดตล่าสุดเมื่อ{' '}
-            {format(info.row.original.lastUpdatedAt, 'dd MMM yy', {
-              locale: th,
-            })}
-          </span>
-        </div>
-        <div className="flex gap-3">
-          <MdModeEditOutline
-            size={18}
-            className="cursor-pointer rounded-full text-blue-500"
-          />
-          <MdRemoveRedEye
-            size={18}
-            className="cursor-pointer rounded-full text-blue-500"
-          />
-          <HiTrash
-            size={18}
-            className="cursor-pointer rounded-full text-red-500"
-          />
-        </div>
-      </div>
-    ),
-  },
-]
 
 const FaqListTable = () => {
   const [paginationState, setPaginationState] = useState<PaginationState>({
@@ -83,7 +21,75 @@ const FaqListTable = () => {
     pageSize: 10,
   })
 
-  const { data: faqs } = useGetDepartmentFaqs(paginationState.pageIndex + 1)
+  const { data: faqs, isFetching } = useGetDepartmentFaqs(
+    paginationState.pageIndex + 1
+  )
+
+  const columns: ColumnDef<Faq>[] = [
+    {
+      id: 'index',
+      size: 30,
+      header: 'ที่',
+      cell: (info) => (
+        <span className="font-medium text-gray-500">{info.row.index + 1}</span>
+      ),
+    },
+    {
+      id: 'tags',
+      size: 60,
+      header: `ทั้งหมด ${faqs?.data.totalFaqsCount} ข้อมูล`,
+      cell: (info) => (
+        <div className="space-y-1">
+          {info.row.original.faqTags.map((tag) => (
+            <Tag name={tag.tag.name} />
+          ))}
+        </div>
+      ),
+    },
+    {
+      id: 'faqInfo',
+      size: 400,
+      header: '',
+      cell: (info) => (
+        <div className="flex flex-row items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 ">
+              <span className="font-semibold text-blue-500 ">
+                {info.row.original.titleTh}
+              </span>
+              <img
+                className="w-6 rounded-full"
+                src={info.row.original.userUpdated.profileImg}
+              />
+              <span className="text-sm font-semibold text-gray-400">
+                อัปเดตโดย {info.row.original.userUpdated.nameTh}
+              </span>
+            </div>
+            <span className="text-gray-400">
+              อัพเดตล่าสุดเมื่อ{' '}
+              {format(info.row.original.lastUpdatedAt, 'dd MMM yy', {
+                locale: th,
+              })}
+            </span>
+          </div>
+          <div className="flex gap-3">
+            <MdModeEditOutline
+              size={18}
+              className="cursor-pointer rounded-full text-blue-500"
+            />
+            <MdRemoveRedEye
+              size={18}
+              className="cursor-pointer rounded-full text-blue-500"
+            />
+            <HiTrash
+              size={18}
+              className="cursor-pointer rounded-full text-red-500"
+            />
+          </div>
+        </div>
+      ),
+    },
+  ]
 
   const table = useReactTable({
     columns,
@@ -94,7 +100,7 @@ const FaqListTable = () => {
     state: {
       pagination: paginationState,
     },
-    data: faqs?.data ?? [],
+    data: faqs?.data.faqs ?? [],
   })
 
   return (
@@ -103,7 +109,7 @@ const FaqListTable = () => {
       <Pagination
         paginationState={paginationState}
         setPaginationState={setPaginationState}
-        totalPage={10}
+        totalPage={faqs?.data.totalPages ?? 0}
       />
     </div>
   )

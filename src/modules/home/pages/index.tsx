@@ -1,7 +1,7 @@
 import PageContainer from '@/components/PageContainer'
 import TextInput from '@/components/TextInput'
 import FaqImage from '@/modules/Home/assets/faq-image.png'
-import useGetDepartmentFaqs from '@/modules/faq/hooks/api/useGetFaqList'
+import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
 import { useUserStore } from '@/stores/userStore'
 import { useState } from 'react'
 import { VscMortarBoard } from 'react-icons/vsc'
@@ -15,7 +15,7 @@ const Home = () => {
 
   if (!isLogin) return <GuestHomePage />
 
-  const { data: faqs } = useGetDepartmentFaqs(1)
+  const { data: faqs } = useGetPublicFaqs(1)
 
   return (
     <PageContainer className="p-4 ">
@@ -29,10 +29,10 @@ const Home = () => {
         />
       </div>
       <div className="space-y-2.5">
-        {faqs?.data.map((faq, index) => {
+        {faqs?.data.faqs.map((faq, index) => {
           const shouldShowDepartment =
             index === 0 ||
-            faq.department.name !== faqs.data[index - 1].department.name
+            faq.department.name !== faqs.data.faqs[index - 1].department.name
           return (
             <div key={faq.id} className="rounded-lg ">
               {shouldShowDepartment && (

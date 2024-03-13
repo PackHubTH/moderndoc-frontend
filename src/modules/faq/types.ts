@@ -32,6 +32,15 @@ export type Faq = {
   subFaqs: SubFaqs[]
   faqTags: FaqTags[]
   department: Department
+  userUpdated: UserUpdated
+}
+
+export type UserUpdated = {
+  id: string
+  nameTh: string
+  emails: string[]
+  defaultEmailIndex: number
+  profileImg: string
 }
 
 export type SubFaqs = {
