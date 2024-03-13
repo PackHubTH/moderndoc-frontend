@@ -36,7 +36,7 @@ const Home = () => {
           return (
             <div key={faq.id} className="rounded-lg ">
               {shouldShowDepartment && (
-                <div className="mb-5 flex items-center gap-4">
+                <div className="mb-5 mt-8 flex items-center gap-4">
                   <VscMortarBoard
                     size={50}
                     className="rounded-lg bg-yellow-100 p-2 text-yellow-500"
@@ -46,7 +46,7 @@ const Home = () => {
                   </h1>
                 </div>
               )}
-              <FaqAccordion faq={faq} />
+              <FaqAccordion faq={faq} isEditable />
             </div>
           )
         })}
