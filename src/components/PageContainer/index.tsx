@@ -1,7 +1,7 @@
-import Sidebar from '@/modules/Home/components/Sidebar'
 import Navbar from '@/modules/navbar/pages'
-import { useUserStore } from '@/stores/userStore'
+import Sidebar from '@/modules/home/components/Sidebar'
 import tw from 'twin.macro'
+import { useUserStore } from '@/stores/userStore'
 
 type PropsType = {
   children: React.ReactNode
