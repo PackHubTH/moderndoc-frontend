@@ -314,4 +314,62 @@ const saveCanvas = async (canvasList: CanvasProps[], file: any) => {
   // link.click()
 }
 
-export { addCheck, addField, initCanvas, mouseHandler, saveCanvas }
+const setTextAlign = (
+  canvasList: CanvasProps[],
+  id: string,
+  align: string,
+  setActiveObject: (obj: Fabric.Object) => void
+) => {
+  const canvas = canvasList.find((page) => page.id === id)?.canvas
+  const activeObject = canvas?.getActiveObject()
+
+  if (activeObject && canvas) {
+    const updatedObject = activeObject.set({ textAlign: align })
+    console.log('Updated Object', updatedObject)
+    setActiveObject(updatedObject) // Updating state with the new object
+    canvas.renderAll()
+  }
+}
+
+const setTextBold = (
+  canvasList: CanvasProps[],
+  id: string,
+  setActiveObject: (obj: Fabric.Object) => void
+) => {
+  const canvas = canvasList.find((page) => page.id === id)?.canvas
+  const activeObject = canvas?.getActiveObject()
+
+  if (activeObject && canvas) {
+    const updatedObject = activeObject.set({ fontWeight: 'bold' })
+    console.log('Updated Object', updatedObject)
+    setActiveObject(updatedObject) // Updating state with the new object
+    canvas.renderAll()
+  }
+}
+
+const setTextItalic = (
+  canvasList: CanvasProps[],
+  id: string,
+  setActiveObject: (obj: Fabric.Object) => void
+) => {
+  const canvas = canvasList.find((page) => page.id === id)?.canvas
+  const activeObject = canvas?.getActiveObject()
+
+  if (activeObject && canvas) {
+    const updatedObject = activeObject.set({ fontStyle: 'italic' })
+    console.log('Updated Object', updatedObject)
+    setActiveObject(updatedObject) // Updating state with the new object
+    canvas.renderAll()
+  }
+}
+
+export {
+  addCheck,
+  addField,
+  initCanvas,
+  mouseHandler,
+  saveCanvas,
+  setTextAlign,
+  setTextBold,
+  setTextItalic,
+}

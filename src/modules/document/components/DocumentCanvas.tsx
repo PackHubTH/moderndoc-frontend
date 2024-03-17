@@ -25,8 +25,12 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
     (state) => state.setActiveButton
   )
   const activeObject = useDocumentToolbarStore((state) => state.activeObject)
+  const activeObjectRef = useRef(activeObject)
   const setActiveObject = useDocumentToolbarStore(
     (state) => state.setActiveObject
+  )
+  const setActiveCanvasId = useDocumentToolbarStore(
+    (state) => state.setActiveCanvasId
   )
 
   useEffect(() => {
@@ -66,15 +70,22 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
       if (option.selected.length === 1) {
         const obj = option.selected[0]
         console.log('obj', obj)
+        setActiveCanvasId(id)
         setActiveObject(obj)
       }
     }
+    const handler3 = (option: any) => {
+      setActiveObject(null)
+    }
+
     if (canvas) {
       canvas.on('mouse:down', handler)
       canvas.on('selection:created', handler2)
+      canvas.on('selection:cleared', handler3)
       return () => {
         canvas.off('mouse:down', handler)
         canvas.off('selection:created', handler2)
+        canvas.off('selection:cleared', handler3)
       }
     }
   }, [activeButton, canvasList, id])

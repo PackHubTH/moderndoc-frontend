@@ -1,5 +1,21 @@
 import { Document, Page } from 'react-pdf'
-import { FaCheck, FaDownload, FaMousePointer, FaPenFancy } from 'react-icons/fa'
+import {
+  FaAlignJustify,
+  FaAlignLeft,
+  FaAlignRight,
+  FaBold,
+  FaCheck,
+  FaDownload,
+  FaItalic,
+  FaMousePointer,
+  FaPenFancy,
+} from 'react-icons/fa'
+import {
+  saveCanvas,
+  setTextAlign,
+  setTextBold,
+  setTextItalic,
+} from '../utils/documentEditorUtils'
 import { useRef, useState } from 'react'
 
 import Button from '@/components/Button'
@@ -21,9 +37,9 @@ import ProcessModalContent from '../components/ProcessModalContent'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
 import exampleFile from '@/assets/example.pdf'
-import { saveCanvas } from '../utils/documentEditorUtils'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import { useDocumentStore } from '../stores/documentStore'
+import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
 import { useDrop } from 'react-dnd'
 import { useNavigate } from 'react-router-dom'
 
@@ -49,6 +65,13 @@ const DocumentEditor = () => {
   const canvasList = useDocumentStore((state) => state.canvasList)
   const setCanvasSize = useDocumentStore((state) => state.setCanvasSize)
   const setPageTotal = useDocumentStore((state) => state.setPageTotal)
+  const activeObject = useDocumentToolbarStore((state) => state.activeObject)
+  const activeCanvasId = useDocumentToolbarStore(
+    (state) => state.activeCanvasId
+  )
+  const setActiveObject = useDocumentToolbarStore(
+    (state) => state.setActiveObject
+  )
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setPageTotal(numPages)
@@ -124,7 +147,7 @@ const DocumentEditor = () => {
 
   // const pdfDoc = PDFDocument.load(existingPdfBytes)
   // console.log('pdfDoc', pdfDoc)
-
+  console.log('documentEditor', activeObject)
   return (
     <div>
       {/* Header */}
@@ -229,32 +252,91 @@ const DocumentEditor = () => {
               id={ButtonId.Delete}
             />
             <ToolbarButton icon={<FaCheck />} id={ButtonId.Correct} />
-            <Dropdown
-              label="12"
-              dropdownSection={[
-                {
-                  lists: [
-                    { displayText: '14' },
+            {activeObject ? (
+              <>
+                <Dropdown
+                  label={activeObject?.fontSize.toString() ?? '16'}
+                  dropdownSection={[
                     {
-                      displayText: '16',
+                      lists: [
+                        { displayText: '14' },
+                        {
+                          displayText: '16',
+                        },
+                      ],
                     },
-                  ],
-                },
-              ]}
-            />
-            <Dropdown
-              label="Sarabun"
-              dropdownSection={[
-                {
-                  lists: [
-                    { displayText: '14' },
+                  ]}
+                />
+                <Dropdown
+                  label={activeObject?.fontFamily ?? 'Arial'}
+                  dropdownSection={[
                     {
-                      displayText: '16',
+                      lists: [
+                        { displayText: '14' },
+                        {
+                          displayText: '16',
+                        },
+                      ],
                     },
-                  ],
-                },
-              ]}
-            />
+                  ]}
+                />
+                <ToolbarButton
+                  icon={<FaAlignLeft />}
+                  id={ButtonId.TextAlignLeft}
+                  selected={activeObject?.textAlign === 'left'}
+                  onClick={() =>
+                    setTextAlign(
+                      canvasList,
+                      activeCanvasId,
+                      'left',
+                      setActiveObject
+                    )
+                  }
+                />
+                <ToolbarButton
+                  icon={<FaAlignJustify />}
+                  id={ButtonId.TextAlignCenter}
+                  selected={activeObject?.textAlign === 'center'}
+                  onClick={() => {
+                    setTextAlign(
+                      canvasList,
+                      activeCanvasId,
+                      'center',
+                      setActiveObject
+                    )
+                  }}
+                />
+                <ToolbarButton
+                  icon={<FaAlignRight />}
+                  id={ButtonId.TextAlignRight}
+                  selected={activeObject?.textAlign === 'right'}
+                  onClick={() =>
+                    setTextAlign(
+                      canvasList,
+                      activeCanvasId,
+                      'right',
+                      setActiveObject
+                    )
+                  }
+                />
+                <ToolbarButton
+                  icon={<FaBold />}
+                  id={ButtonId.Bold}
+                  selected={activeObject?.fontWeight === 'bold'}
+                  onClick={() =>
+                    setTextBold(canvasList, activeCanvasId, setActiveObject)
+                  }
+                />
+                <ToolbarButton
+                  icon={<FaItalic />}
+                  id={ButtonId.Italic}
+                  selected={activeObject?.fontStyle === 'italic'}
+                  onClick={() =>
+                    setTextItalic(canvasList, activeCanvasId, setActiveObject)
+                  }
+                />
+              </>
+            ) : null}
           </DocumentToolbar>
           {/* canvas section */}
           <div
