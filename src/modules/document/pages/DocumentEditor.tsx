@@ -1,30 +1,31 @@
-import { useRef, useState } from 'react'
-import { FaCheck, FaDownload, FaMousePointer, FaPenFancy } from 'react-icons/fa'
 import { Document, Page } from 'react-pdf'
+import { FaCheck, FaDownload, FaMousePointer, FaPenFancy } from 'react-icons/fa'
+import { useRef, useState } from 'react'
 
-import exampleFile from '@/assets/example.pdf'
 import Button from '@/components/Button'
-import Modal from '@/components/Modal'
-import { useDisclosure } from '@/hooks/useDisclosure'
-import { PDFDocument } from 'pdf-lib'
-import { useDrop } from 'react-dnd'
-import { FaA } from 'react-icons/fa6'
-import { IoEyeOutline } from 'react-icons/io5'
-import { MdOutlineDeleteForever } from 'react-icons/md'
-import { useNavigate } from 'react-router-dom'
+import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
+import { DnDItem } from '../types/DocumentField'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
 import DocumentToolbar from '../components/DocumentToolbar'
 import DraggableBox from '../components/DraggableBox'
+import Dropdown from '@/components/Dropdown'
+import { FaA } from 'react-icons/fa6'
 import FinalizeModalContent from '../components/FinalizeModalContent'
 import GuidelineModalContent from '../components/GuidelineModalContent'
+import { IoEyeOutline } from 'react-icons/io5'
+import { MdOutlineDeleteForever } from 'react-icons/md'
+import Modal from '@/components/Modal'
+import { PDFDocument } from 'pdf-lib'
 import ProcessModalContent from '../components/ProcessModalContent'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
-import { useDocumentStore } from '../stores/documentStore'
-import { DnDItem } from '../types/DocumentField'
-import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
+import exampleFile from '@/assets/example.pdf'
 import { saveCanvas } from '../utils/documentEditorUtils'
+import { useDisclosure } from '@/hooks/useDisclosure'
+import { useDocumentStore } from '../stores/documentStore'
+import { useDrop } from 'react-dnd'
+import { useNavigate } from 'react-router-dom'
 
 const DocumentEditor = () => {
   const navigate = useNavigate()
@@ -228,10 +229,36 @@ const DocumentEditor = () => {
               id={ButtonId.Delete}
             />
             <ToolbarButton icon={<FaCheck />} id={ButtonId.Correct} />
+            <Dropdown
+              label="12"
+              dropdownSection={[
+                {
+                  lists: [
+                    { displayText: '14' },
+                    {
+                      displayText: '16',
+                    },
+                  ],
+                },
+              ]}
+            />
+            <Dropdown
+              label="Sarabun"
+              dropdownSection={[
+                {
+                  lists: [
+                    { displayText: '14' },
+                    {
+                      displayText: '16',
+                    },
+                  ],
+                },
+              ]}
+            />
           </DocumentToolbar>
           {/* canvas section */}
           <div
-            className="flex h-[calc(100vh-122px)] justify-center overflow-auto bg-green-200"
+            className="flex h-[calc(100vh-122px)] justify-center overflow-auto bg-[#f1f2f5]"
             ref={canvasRef}
           >
             <Document

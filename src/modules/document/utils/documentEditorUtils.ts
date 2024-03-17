@@ -1,9 +1,8 @@
 import * as Fabric from 'fabric'
 
-import { PDFDocument } from 'pdf-lib'
-
-import { CanvasProps } from '../types/DocumentField'
 import { ActiveToolbarButton } from '../types/ToolbarButton'
+import { CanvasProps } from '../types/DocumentField'
+import { PDFDocument } from 'pdf-lib'
 
 const _json = {
   version: '6.0.0-beta9',
@@ -18,8 +17,9 @@ const _json = {
       left: 164,
       top: 99,
       version: '6.0.0-beta9',
+      editable: false,
       // custom field
-      is_locked: true,
+      // is_locked: true,
     },
     {
       fontSize: 40,
@@ -31,21 +31,24 @@ const _json = {
       left: 364,
       top: 99,
       version: '6.0.0-beta9',
+      editable: false,
       // custom field
-      is_locked: true,
+      // is_locked: true,
     },
     {
       fontSize: 40,
-      text: 'test text',
+      text: 'moveable text',
       type: 'Textbox',
       fill: 'rgb(255, 0, 0)',
-      width: 200,
+      // width: 200,
       minWidth: 20,
       left: 164,
       top: 199,
+      lockScalingY: true,
       version: '6.0.0-beta9',
+      // editable: false,
       // custom field
-      is_locked: true,
+      // is_locked: true,
     },
   ],
 }
@@ -119,7 +122,7 @@ const addCheck = (canvas: Fabric.Canvas, x: number, y: number) => {
       fontSize: 40,
       fill: 'green',
       minWidth: 20,
-      is_locked: false,
+      // is_locked: false,
     })
   )
   canvas.renderAll()
@@ -129,21 +132,39 @@ const addField = (
   canvas: Fabric.Canvas,
   text: string,
   x: number,
-  y: number
+  y: number,
+  setActiveButton: (button: ActiveToolbarButton) => void
 ) => {
   console.log('addField')
-  canvas.add(
-    new Fabric.Textbox(text, {
-      top: y,
-      left: x,
-      fontSize: 40,
-      fill: 'rgb(255, 0, 0)',
-      width: 200,
-      minWidth: 20,
-      is_locked: false,
-    })
-  )
+
+  const fabricText = new Fabric.Textbox(text, {
+    top: y,
+    left: x,
+    fontSize: 20,
+    fill: 'rgb(255, 0, 0)',
+    width: 200,
+    minWidth: 20,
+    borderColor: 'red',
+  })
+
+  canvas.add(fabricText)
+  canvas.setActiveObject(fabricText)
+
+  // Render the canvas before entering edit mode
   canvas.renderAll()
+
+  // Enter editing mode
+  const simulatedEvent = new MouseEvent('dblclick', {
+    bubbles: true,
+    cancelable: true,
+    view: window,
+    clientX: fabricText.left,
+    clientY: fabricText.top,
+  })
+  fabricText.enterEditing(simulatedEvent)
+  fabricText.hiddenTextarea?.focus()
+
+  setActiveButton(ActiveToolbarButton.Default)
 }
 
 const deleteField = (canvas: Fabric.Canvas) => {
@@ -158,16 +179,15 @@ const deleteField = (canvas: Fabric.Canvas) => {
 
 const initCanvas = (
   id: string,
-  activeButton: ActiveToolbarButton,
+  json: any,
   setCanvasList: (id: string, canvas: Fabric.Canvas) => void
 ) => {
   console.log('initCanvas')
   const newCanvas = new Fabric.Canvas(id)
-
   // newCanvas.loadFromJSON(json, newCanvas.renderAll.bind(newCanvas))
   newCanvas.loadFromJSON(_json).then(() => {
     newCanvas.forEachObject((obj: any) => {
-      if (obj.is_locked) {
+      if (!obj.editable) {
         obj.set({ selectable: false })
         obj.set({ evented: false })
       }
@@ -175,36 +195,35 @@ const initCanvas = (
     newCanvas.renderAll()
   })
   setCanvasList(id, newCanvas)
-  //   newCanvas.renderAll()
 }
 
-// const mouseHandler = (canvas: any, activeButton: any) => {
-//   if (canvas) {
-//     console.log('canvas event' + 'active butt' + activeButton)
-//     // updated cursor based on activeButton
-//     if (activeButton === ActiveToolbarButton.Text) {
-//       canvas.defaultCursor = 'crosshair'
-//       canvas.hoverCursor = 'default'
-//     } else {
-//       canvas.defaultCursor = 'default'
-//       canvas.hoverCursor = 'default'
-//     }
-//   }
-//   console.log('mouseHandler')
-//   return () => {
-//     canvas?.removeListeners()
-//   }
-// }
 const mouseHandler = (
   canvas: Fabric.Canvas,
   activeButton: ActiveToolbarButton,
+  setActiveButton: (button: ActiveToolbarButton) => void,
   option?: any
 ) => {
   console.log('mouseHandler')
+  if (activeButton !== ActiveToolbarButton.Default) {
+    canvas.forEachObject((obj: any) => {
+      // console.log('obj', obj, obj.is_locked)
+      obj.set({ selectable: false })
+      obj.set({ evented: false })
+    })
+    canvas.discardActiveObject()
+  } else {
+    canvas.forEachObject((obj: any) => {
+      // console.log('obj', obj, obj.is_locked)
+      if (obj.editable) {
+        obj.set({ selectable: true })
+        obj.set({ evented: true })
+      }
+    })
+  }
   switch (activeButton) {
     case ActiveToolbarButton.Text:
       console.log('text')
-      addField(canvas, option.text, option.x, option.y)
+      addField(canvas, option.text, option.x, option.y, setActiveButton)
       break
     case ActiveToolbarButton.Pen:
       console.log('pen')
@@ -221,22 +240,7 @@ const mouseHandler = (
       console.log('default')
       break
   }
-  if (activeButton !== ActiveToolbarButton.Default) {
-    canvas.forEachObject((obj: any) => {
-      console.log('obj', obj, obj.is_locked)
-      obj.set({ selectable: false })
-      obj.set({ evented: false })
-    })
-    canvas.discardActiveObject()
-  } else {
-    canvas.forEachObject((obj: any) => {
-      console.log('obj', obj, obj.is_locked)
-      if (!obj.is_locked) {
-        obj.set({ selectable: true })
-        obj.set({ evented: true })
-      }
-    })
-  }
+
   canvas.renderAll()
 }
 
@@ -307,7 +311,7 @@ const saveCanvas = async (canvasList: CanvasProps[], file: any) => {
   const link = document.createElement('a')
   link.href = window.URL.createObjectURL(blob)
   link.download = 'modified_document.pdf'
-  link.click()
+  // link.click()
 }
 
 export { addCheck, addField, initCanvas, mouseHandler, saveCanvas }

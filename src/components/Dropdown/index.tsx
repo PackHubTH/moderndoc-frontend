@@ -7,7 +7,7 @@ type PropsType = {
 
 const Dropdown: React.FC<PropsType> = ({ dropdownSection, label }) => {
   return (
-    <div className="hs-dropdown relative inline-flex">
+    <div className="hs-dropdown relative z-10 inline-flex">
       <button
         id="hs-dropdown-with-title"
         type="button"
