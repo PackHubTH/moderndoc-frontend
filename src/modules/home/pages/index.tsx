@@ -4,8 +4,9 @@ import FaqImage from '@/modules/Home/assets/faq-image.png'
 import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { useUserStore } from '@/stores/userStore'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { VscMortarBoard } from 'react-icons/vsc'
+import { useInView } from 'react-intersection-observer'
 import { UserRole } from 'types/user'
 import FaqAccordion from '../components/FaqAccordion'
 import GuestHomePage from './GuestHomePage'
@@ -18,7 +19,21 @@ const Home = () => {
 
   if (!isLogin) return <GuestHomePage />
 
-  const { data: faqs } = useGetPublicFaqs(1)
+  const { data: faqs, fetchNextPage, hasNextPage } = useGetPublicFaqs()
+  console.log('🚀 ~ Home ~ faqs:', faqs)
+
+  const faqsData = faqs?.pages.map((page) => page.data.faqs).flat()
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+  })
+
+  useEffect(() => {
+    console.log('fetchNextPage', inView, hasNextPage)
+    if (inView && hasNextPage) {
+      fetchNextPage()
+    }
+  }, [inView])
 
   return (
     <PageContainer className="p-4 ">
@@ -32,10 +47,10 @@ const Home = () => {
         />
       </div>
       <div className="space-y-2.5">
-        {faqs?.data.faqs.map((faq, index) => {
+        {faqsData?.map((faq, index) => {
           const shouldShowDepartment =
             index === 0 ||
-            faq.department.name !== faqs.data.faqs[index - 1].department.name
+            faq.department.name !== faqsData[index - 1].department.name
           const shouldAbleToEdit =
             userData?.data.role === UserRole.ADMIN ||
             !!userData?.data.teacher?.teacherDepartments.find(
@@ -65,6 +80,7 @@ const Home = () => {
           )
         })}
       </div>
+      <div ref={ref} className="h-1" />
     </PageContainer>
   )
 }
