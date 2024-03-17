@@ -1,7 +1,7 @@
 import Button from '@/components/Button'
 import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
-import { Faq } from '@/modules/faq/types'
+import { Faq, SubFaq } from '@/modules/faq/types'
 import { Disclosure } from '@headlessui/react'
 import { useState } from 'react'
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa6'
@@ -9,8 +9,8 @@ import { HiTrash } from 'react-icons/hi'
 import { MdModeEditOutline } from 'react-icons/md'
 import { blue, white } from 'tailwindcss/colors'
 import tw from 'twin.macro'
-import CreateSubFaqModal from '../CreateSubFaqModal'
 import DeleteSubFaqModal from '../DeleteSubFaqModal'
+import SubFaqActionModal from '../SubFaqActionModal'
 import {
   SendChannelBgColorMapper,
   SendChannelTextColorMapper,
@@ -35,7 +35,26 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
   } = useDisclosure()
 
   const [actionFaqId, setActionFaqId] = useState<string | null>(null)
-  const [actionSubFaqId, setActionSubFaqId] = useState<string | null>(null)
+  const [actionSubFaq, setActionSubFaq] = useState<SubFaq | null>(null)
+  const [subFaqModalType, setSubFaqModalType] = useState<'CREATE' | 'UPDATE'>(
+    'CREATE'
+  )
+
+  const handleClickCreateSubFaq = () => {
+    setSubFaqModalType('CREATE')
+    createSubFaqOpen()
+  }
+
+  const handleClickUpdateSubFaq = (subFaq: SubFaq) => {
+    setSubFaqModalType('UPDATE')
+    setActionSubFaq(subFaq)
+    createSubFaqOpen()
+  }
+
+  const handleClickDeleteSubFaq = (subFaq: SubFaq) => {
+    setActionSubFaq(subFaq)
+    deleteSubFaqOpen()
+  }
 
   return (
     <>
@@ -114,10 +133,7 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
                     <Button
                       label="สร้างรายการ FAQ ย่อย"
                       variant="green"
-                      onClick={() => {
-                        createSubFaqOpen()
-                        setActionFaqId(faq.id)
-                      }}
+                      onClick={handleClickCreateSubFaq}
                     />
                     <div
                       css={[
@@ -137,17 +153,16 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
                                       <MdModeEditOutline
                                         size={25}
                                         className="cursor-pointer rounded-full bg-sky-500 p-1 text-white"
-                                        onClick={() => {
-                                          setActionSubFaqId(subFaq.id)
-                                        }}
+                                        onClick={() =>
+                                          handleClickUpdateSubFaq(subFaq)
+                                        }
                                       />
                                       <HiTrash
                                         size={25}
                                         className="cursor-pointer rounded-full bg-red-500 p-1 text-white"
-                                        onClick={() => {
-                                          setActionSubFaqId(subFaq.id)
-                                          deleteSubFaqOpen()
-                                        }}
+                                        onClick={() =>
+                                          handleClickDeleteSubFaq(subFaq)
+                                        }
                                       />
                                     </>
                                   )}
@@ -177,15 +192,17 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
           )}
         </Disclosure>
       </div>
-      <CreateSubFaqModal
+      <SubFaqActionModal
+        type={subFaqModalType}
         isOpen={createSubFaqIsOpen}
         onClose={createSubFaqClose}
         faqId={actionFaqId}
+        subFaq={actionSubFaq}
       />
       <DeleteSubFaqModal
         isOpen={deleteSubFaqIsOpen}
         onClose={deleteSubFaqClose}
-        subFaqId={actionSubFaqId}
+        subFaqId={actionSubFaq?.id || null}
       />
     </>
   )

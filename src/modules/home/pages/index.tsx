@@ -2,14 +2,17 @@ import PageContainer from '@/components/PageContainer'
 import TextInput from '@/components/TextInput'
 import FaqImage from '@/modules/Home/assets/faq-image.png'
 import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
+import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { useUserStore } from '@/stores/userStore'
 import { useState } from 'react'
 import { VscMortarBoard } from 'react-icons/vsc'
+import { UserRole } from 'types/user'
 import FaqAccordion from '../components/FaqAccordion'
 import GuestHomePage from './GuestHomePage'
 
 const Home = () => {
   const { isLogin } = useUserStore()
+  const { data: userData } = useGetUser()
 
   const [search, setSearch] = useState('')
 
@@ -33,6 +36,17 @@ const Home = () => {
           const shouldShowDepartment =
             index === 0 ||
             faq.department.name !== faqs.data.faqs[index - 1].department.name
+          const shouldAbleToEdit =
+            userData?.data.role === UserRole.ADMIN ||
+            !!userData?.data.teacher?.teacherDepartments.find(
+              (teacherDepartment) =>
+                teacherDepartment.departmentId === faq.department.id
+            ) ||
+            !!userData?.data.staff?.staffDepartments.find(
+              (staffDepartment) =>
+                staffDepartment.departmentId === faq.department.id
+            )
+
           return (
             <div key={faq.id} className="rounded-lg ">
               {shouldShowDepartment && (
@@ -46,7 +60,7 @@ const Home = () => {
                   </h1>
                 </div>
               )}
-              <FaqAccordion faq={faq} isEditable />
+              <FaqAccordion faq={faq} isEditable={shouldAbleToEdit} />
             </div>
           )
         })}

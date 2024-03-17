@@ -4,7 +4,9 @@ import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
 import useCreateSubFaq from '@/modules/faq/hooks/api/useCreateSubFaq'
 import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
-import { useState } from 'react'
+import useUpdateSubFaq from '@/modules/faq/hooks/api/useUpdateSubFaq'
+import { SubFaq } from '@/modules/faq/types'
+import { useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa6'
 import { toast } from 'react-toastify'
 
@@ -12,12 +14,25 @@ type PropsType = {
   isOpen: boolean
   onClose: () => void
   faqId: string | null
+  subFaq?: SubFaq | null
+  type: 'CREATE' | 'UPDATE'
 }
-const CreateSubFaqModal: React.FC<PropsType> = ({ isOpen, onClose, faqId }) => {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
+const SubFaqActionModal: React.FC<PropsType> = ({
+  isOpen,
+  onClose,
+  faqId,
+  type,
+  subFaq,
+}) => {
+  const [title, setTitle] = useState(
+    type === 'UPDATE' && subFaq ? subFaq.title : ''
+  )
+  const [description, setDescription] = useState(
+    type === 'UPDATE' && subFaq ? subFaq.description : ''
+  )
 
   const { mutate: createSubFaq } = useCreateSubFaq()
+  const { mutate: updateSubFaq } = useUpdateSubFaq()
   const { refetch: refetchFaq } = useGetPublicFaqs(1)
 
   const onCreateSubFaq = () => {
@@ -38,6 +53,39 @@ const CreateSubFaqModal: React.FC<PropsType> = ({ isOpen, onClose, faqId }) => {
     )
   }
 
+  const onUpdateSubFaq = () => {
+    if (!subFaq?.id) return console.error('subFaqId is required')
+    updateSubFaq(
+      { id: subFaq.id, title, description },
+      {
+        onSuccess: () => {
+          toast.success('แก้ไขรายการ FAQ สำเร็จ')
+          refetchFaq()
+          onClose()
+        },
+        onError: (error) => {
+          toast.error(`แก้ไขรายการ FAQ ไม่สำเร็จ ${error}`)
+          onClose()
+        },
+      }
+    )
+  }
+
+  const handleAction = () => {
+    if (type === 'CREATE') {
+      onCreateSubFaq()
+    } else {
+      onUpdateSubFaq()
+    }
+  }
+
+  useEffect(() => {
+    if (type === 'UPDATE' && subFaq) {
+      setTitle(subFaq.title)
+      setDescription(subFaq.description)
+    }
+  }, [subFaq, type])
+
   return (
     <Modal
       width="800px"
@@ -47,7 +95,7 @@ const CreateSubFaqModal: React.FC<PropsType> = ({ isOpen, onClose, faqId }) => {
             size={24}
             className="rounded-full bg-green-500 p-1 text-white"
           />
-          เพิ่มรายการ FAQ
+          {type === 'CREATE' ? 'สร้างรายการ FAQ ย่อย' : 'แก้ไขรายการ FAQ ย่อย'}
         </span>
       }
       content={
@@ -70,9 +118,9 @@ const CreateSubFaqModal: React.FC<PropsType> = ({ isOpen, onClose, faqId }) => {
         <div className="space-x-2">
           <Button label="ยกเลิก" onClick={onClose} variant="white" />
           <Button
-            label="สร้าง FAQ"
+            label={type === 'CREATE' ? 'สร้าง' : 'แก้ไข'}
             disabled={!title || !description}
-            onClick={onCreateSubFaq}
+            onClick={handleAction}
           />
         </div>
       }
@@ -82,4 +130,4 @@ const CreateSubFaqModal: React.FC<PropsType> = ({ isOpen, onClose, faqId }) => {
   )
 }
 
-export default CreateSubFaqModal
+export default SubFaqActionModal

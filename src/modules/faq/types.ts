@@ -29,7 +29,7 @@ export type Faq = {
   titleTh: string
   extraContact: object
   files: string[]
-  subFaqs: SubFaqs[]
+  subFaqs: SubFaq[]
   faqTags: FaqTags[]
   department: Department
   userUpdated: UserUpdated
@@ -43,7 +43,7 @@ export type UserUpdated = {
   profileImg: string
 }
 
-export type SubFaqs = {
+export type SubFaq = {
   id: string
   faqId: string
   title: string
