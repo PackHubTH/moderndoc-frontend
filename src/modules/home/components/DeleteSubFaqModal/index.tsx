@@ -16,7 +16,7 @@ const DeleteSubFaqModal: React.FC<PropsType> = ({
   subFaqId,
 }) => {
   const { mutate: deleteSubFaq } = useDeleteSubFaq()
-  const { refetch: refetchFaqs } = useGetPublicFaqs(1)
+  const { refetch: refetchFaqs } = useGetPublicFaqs()
 
   const onDeleteSubFaq = () => {
     if (!subFaqId) return console.error('subFaqId is required')

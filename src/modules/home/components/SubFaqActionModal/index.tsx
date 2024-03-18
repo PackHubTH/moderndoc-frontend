@@ -33,7 +33,7 @@ const SubFaqActionModal: React.FC<PropsType> = ({
 
   const { mutate: createSubFaq } = useCreateSubFaq()
   const { mutate: updateSubFaq } = useUpdateSubFaq()
-  const { refetch: refetchFaq } = useGetPublicFaqs(1)
+  const { refetch: refetchFaq } = useGetPublicFaqs()
 
   const onCreateSubFaq = () => {
     if (!faqId) return console.error('faqId is required')

@@ -20,7 +20,6 @@ const Home = () => {
   if (!isLogin) return <GuestHomePage />
 
   const { data: faqs, fetchNextPage, hasNextPage } = useGetPublicFaqs()
-  console.log('🚀 ~ Home ~ faqs:', faqs)
 
   const faqsData = faqs?.pages.map((page) => page.data.faqs).flat()
 
@@ -29,7 +28,6 @@ const Home = () => {
   })
 
   useEffect(() => {
-    console.log('fetchNextPage', inView, hasNextPage)
     if (inView && hasNextPage) {
       fetchNextPage()
     }

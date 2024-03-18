@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { HiTrash } from 'react-icons/hi'
 import { MdModeEditOutline, MdRemoveRedEye } from 'react-icons/md'
 import useGetDepartmentFaqs from '../../hooks/api/useGetDepartmentFaqs'
@@ -21,7 +21,7 @@ const FaqListTable = () => {
     pageSize: 10,
   })
 
-  const { data: faqs, isFetching } = useGetDepartmentFaqs(
+  const { data: faqs, refetch } = useGetDepartmentFaqs(
     paginationState.pageIndex + 1
   )
 
@@ -93,23 +93,27 @@ const FaqListTable = () => {
 
   const table = useReactTable({
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getCoreRowModel(),
-    onPaginationChange: (paginationState) =>
-      setPaginationState(paginationState),
-    state: {
-      pagination: paginationState,
-    },
     data: faqs?.data.faqs ?? [],
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    pageCount: faqs?.data.totalPages ?? -1,
   })
+
+  useEffect(() => {
+    setPaginationState({
+      pageIndex: table.getState().pagination.pageIndex,
+      pageSize: table.getState().pagination.pageSize,
+    })
+  }, [table.getState().pagination.pageIndex])
 
   return (
     <div className="p-2">
       <TableDisplay table={table} />
       <Pagination
-        paginationState={paginationState}
-        setPaginationState={setPaginationState}
         totalPage={faqs?.data.totalPages ?? 0}
+        currentPage={table.getState().pagination.pageIndex + 1}
+        nextPage={table.nextPage}
+        prevPage={table.previousPage}
       />
     </div>
   )
