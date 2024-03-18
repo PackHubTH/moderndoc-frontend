@@ -60,13 +60,6 @@ const Home = () => {
               (staffDepartment) =>
                 staffDepartment.departmentId === faq.department.id
             )
-          console.log(
-            '🚀 ~ {faqsData?.map ~ userData:',
-            userData?.data.teacher,
-            userData?.data?.staff,
-            faq.departmentId,
-            shouldAbleToEdit
-          )
 
           return (
             <div key={faq.id} className="rounded-lg ">

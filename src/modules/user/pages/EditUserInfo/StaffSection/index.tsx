@@ -54,7 +54,7 @@ const StaffSection = () => {
     if (defaultDepartmentId) {
       methods.setValue('departmentId', defaultDepartmentId)
     }
-  }, [defaultDepartmentId])
+  }, [departmentData])
 
   return (
     <div className="mt-5 flex flex-col gap-5">
