@@ -49,6 +49,7 @@ const Home = () => {
           const shouldShowDepartment =
             index === 0 ||
             faq.department.name !== faqsData[index - 1].department.name
+
           const shouldAbleToEdit =
             userData?.data.role === UserRole.ADMIN ||
             !!userData?.data.teacher?.teacherDepartments.find(
@@ -59,6 +60,13 @@ const Home = () => {
               (staffDepartment) =>
                 staffDepartment.departmentId === faq.department.id
             )
+          console.log(
+            '🚀 ~ {faqsData?.map ~ userData:',
+            userData?.data.teacher,
+            userData?.data?.staff,
+            faq.departmentId,
+            shouldAbleToEdit
+          )
 
           return (
             <div key={faq.id} className="rounded-lg ">

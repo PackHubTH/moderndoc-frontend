@@ -40,8 +40,9 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
     'CREATE'
   )
 
-  const handleClickCreateSubFaq = () => {
+  const handleClickCreateSubFaq = (faqId: string) => {
     setSubFaqModalType('CREATE')
+    setActionFaqId(faqId)
     createSubFaqOpen()
   }
 
@@ -130,11 +131,13 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
                     <h3 className="font-semibold text-blue-500">
                       รายการคำถามที่เกี่ยวข้อง
                     </h3>
-                    <Button
-                      label="สร้างรายการ FAQ ย่อย"
-                      variant="green"
-                      onClick={handleClickCreateSubFaq}
-                    />
+                    {isEditable && (
+                      <Button
+                        label="สร้างรายการ FAQ ย่อย"
+                        variant="green"
+                        onClick={() => handleClickCreateSubFaq(faq.id)}
+                      />
+                    )}
                     <div
                       css={[
                         tw`rounded-xl border`,
