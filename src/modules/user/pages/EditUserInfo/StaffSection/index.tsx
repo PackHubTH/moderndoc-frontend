@@ -51,10 +51,10 @@ const StaffSection = () => {
   }, [departmentData])
 
   useEffect(() => {
-    if (departments?.data) {
-      methods.setValue('departmentId', departments.data[0].id)
+    if (defaultDepartmentId) {
+      methods.setValue('departmentId', defaultDepartmentId)
     }
-  }, [departmentType, departments])
+  }, [departmentData])
 
   return (
     <div className="mt-5 flex flex-col gap-5">

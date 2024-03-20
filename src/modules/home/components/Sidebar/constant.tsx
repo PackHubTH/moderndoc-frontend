@@ -42,6 +42,6 @@ export const SIDE_BAR_MENUS = [
   {
     name: 'จัดการรายการ FAQ',
     icon: <IoChatboxEllipsesOutline />,
-    link: null,
+    link: '/faq-management',
   },
 ]

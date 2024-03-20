@@ -22,6 +22,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <AppRoute />
         <ToastContainer position="bottom-center" />
       </QueryClientProvider>
-    </React.StrictMode>
+    </React.StrictMode>w
   </GoogleOAuthProvider>
 )
