@@ -1,4 +1,4 @@
-import { Document, Page } from 'react-pdf'
+import { useRef, useState } from 'react'
 import {
   FaAlignJustify,
   FaAlignLeft,
@@ -10,38 +10,38 @@ import {
   FaMousePointer,
   FaPenFancy,
 } from 'react-icons/fa'
+import { Document, Page } from 'react-pdf'
 import {
   saveCanvas,
   setTextAlign,
   setTextBold,
   setTextItalic,
 } from '../utils/documentEditorUtils'
-import { useRef, useState } from 'react'
 
+import exampleFile from '@/assets/FO-TO-44.pdf'
 import Button from '@/components/Button'
-import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
-import { DnDItem } from '../types/DocumentField'
+import Dropdown from '@/components/Dropdown'
+import Modal from '@/components/Modal'
+import { useDisclosure } from '@/hooks/useDisclosure'
+import { PDFDocument } from 'pdf-lib'
+import { useDrop } from 'react-dnd'
+import { FaA } from 'react-icons/fa6'
+import { IoEyeOutline } from 'react-icons/io5'
+import { MdOutlineDeleteForever } from 'react-icons/md'
+import { useNavigate } from 'react-router-dom'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
 import DocumentToolbar from '../components/DocumentToolbar'
 import DraggableBox from '../components/DraggableBox'
-import Dropdown from '@/components/Dropdown'
-import { FaA } from 'react-icons/fa6'
 import FinalizeModalContent from '../components/FinalizeModalContent'
 import GuidelineModalContent from '../components/GuidelineModalContent'
-import { IoEyeOutline } from 'react-icons/io5'
-import { MdOutlineDeleteForever } from 'react-icons/md'
-import Modal from '@/components/Modal'
-import { PDFDocument } from 'pdf-lib'
 import ProcessModalContent from '../components/ProcessModalContent'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
-import exampleFile from '@/assets/example.pdf'
-import { useDisclosure } from '@/hooks/useDisclosure'
 import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
-import { useDrop } from 'react-dnd'
-import { useNavigate } from 'react-router-dom'
+import { DnDItem } from '../types/DocumentField'
+import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 
 const DocumentEditor = () => {
   const navigate = useNavigate()
@@ -74,6 +74,7 @@ const DocumentEditor = () => {
   )
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    console.log('numPages', numPages)
     setPageTotal(numPages)
   }
 
@@ -148,6 +149,7 @@ const DocumentEditor = () => {
   // const pdfDoc = PDFDocument.load(existingPdfBytes)
   // console.log('pdfDoc', pdfDoc)
   console.log('documentEditor', activeObject)
+  console.log('documentEditor', activeCanvasId)
   return (
     <div>
       {/* Header */}
@@ -348,6 +350,7 @@ const DocumentEditor = () => {
               // renderMode="svg"
               onLoadSuccess={onDocumentLoadSuccess}
             >
+              {/* TODO: fix bug 1 page */}
               {Array.apply(null, Array(pageTotal))
                 .map((x, i) => i + 1)
                 .map((page) => {
@@ -412,5 +415,4 @@ const DocumentEditor = () => {
     </div>
   )
 }
-
 export default DocumentEditor

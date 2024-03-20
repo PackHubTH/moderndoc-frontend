@@ -1,8 +1,8 @@
 import * as Fabric from 'fabric'
 
-import { ActiveToolbarButton } from '../types/ToolbarButton'
-import { CanvasProps } from '../types/DocumentField'
 import { PDFDocument } from 'pdf-lib'
+import { CanvasProps } from '../types/DocumentField'
+import { ActiveToolbarButton } from '../types/ToolbarButton'
 
 const _json = {
   version: '6.0.0-beta9',
@@ -144,7 +144,6 @@ const addField = (
     fill: 'rgb(255, 0, 0)',
     width: 200,
     minWidth: 20,
-    borderColor: 'red',
   })
 
   canvas.add(fabricText)
@@ -167,13 +166,16 @@ const addField = (
   setActiveButton(ActiveToolbarButton.Default)
 }
 
-const deleteField = (canvas: Fabric.Canvas) => {
-  console.log('deleteField')
+const deleteField = (
+  canvas: Fabric.Canvas,
+  setActiveButton: (button: ActiveToolbarButton) => void
+) => {
   const activeObject = canvas.getActiveObject()
+  console.log('deleteField', activeObject)
   if (activeObject) {
-    console.log('activeObject', activeObject)
     canvas.remove(activeObject)
     canvas.renderAll()
+    setActiveButton(ActiveToolbarButton.Default)
   }
 }
 
@@ -230,7 +232,7 @@ const mouseHandler = (
       break
     case ActiveToolbarButton.Delete:
       console.log('delete')
-      deleteField(canvas)
+      deleteField(canvas, setActiveButton)
       break
     case ActiveToolbarButton.Correct:
       console.log('correct')
@@ -297,6 +299,9 @@ const saveCanvas = async (canvasList: CanvasProps[], file: any) => {
         x: obj.left,
         y: pages[i].getHeight() - obj.top,
         size: obj.fontSize,
+        maxWidth: obj.width,
+        lineHeight: 16,
+        // font: 'Times New Roman',
         // color: obj.fill as Color,
       })
     })
@@ -311,7 +316,7 @@ const saveCanvas = async (canvasList: CanvasProps[], file: any) => {
   const link = document.createElement('a')
   link.href = window.URL.createObjectURL(blob)
   link.download = 'modified_document.pdf'
-  // link.click()
+  link.click()
 }
 
 const setTextAlign = (
