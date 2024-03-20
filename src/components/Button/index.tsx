@@ -60,13 +60,19 @@ const Button: React.FC<PropsType> = ({
       bgColor: colors.gray[500],
       hoverBgColor: colors.gray[600],
     },
+    white: {
+      color: colors.gray[600],
+      bgColor: colors.white,
+      hoverBgColor: colors.gray[100],
+      borderColor: colors.gray[300],
+    },
   }
 
   return (
     <button
       type={type ?? 'button'}
       css={[
-        tw`disabled:(pointer-events-none opacity-50) inline-flex items-center gap-x-2 rounded-2xl border border-transparent px-6 py-2 text-center text-sm font-semibold`,
+        tw`disabled:(pointer-events-none opacity-50) inline-flex items-center gap-x-2 rounded-3xl border border-transparent px-5 py-2 text-center text-sm shadow-md`,
         {
           backgroundColor:
             backgroundColor ?? BUTTON_STYLES[colorVariant].bgColor,

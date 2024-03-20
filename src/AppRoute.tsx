@@ -1,7 +1,9 @@
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
-import Home from './modules/home/pages'
-import Document from './modules/document/pages'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
 import { pdfjs } from 'react-pdf'
+import Document from './modules/document/pages'
+import FaqManagementPage from './modules/faq/pages/FaqManagementPage'
+import Home from './modules/home/pages'
 import TestPage from './modules/home/pages/TestPage'
 import CreateProfilePage from './modules/user/pages/CreateProfilePage'
 import EditUserInfo from './modules/user/pages/EditUserInfo'
@@ -22,6 +24,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/create-profile" element={<CreateProfilePage />} />
         <Route path="/edit-user" element={<EditUserInfo />} />
+        <Route path="/faq-management" element={<FaqManagementPage />} />
       </Routes>
     </BrowserRouter>
   )

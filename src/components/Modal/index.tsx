@@ -1,5 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react'
 import React, { Fragment } from 'react'
+
 import { IoClose } from 'react-icons/io5'
 import tw from 'twin.macro'
 import { VariantType } from './types'
@@ -7,7 +8,7 @@ import { VariantType } from './types'
 type PropsType = {
   content: React.ReactNode | string
   isOpen: boolean
-  title: string
+  title: React.ReactNode | string
   onClose: () => void
   actions?: React.ReactNode
   leftIcon?: React.ReactNode
@@ -22,8 +23,8 @@ const Modal: React.FC<PropsType> = ({
   onClose,
   actions,
   leftIcon,
+  width,
   variant = 'default',
-  width = 'fit',
 }) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -53,9 +54,9 @@ const Modal: React.FC<PropsType> = ({
             >
               <Dialog.Panel
                 css={[
-                  tw`relative w-full max-w-[531px] transform rounded-2xl bg-white text-left align-middle shadow-xl transition-all`,
+                  tw`relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all`,
+                  width && { width, maxWidth: width },
                 ]}
-                style={{ maxWidth: width === 'fit' ? 'fit-content' : width }}
               >
                 <IoClose
                   size="24px"

@@ -3,7 +3,7 @@ import { PatternFormat } from 'react-number-format'
 import tw from 'twin.macro'
 
 type PropsType = {
-  label: string
+  label?: string
   value?: string
   onChange?: (value: string) => void
   type?: HTMLInputTypeAttribute
@@ -25,12 +25,14 @@ const TextInput: React.FC<PropsType> = ({
 }) => {
   return (
     <div className={className}>
-      <label
-        htmlFor={label}
-        className="mb-2 block text-sm font-medium text-gray-800"
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          htmlFor={label}
+          className="mb-2 block text-sm font-medium text-gray-800"
+        >
+          {label}
+        </label>
+      )}
       {patternFormat ? (
         <PatternFormat
           id={label}

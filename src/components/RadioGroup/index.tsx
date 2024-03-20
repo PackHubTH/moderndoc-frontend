@@ -1,11 +1,11 @@
 type PropsType = {
   label: string
   options: {
-    value: string
+    value: any
     label: string
   }[]
-  value?: string
-  onChange?: (value: string) => void
+  value?: any
+  onChange?: (value: any) => void
   className?: string
 }
 

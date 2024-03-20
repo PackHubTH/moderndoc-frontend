@@ -5,6 +5,7 @@ import Modal from '@/components/Modal'
 import RadioGroup from '@/components/RadioGroup'
 import Select from '@/components/Select'
 import Tabs from '@/components/Tabs'
+import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import { RiEyeCloseFill } from 'react-icons/ri'
 
@@ -58,6 +59,7 @@ const TestPage = () => {
           },
         ]}
       />
+      <Tag name="Tag" />
       <Tabs
         tabs={[
           { title: 'Tab 1', content: <div>Tab 1</div> },
