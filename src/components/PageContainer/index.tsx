@@ -1,6 +1,5 @@
-import Sidebar from '@/modules/Home/components/Sidebar'
+import Sidebar from '@/modules/home/components/Sidebar'
 import Navbar from '@/modules/navbar/pages'
-import { useUserStore } from '@/stores/userStore'
 import tw from 'twin.macro'
 
 type PropsType = {
@@ -19,7 +18,8 @@ const PageContainer: React.FC<PropsType> = ({
   showNavbar = true,
   className,
 }) => {
-  const { isLogin } = useUserStore()
+  const isLogin = true
+  // const { isLogin } = useUserStore()
 
   const isShowSidebar = showSidebar && isLogin
 
