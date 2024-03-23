@@ -1,12 +1,19 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
-import FaqManagementPage from './modules/faq/pages/FaqManagementPage'
-import Home from './modules/home/pages'
-import TestPage from './modules/home/pages/TestPage'
-import TemplateManagementPage from './modules/template/pages/TemplateManagementPage'
 import CreateProfilePage from './modules/user/pages/CreateProfilePage'
 import EditUserInfo from './modules/user/pages/EditUserInfo'
+import FaqManagementPage from './modules/faq/pages/FaqManagementPage'
+import Home from './modules/home/pages'
 import Login from './modules/user/pages/Login'
+import TemplateEditor from './modules/template/pages/TemplateEditor'
+import TemplateManagementPage from './modules/template/pages/TemplateManagementPage'
+import TestPage from './modules/home/pages/TestPage'
+import { pdfjs } from 'react-pdf'
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url
+).toString()
 
 function App() {
   return (
@@ -21,6 +28,10 @@ function App() {
         <Route
           path="/template-management"
           element={<TemplateManagementPage />}
+        />
+        <Route
+          path="/edit-template"
+          element={<TemplateEditor type="create" />}
         />
       </Routes>
     </BrowserRouter>
