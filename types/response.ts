@@ -3,3 +3,8 @@ export type ApiResponse<T> = {
   error?: unknown
   message?: string
 }
+
+export type UploadFileResponse = {
+  fileUrl: string
+  accessUrl: string
+}

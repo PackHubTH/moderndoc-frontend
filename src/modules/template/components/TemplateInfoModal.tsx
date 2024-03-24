@@ -2,6 +2,7 @@ import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
+import useUploadFile from '@/hooks/useUploadFile'
 import { useEffect } from 'react'
 import { Controller } from 'react-hook-form'
 import { FaEdit } from 'react-icons/fa'
@@ -14,12 +15,18 @@ import { CreateTemplateForm } from '../hooks/useCreateTemplateForm/validation'
 
 interface TemplateInfoModalProps {
   isOpen: boolean
+  templateFile: File | null
   close: () => void
 }
 
-const TemplateInfoModal = ({ isOpen, close }: TemplateInfoModalProps) => {
+const TemplateInfoModal = ({
+  isOpen,
+  templateFile,
+  close,
+}: TemplateInfoModalProps) => {
   const { methods } = useCreateTemplateForm()
   const { mutate: createTemplate, isSuccess } = useCreateTemplate()
+  const { mutateAsync: uploadFile } = useUploadFile()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -28,26 +35,49 @@ const TemplateInfoModal = ({ isOpen, close }: TemplateInfoModalProps) => {
     }
   }, [isOpen])
 
-  const onSubmit = (data: CreateTemplateForm) => {
+  const onSubmit = async (data: CreateTemplateForm) => {
     console.log('submit', data)
-    createTemplate(
-      {
-        title: data.title,
-        exampleFile: 'https://www.google.com',
-        templateFile: 'https://www.google.com',
-      },
-      {
-        onSuccess: () => {
-          console.log('success')
-          toast('สร้าง Template สำเร็จ', { type: 'success' })
-          setTimeout(() => navigate('/template-management'), 2000)
-        },
-        onError: (error) => {
-          console.log('error', error)
-          toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
-        },
+    try {
+      let uploadTemplateRes = null
+      let uploadExampleRes = null
+      if (templateFile)
+        uploadTemplateRes = uploadFile({
+          file: templateFile,
+          folder: 'template',
+        })
+      if (data.exampleFile)
+        uploadExampleRes = uploadFile({
+          file: data.exampleFile,
+          folder: 'template',
+        })
+      const response = await Promise.all([uploadTemplateRes, uploadExampleRes])
+
+      if (response[0]?.data?.fileUrl)
+        createTemplate(
+          {
+            title: data.title,
+            description: data.description,
+            exampleFile: response[1]?.data?.fileUrl ?? undefined,
+            templateFile: response[0]?.data?.fileUrl,
+          },
+          {
+            onSuccess: () => {
+              toast('สร้าง Template สำเร็จ', { type: 'success' })
+              // setTimeout(() => navigate('/template-management'), 2000)
+            },
+            onError: (error) => {
+              toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+                type: 'error',
+              })
+            },
+          }
+        )
+      else {
+        toast('เกิดข้อผิดพลาดในการอัพโหลดไฟล์', { type: 'error' })
       }
-    )
+    } catch (error) {
+      toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
+    }
   }
 
   return (

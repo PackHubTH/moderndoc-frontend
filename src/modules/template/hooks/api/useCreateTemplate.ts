@@ -1,9 +1,11 @@
+import moderndocApi from '@/moderndocApi'
 import { useMutation } from '@tanstack/react-query'
+import { ApiResponse } from 'types/response'
 
 type Params = {
   title: string
-  // description: string
-  exampleFile: string
+  description: string
+  exampleFile?: string
   // receiver: string[]
   // receiverGroup: string
   templateFile: string
@@ -12,11 +14,10 @@ type Params = {
 
 const useCreateTemplate = () => {
   const context = useMutation(['create-template'], async (data: Params) => {
-    // const response = await moderndocApi.post<ApiResponse<unknown | null>>(
-    //   '/template',
-    //   data
-    // )
-    const response = { data: { test: 'test' } }
+    const response = await moderndocApi.post<ApiResponse<unknown | null>>(
+      '/template',
+      data
+    )
     return response.data
   })
 

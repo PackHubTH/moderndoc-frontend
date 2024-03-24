@@ -28,7 +28,11 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
     <div>
       {/* Header */}
       <div className="flex h-20 items-center justify-between border-b-2 p-5">
-        <TemplateInfoModal isOpen={isOpen} close={close} />
+        <TemplateInfoModal
+          isOpen={isOpen}
+          templateFile={templateFile}
+          close={close}
+        />
         <div className="flex items-center gap-8">
           <MainLogo />
           <h1 className="text-xl font-bold text-gray-600">
