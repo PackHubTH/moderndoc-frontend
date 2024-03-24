@@ -1,12 +1,17 @@
+import { CreateTemplateForm, CreateTemplateFormValidation } from './validation'
+
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
-// import { CreateFaqForm, CreateFaqFormValidation } from './validation'
-
 const useCreateTemplateForm = () => {
-  const methods = useForm<any>({
-    // resolver: zodResolver(),
+  const methods = useForm<CreateTemplateForm>({
+    resolver: zodResolver(CreateTemplateFormValidation),
     defaultValues: {
-      tagIds: [],
+      title: '',
+      receiverGroup: '',
+      receiver: [],
+      description: '',
+      exampleFile: undefined,
     },
     reValidateMode: 'onChange',
   })
