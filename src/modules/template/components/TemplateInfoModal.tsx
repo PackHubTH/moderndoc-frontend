@@ -1,9 +1,12 @@
+import { useEffect, useMemo } from 'react'
+
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import RichTextInput from '@/components/RichTextInput'
+import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
 import useUploadFile from '@/hooks/useUploadFile'
-import { useEffect } from 'react'
+import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
 import { Controller } from 'react-hook-form'
 import { FaEdit } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
@@ -26,6 +29,7 @@ const TemplateInfoModal = ({
 }: TemplateInfoModalProps) => {
   const { methods } = useCreateTemplateForm()
   const { mutate: createTemplate, isSuccess } = useCreateTemplate()
+  const { data } = useGetDepartments()
   const { mutateAsync: uploadFile } = useUploadFile()
   const navigate = useNavigate()
 
@@ -63,7 +67,7 @@ const TemplateInfoModal = ({
           {
             onSuccess: () => {
               toast('สร้าง Template สำเร็จ', { type: 'success' })
-              // setTimeout(() => navigate('/template-management'), 2000)
+              setTimeout(() => navigate('/template-management'), 2000)
             },
             onError: (error) => {
               toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
@@ -79,6 +83,14 @@ const TemplateInfoModal = ({
       toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
     }
   }
+
+  const departments = useMemo(() => {
+    if (data) {
+      return [{ id: '', name: 'เจ้าหน้าที่ประจำภาควิชา' }, ...data?.data]
+    }
+  }, [data])
+
+  console.log('departments', departments)
 
   return (
     <Modal
@@ -110,7 +122,7 @@ const TemplateInfoModal = ({
               />
             )}
           />
-          <Controller
+          {/* <Controller
             control={methods.control}
             name="receiverGroup"
             render={({ field }) => (
@@ -120,18 +132,25 @@ const TemplateInfoModal = ({
                 {...field}
               />
             )}
-          />
-          {/* <Controller
+          /> */}
+          <Controller
             control={methods.control}
-            name="receiver"
-            render={({ field }) => (
-              <TextInput
-                label="กำหนดรายชื่อผู้รับผิดชอบดำเนินการเอกสาร (ถ้ามี)"
-                placeholder="เลือกรายชื่อ"
-                {...field}
+            name="receiverGroup"
+            render={({ field: { onChange, value } }) => (
+              <Select
+                // className="w-1/3"
+                label="กำหนดกลุ่มผู้ดำเนินการเอกสาร"
+                onChange={onChange}
+                value={value}
+                options={
+                  departments?.map((department) => ({
+                    label: department.name,
+                    value: department.id,
+                  })) ?? []
+                }
               />
             )}
-          /> */}
+          />
           <Controller
             control={methods.control}
             name="description"
