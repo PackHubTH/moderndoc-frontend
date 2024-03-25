@@ -1,7 +1,7 @@
 import { Faq } from '../types'
 
 export type GetFaqsListResponse = {
-  faqs: Faq[]
+  data: Faq[]
   totalPages: number
-  totalFaqsCount: number
+  total: number
 }

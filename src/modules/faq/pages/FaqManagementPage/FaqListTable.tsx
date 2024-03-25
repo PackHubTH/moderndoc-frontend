@@ -1,17 +1,18 @@
-import TableDisplay from '@/components/TableDisplay'
-import Pagination from '@/components/TableDisplay/Pagination'
-import Tag from '@/components/Tag'
 import {
   ColumnDef,
   PaginationState,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useEffect, useState } from 'react'
+import { MdModeEditOutline, MdRemoveRedEye } from 'react-icons/md'
+
+import TableDisplay from '@/components/TableDisplay'
+import Pagination from '@/components/TableDisplay/Pagination'
+import Tag from '@/components/Tag'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
-import { useEffect, useState } from 'react'
 import { HiTrash } from 'react-icons/hi'
-import { MdModeEditOutline, MdRemoveRedEye } from 'react-icons/md'
 import useGetDepartmentFaqs from '../../hooks/api/useGetDepartmentFaqs'
 import { Faq } from '../../types'
 
@@ -37,7 +38,7 @@ const FaqListTable = () => {
     {
       id: 'tags',
       size: 60,
-      header: `ทั้งหมด ${faqs?.data.totalFaqsCount} ข้อมูล`,
+      header: `ทั้งหมด ${faqs?.data.total} ข้อมูล`,
       cell: (info) => (
         <div className="space-y-1">
           {info.row.original.faqTags.map((tag) => (
@@ -93,7 +94,7 @@ const FaqListTable = () => {
 
   const table = useReactTable({
     columns,
-    data: faqs?.data.faqs ?? [],
+    data: faqs?.data.data ?? [],
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     pageCount: faqs?.data.totalPages ?? -1,
