@@ -37,7 +37,7 @@ export const SIDE_BAR_MENUS = [
   {
     name: 'จัดการหน่วยงาน',
     icon: <IoGlobeOutline />,
-    link: null,
+    link: '/department-management',
   },
   {
     name: 'จัดการรายการ FAQ',

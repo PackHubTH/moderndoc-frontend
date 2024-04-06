@@ -1,6 +1,6 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-
 import { pdfjs } from 'react-pdf'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import DepartmentManagementPage from './modules/department/pages/DepartmentManagementPage'
 import Document from './modules/document/pages'
 import FaqManagementPage from './modules/faq/pages/FaqManagementPage'
 import Home from './modules/home/pages'
@@ -31,6 +31,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/create-profile" element={<CreateProfilePage />} />
         <Route path="/edit-user" element={<EditUserInfo />} />
+        <Route
+          path="/department-management"
+          element={<DepartmentManagementPage />}
+        />
         <Route path="/faq-management" element={<FaqManagementPage />} />
         <Route
           path="/template-management"
