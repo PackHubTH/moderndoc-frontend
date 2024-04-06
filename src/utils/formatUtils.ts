@@ -1,4 +1,4 @@
-export const formatPhoneNumbers = (phones: string) => {
+export const formatPhoneNumber = (phones: string) => {
   return phones
     .split(',')
     .map((phone) => {

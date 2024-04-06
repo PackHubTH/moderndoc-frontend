@@ -29,10 +29,24 @@ const DepartmentManagementPage = () => {
       <Tabs
         tabs={[
           {
-            content: <DepartmentMembersList />,
+            content: (
+              <DepartmentMembersList
+                isApproved
+                facultyName={departmentData.data.faculty.name}
+                departmentName={departmentData.data.name}
+              />
+            ),
             title: 'สังกัด/หน่วยงานของฉัน',
           },
-          { content: 'รอการตอบรับ', title: 'รอการตอบรับ' },
+          {
+            content: (
+              <DepartmentMembersList
+                facultyName={departmentData.data.faculty.name}
+                departmentName={departmentData.data.name}
+              />
+            ),
+            title: 'รอการตอบรับ',
+          },
         ]}
       />
     </PageContainer>
