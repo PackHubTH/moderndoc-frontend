@@ -2,6 +2,7 @@ import Button from '@/components/Button'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import ApproveMemberModal from '@/modules/department/components/ApproveMemberModal'
 import UserInfoModal from '@/modules/department/components/UserInfoModal'
 import { GetDepartmentMemberResponse } from '@/modules/department/hooks/api/types'
 import useGetDepartmentMembers from '@/modules/department/hooks/api/useGetDepartmentMembers'
@@ -20,6 +21,7 @@ import { BiTransfer } from 'react-icons/bi'
 import { FaEye } from 'react-icons/fa6'
 import { MdCancel, MdCheckCircle } from 'react-icons/md'
 import { green, red, white } from 'tailwindcss/colors'
+import { UserRole } from 'types/user'
 
 type PropsType = {
   facultyName: string
@@ -37,8 +39,22 @@ const DepartmentMembersList: React.FC<PropsType> = ({
     pageSize: 10,
   })
 
-  const { data: members, refetch } = useGetDepartmentMembers(isApproved)
-  const { isOpen, close, open } = useDisclosure()
+  const [approveMemberModalData, setApproveMemberModalData] = useState<{
+    userId: string
+    isApproved: boolean
+  } | null>(null)
+
+  const { data: members } = useGetDepartmentMembers(isApproved)
+  const {
+    isOpen: isOpenUserInfo,
+    close: closeUserInfo,
+    open: openUserInfo,
+  } = useDisclosure()
+  const {
+    isOpen: isOpenApproveMember,
+    close: closeApproveMember,
+    open: openApproveMember,
+  } = useDisclosure()
 
   const [userData, setUserData] = useState<GetDepartmentMemberResponse | null>(
     null
@@ -73,7 +89,15 @@ const DepartmentMembersList: React.FC<PropsType> = ({
     },
     {
       header: `รหัสประจำตัว`,
-      cell: (info) => <div className="w-28 space-y-1">รหัสประจำตัว</div>,
+      cell: (info) => (
+        <div className="w-28 space-y-1">
+          {info.row.original.role === UserRole.STUDENT
+            ? info.row.original.student!.studentNumber
+            : info.row.original.role === UserRole.TEACHER
+            ? info.row.original.teacher!.staffNumber
+            : info.row.original.staff!.staffNumber}
+        </div>
+      ),
     },
     {
       header: `เบอร์โทรศัพท์`,
@@ -124,7 +148,7 @@ const DepartmentMembersList: React.FC<PropsType> = ({
           className="w-14 cursor-pointer "
           onClick={() => {
             setUserData(info.row.original)
-            open()
+            openUserInfo()
           }}
         >
           <FaEye />
@@ -141,8 +165,26 @@ const DepartmentMembersList: React.FC<PropsType> = ({
             className="cursor-pointer"
             size={24}
             color={green[500]}
+            onClick={() => {
+              setApproveMemberModalData({
+                userId: info.row.original.id,
+                isApproved: true,
+              })
+              openApproveMember()
+            }}
           />
-          <MdCancel className="cursor-pointer " size={24} color={red[500]} />
+          <MdCancel
+            className="cursor-pointer "
+            size={24}
+            color={red[500]}
+            onClick={() => {
+              setApproveMemberModalData({
+                userId: info.row.original.id,
+                isApproved: false,
+              })
+              openApproveMember()
+            }}
+          />
         </div>
       ),
     },
@@ -196,10 +238,16 @@ const DepartmentMembersList: React.FC<PropsType> = ({
         />
       </div>
       <UserInfoModal
-        isOpen={isOpen}
-        onClose={close}
+        isOpen={isOpenUserInfo}
+        onClose={closeUserInfo}
         userData={userData}
         departmentName={facultyName}
+      />
+      <ApproveMemberModal
+        isOpen={isOpenApproveMember}
+        onClose={closeApproveMember}
+        userId={approveMemberModalData?.userId}
+        isApproved={approveMemberModalData?.isApproved}
       />
     </>
   )

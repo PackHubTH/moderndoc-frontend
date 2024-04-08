@@ -13,4 +13,13 @@ export type GetDepartmentMemberResponse = {
   createdAt: string
   nameEn: string
   nameTh: string
+  student?: {
+    studentNumber: string
+  }
+  staff?: {
+    staffNumber: string
+  }
+  teacher?: {
+    staffNumber: string
+  }
 }
