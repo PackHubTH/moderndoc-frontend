@@ -6,7 +6,9 @@ import { useDisclosure } from '@/hooks/useDisclosure'
 import { useTemplateStore } from '@/stores/templateStore'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import PreviewButton from '../components/PreviewButton'
 import TemplateInfoModal from '../components/TemplateInfoModal'
+import ToolBarButtonGroup from '../components/ToolBarButtonGroup'
 
 // import file from './example.pdf'
 
@@ -18,6 +20,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   const { isOpen, open, close } = useDisclosure()
   const navigate = useNavigate()
   const templateFile = useTemplateStore((state) => state.templateFile)
+  const [isPreview, setIsPreview] = useState(false)
   const [pageTotal, setPageTotal] = useState(0)
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
@@ -40,6 +43,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
           </h1>
         </div>
         <div className="flex gap-4">
+          <PreviewButton isPreview={isPreview} setIsPreview={setIsPreview} />
           <Button
             disabled={templateFile ? false : true}
             label={
@@ -55,8 +59,10 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
           />
         </div>
       </div>
+      {/* Toolbar */}
+      <ToolBarButtonGroup />
       {/* Content */}
-      <div className="flex h-[calc(100vh-80px)] justify-center overflow-auto bg-gray-100">
+      <div className="flex h-[calc(100vh-128px)] justify-center overflow-auto bg-gray-100">
         <Document
           file={templateFile}
           // renderMode="svg"

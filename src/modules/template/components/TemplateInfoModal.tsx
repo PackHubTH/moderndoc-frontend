@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import colors from 'tailwindcss/colors'
 import useCreateTemplate from '../hooks/api/useCreateTemplate'
+import useGetUsersByDepartmentId from '../hooks/api/useGetUsersByDepartmentId'
 import useCreateTemplateForm from '../hooks/useCreateTemplateForm'
 import { CreateTemplateForm } from '../hooks/useCreateTemplateForm/validation'
 
@@ -29,7 +30,10 @@ const TemplateInfoModal = ({
 }: TemplateInfoModalProps) => {
   const { methods } = useCreateTemplateForm()
   const { mutate: createTemplate, isSuccess } = useCreateTemplate()
-  const { data } = useGetDepartments()
+  const { data: rawDepartments } = useGetDepartments()
+  const { data: users } = useGetUsersByDepartmentId(
+    methods.getValues('operatorGroup') ?? ''
+  )
   const { mutateAsync: uploadFile } = useUploadFile()
   const navigate = useNavigate()
 
@@ -85,13 +89,17 @@ const TemplateInfoModal = ({
   }
 
   const departments = useMemo(() => {
-    if (data) {
-      return [{ id: '', name: 'เจ้าหน้าที่ประจำภาควิชา' }, ...data?.data]
+    if (rawDepartments) {
+      return [
+        { id: '', name: 'เจ้าหน้าที่ประจำภาควิชา' },
+        ...rawDepartments?.data,
+      ]
     }
-  }, [data])
+  }, [rawDepartments])
 
   console.log('departments', departments)
-
+  console.log('users', users)
+  console.log('methods', methods.getFieldState('operatorGroup'))
   return (
     <Modal
       isOpen={isOpen}
@@ -122,20 +130,9 @@ const TemplateInfoModal = ({
               />
             )}
           />
-          {/* <Controller
-            control={methods.control}
-            name="receiverGroup"
-            render={({ field }) => (
-              <TextInput
-                label="กำหนดกลุ่มผู้ดำเนินการเอกสาร"
-                placeholder="เลือกกลุ่มผู้ดำเนินการ"
-                {...field}
-              />
-            )}
-          /> */}
           <Controller
             control={methods.control}
-            name="receiverGroup"
+            name="operatorGroup"
             render={({ field: { onChange, value } }) => (
               <Select
                 // className="w-1/3"
@@ -151,6 +148,24 @@ const TemplateInfoModal = ({
               />
             )}
           />
+          {/* <Controller
+            control={methods.control}
+            name="operatorId"
+            render={({ field: { onChange, value } }) => (
+              <MultiSelect
+        options={tagsList.map((tag) => ({ value: tag.id, label: tag.name }))}
+        onChange={(selected) => {
+          onChange(selected.map((item) => item.value))
+        }}
+        value={tagsList
+          ?.filter((tag) => value?.includes(tag.id))
+          .map((tag) => ({ value: tag.id, label: tag.name }))}
+        name={label}
+        isSearchable
+        isMulti
+      />
+            )}
+          /> */}
           <Controller
             control={methods.control}
             name="description"
@@ -160,6 +175,20 @@ const TemplateInfoModal = ({
                 placeholder="กรอกรายละเอียด"
                 {...field}
               />
+            )}
+          />
+          <Controller
+            control={methods.control}
+            name="exampleFile"
+            render={({ field: { value, onChange } }) => (
+              // <label>
+              <input
+                type="file"
+                accept=".pdf"
+                // className="hidden"
+                onChange={onChange}
+              />
+              // </label>
             )}
           />
         </form>

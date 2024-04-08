@@ -8,8 +8,8 @@ const useCreateTemplateForm = () => {
     resolver: zodResolver(CreateTemplateFormValidation),
     defaultValues: {
       title: '',
-      receiverGroup: '',
-      receiver: [],
+      operatorGroup: '',
+      operatorId: [],
       description: '',
       exampleFile: undefined,
     },

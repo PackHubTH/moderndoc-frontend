@@ -6,10 +6,12 @@ import {
 } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 
+import Button from '@/components/Button'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
+import { FaRegEnvelope } from 'react-icons/fa6'
 import useGetAllTemplate from '../hooks/api/useGetAllTemplate'
 import { Template } from '../types/types'
 
@@ -35,25 +37,38 @@ const TemplateListTable = () => {
     {
       id: 'templateTitle',
       size: 20,
-      header: 'ทั้งหมด 2 ฉบับ',
+      // header: 'ทั้งหมด 2 ฉบับ',
+      header: (info) => (
+        <div className="flex items-center gap-2 font-semibold">
+          <FaRegEnvelope />
+          ทั้งหมด{' '}
+          <span className="text-blue-500">{info.table.getRowCount()}</span> ฉบับ
+        </div>
+      ),
       cell: (info) => (
-        <span className="font-medium text-gray-500">
+        <span className="font-semibold text-blue-500">
           {info.row.original.title}
         </span>
       ),
     },
     {
       id: 'templateLastUpdatedAt',
-      // size: 400,
       header: '',
       cell: (info) => (
-        <div className="flex flex-row items-center justify-between">
+        <div className="relative flex flex-row items-center justify-end pr-5">
           <span className="text-gray-400">
             อัพเดตล่าสุดเมื่อ{' '}
             {format(info.row.original.lastUpdatedAt, 'dd MMM yy', {
               locale: th,
             })}
           </span>
+          <div className="absolute top-0">
+            <Button
+              label="ดู"
+              variant="outline-blue"
+              onClick={() => console.log('view')}
+            />
+          </div>
         </div>
       ),
     },

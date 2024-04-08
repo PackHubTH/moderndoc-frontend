@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
 export const CreateTemplateFormValidation = z.object({
-  title: z.string().min(3),
-  description: z.string().min(3),
+  title: z.string().min(1),
+  description: z.string(),
   //   element
   exampleFile: z.instanceof(File).optional(),
-  receiver: z.array(z.string()).optional(),
-  receiverGroup: z.string().optional(),
+  operatorId: z.array(z.string().uuid()).optional(),
+  operatorGroup: z.string().uuid(),
 })
 
 export type CreateTemplateForm = z.infer<typeof CreateTemplateFormValidation>

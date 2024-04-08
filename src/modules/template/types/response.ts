@@ -5,3 +5,9 @@ export type GetAllTemplateResponse = {
   totalPages: number
   totalTemplatesCount: number
 }
+
+export type GetUsersByDepartmentId = {
+  id: string
+  nameTh: string
+  role: string
+}
