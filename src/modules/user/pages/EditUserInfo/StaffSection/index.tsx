@@ -17,6 +17,7 @@ import { UserRole } from 'types/user'
 const StaffSection = () => {
   const methods = useFormContext<EditProfileForm>()
 
+  const [facultyId, setFacultyId] = useState<string | undefined>()
   const [departmentType, setDepartmentType] = useState<DepartmentType | string>(
     DepartmentType.DEPARTMENT
   )
@@ -24,11 +25,13 @@ const StaffSection = () => {
   const { data: userData } = useGetUser()
 
   const isAgency = departmentType === DepartmentType.AGENCY
+  console.log('🚀 ~ StaffSection ~ isAgency:', isAgency)
 
   const { data: faculties } = useGetAllFaculties()
-  const { data: departments } = useGetDepartments(
-    isAgency ? undefined : methods.watch('facultyId')
+  const { data: departments, refetch } = useGetDepartments(
+    isAgency ? undefined : facultyId
   )
+  console.log('🚀 ~ StaffSection ~ departments:', departments)
 
   const defaultDepartmentId =
     userData?.data.role === UserRole.STAFF
@@ -44,17 +47,17 @@ const StaffSection = () => {
     if (departmentData) {
       if (departmentData.data.type === DepartmentType.AGENCY) {
         setDepartmentType(DepartmentType.AGENCY)
+        methods.setValue('departmentId', defaultDepartmentId)
+        refetch()
       } else {
         setDepartmentType(DepartmentType.DEPARTMENT)
+        setFacultyId(departmentData.data.facultyId)
+        methods.setValue('facultyId', departmentData.data.facultyId)
+        methods.setValue('departmentId', defaultDepartmentId)
+        refetch()
       }
     }
-  }, [departmentData])
-
-  useEffect(() => {
-    if (defaultDepartmentId) {
-      methods.setValue('departmentId', defaultDepartmentId)
-    }
-  }, [departmentData])
+  }, [departmentData, defaultDepartmentId, departments])
 
   return (
     <div className="mt-5 flex flex-col gap-5">

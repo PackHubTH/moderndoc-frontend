@@ -190,7 +190,7 @@ const DepartmentMembersList: React.FC<PropsType> = ({
     },
     {
       id: 'transfer',
-      header: 'การตอบรับ',
+      header: 'ย้าย',
       size: 1,
       cell: (info) => (
         <div className="flex gap-2">
