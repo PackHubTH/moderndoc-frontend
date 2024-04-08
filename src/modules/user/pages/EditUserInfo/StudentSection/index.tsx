@@ -49,22 +49,6 @@ const StudentSection = () => {
     setSearchAdvisor(userData?.data.student.advisor?.user?.nameTh ?? '')
   }, [userData])
 
-  useEffect(() => {
-    if (departments?.data.length) {
-      methods.setValue('departmentId', departments.data[0].id, {
-        shouldDirty: true,
-      })
-    }
-
-    if (courses?.data.length) {
-      methods.setValue('student.courseId', courses.data[0].id, {
-        shouldDirty: true,
-      })
-    }
-
-    methods.trigger()
-  }, [faculties, departments, courses])
-
   return (
     <div className="mt-5 flex flex-col gap-5">
       <Controller
