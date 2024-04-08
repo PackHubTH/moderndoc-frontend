@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import tw from 'twin.macro'
 
 type PropsType = {
@@ -12,6 +11,7 @@ type PropsType = {
   className?: string
   isError?: boolean
   disabled?: boolean
+  placeholder?: string
 }
 
 const Select: React.FC<PropsType> = ({
@@ -22,12 +22,13 @@ const Select: React.FC<PropsType> = ({
   isError,
   options,
   disabled,
+  placeholder = 'กรุณาเลือก...',
 }) => {
-  useEffect(() => {
-    if (value === undefined && options[0]?.value) {
-      onChange?.(options[0].value)
-    }
-  }, [options])
+  // useEffect(() => {
+  //   if (value === undefined && options[0]?.value) {
+  //     onChange?.(options[0].value)
+  //   }
+  // }, [options])
 
   return (
     <div className={className}>
@@ -54,7 +55,13 @@ const Select: React.FC<PropsType> = ({
         }
         disabled={disabled}
       >
-        {options.map((option) => (
+        {[
+          {
+            value: '',
+            label: placeholder,
+          },
+          ...options,
+        ].map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
