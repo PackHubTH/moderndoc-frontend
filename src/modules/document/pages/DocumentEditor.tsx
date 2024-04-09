@@ -33,7 +33,6 @@ import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
 import DocumentToolbar from '../components/DocumentToolbar'
 import DraggableBox from '../components/DraggableBox'
-import FinalizeModalContent from '../components/FinalizeModalContent'
 import GuidelineModalContent from '../components/GuidelineModalContent'
 import ProcessModalContent from '../components/ProcessModalContent'
 import ProfileBox from '../components/ProfileBox'
@@ -45,11 +44,6 @@ import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 
 const DocumentEditor = () => {
   const navigate = useNavigate()
-  const {
-    isOpen: isFinalizeModalOpen,
-    open: openFinalizeModal,
-    close: closeFinalizeModal,
-  } = useDisclosure()
   const {
     isOpen: isGuidelineModalOpen,
     open: openGuidelineModal,
@@ -194,29 +188,6 @@ const DocumentEditor = () => {
             onClick={() => saveCanvas(canvasList, exampleFile)}
           />
           <Button
-            label="Finalize"
-            variant="yellow"
-            onClick={openFinalizeModal}
-          />
-          <Modal
-            actions={
-              <>
-                <Button
-                  label="ยกเลิก"
-                  variant="gray"
-                  onClick={closeFinalizeModal}
-                />
-                <Button label="ยืนยัน" variant="blue" />
-              </>
-            }
-            content={<FinalizeModalContent />}
-            isOpen={isFinalizeModalOpen}
-            title="ยืนยันการเสร็จสิ้นดำเนินการเอกสาร"
-            variant="confirm"
-            width="515px"
-            onClose={closeFinalizeModal}
-          />
-          <Button
             label="ดำเนินการ"
             variant="green"
             onClick={openProcessModal}
@@ -229,7 +200,7 @@ const DocumentEditor = () => {
                   variant="gray"
                   onClick={closeProcessModal}
                 />
-                <Button label="ยืนยันการส่ง" variant="blue" />
+                <Button label="ยืนยัน" variant="blue" />
               </>
             }
             content={<ProcessModalContent />}
