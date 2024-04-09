@@ -2,8 +2,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import React, { Fragment } from 'react'
 
 import { IoClose } from 'react-icons/io5'
-import tw from 'twin.macro'
 import { VariantType } from './types'
+import tw from 'twin.macro'
 
 type PropsType = {
   content: React.ReactNode | string
@@ -66,8 +66,8 @@ const Modal: React.FC<PropsType> = ({
                 <Dialog.Title
                   as="div"
                   css={[
-                    variant === 'default' && tw`justify-center text-xl`,
-                    tw`flex items-center gap-x-4 break-all border-b px-6 py-4 pr-9 font-bold text-gray-600`,
+                    variant === 'default' && tw`justify-center`,
+                    tw`mt-4 flex items-center gap-x-4 break-all border-b px-6 py-4 pr-9 font-bold text-gray-800`,
                   ]}
                 >
                   {leftIcon && leftIcon}

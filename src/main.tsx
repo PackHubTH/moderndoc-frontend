@@ -1,4 +1,5 @@
 import 'preline'
+import 'react-toastify/dist/ReactToastify.css'
 import './index.css'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -9,7 +10,6 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import ReactDOM from 'react-dom/client'
 import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import AppRoute from './AppRoute'
 import { useUserStore } from './stores/userStore'
 
@@ -23,9 +23,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <QueryClientProvider client={queryClient}>
         <DndProvider backend={HTML5Backend}>
           <AppRoute />
+          <ToastContainer position="bottom-center" />
         </DndProvider>
-        <ToastContainer position="bottom-center" />
       </QueryClientProvider>
-    </React.StrictMode>w
+    </React.StrictMode>
   </GoogleOAuthProvider>
 )

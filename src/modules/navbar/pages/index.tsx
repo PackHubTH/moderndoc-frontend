@@ -1,3 +1,4 @@
+import MainLogo from '@/components/MainLogo'
 import { useUserStore } from '@/stores/userStore'
 import { useNavigate } from 'react-router-dom'
 import bellIcon from '../assets/bell.svg'
@@ -29,13 +30,7 @@ const Navbar = () => {
         aria-label="Global"
       >
         <div className="flex items-center justify-between">
-          <a
-            className="flex-none text-xl font-semibold"
-            href="#"
-            aria-label="Brand"
-          >
-            Brand
-          </a>
+          <MainLogo />
           <div className="sm:hidden">
             <button
               type="button"
@@ -72,14 +67,7 @@ const Navbar = () => {
           id="navbar-collapse-with-animation"
           className="hs-collapse hidden grow basis-full overflow-hidden transition-all duration-300 sm:block"
         >
-          <div className="mt-5 flex flex-col gap-x-0 gap-y-4 sm:mt-0 sm:flex-row sm:items-center sm:justify-end sm:gap-x-7 sm:gap-y-0 sm:ps-7">
-            <a
-              className="font-medium text-gray-500 hover:text-gray-400 sm:py-6"
-              href="#"
-            >
-              Blog
-            </a>
-
+          <div className="mt-5 flex h-[72px] flex-col gap-x-0 gap-y-4 sm:mt-0 sm:flex-row sm:items-center sm:justify-end sm:gap-x-7 sm:gap-y-0 sm:ps-7">
             <img alt="bell-icon" src={bellIcon} />
             {isLogin ? (
               <ProfileButton profileImg={user.profileImg} name={user.nameEn} />
