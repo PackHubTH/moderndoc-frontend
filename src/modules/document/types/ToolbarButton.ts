@@ -1,0 +1,18 @@
+export enum ActiveToolbarButton {
+  Default,
+  Undo,
+  Redo,
+  Text,
+  Pen,
+  Delete,
+  Correct,
+  FontSize,
+  FontType,
+  FontColor,
+  LineHeight,
+  TextAlignLeft,
+  TextAlignCenter,
+  TextAlignRight,
+  Bold,
+  Italic,
+}

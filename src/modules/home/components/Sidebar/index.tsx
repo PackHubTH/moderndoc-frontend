@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom'
-import tw from 'twin.macro'
 import { SIDE_BAR_MENUS } from './constant'
+import tw from 'twin.macro'
+import { useNavigate } from 'react-router-dom'
 
 const Sidebar = () => {
   const navigate = useNavigate()

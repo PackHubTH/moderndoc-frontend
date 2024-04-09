@@ -2,8 +2,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import React, { Fragment } from 'react'
 
 import { IoClose } from 'react-icons/io5'
-import tw from 'twin.macro'
 import { VariantType } from './types'
+import tw from 'twin.macro'
 
 type PropsType = {
   content: React.ReactNode | string

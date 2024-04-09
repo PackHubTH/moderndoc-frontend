@@ -4,13 +4,13 @@ import './index.css'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import AppRoute from './AppRoute'
-import { DndProvider } from 'react-dnd'
 import { GoogleOAuthProvider } from '@react-oauth/google'
-import { HTML5Backend } from 'react-dnd-html5-backend'
 import React from 'react'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 import ReactDOM from 'react-dom/client'
 import { ToastContainer } from 'react-toastify'
+import AppRoute from './AppRoute'
 import { useUserStore } from './stores/userStore'
 
 const queryClient = new QueryClient()

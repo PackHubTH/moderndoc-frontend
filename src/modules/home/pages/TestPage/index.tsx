@@ -2,6 +2,8 @@ import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
 import Modal from '@/components/Modal'
+import RadioGroup from '@/components/RadioGroup'
+import Select from '@/components/Select'
 import Tabs from '@/components/Tabs'
 import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
@@ -77,6 +79,17 @@ const TestPage = () => {
             <Button label="Button2" onClick={close} />
           </>
         }
+      />
+      <Select
+        label="test"
+        options={[{ value: '0', label: 'เอกสารดำเนินการเสร็จแล้ว' }]}
+      />
+      <RadioGroup
+        label=""
+        options={[
+          { value: '0', label: 'เอกสารดำเนินการเสร็จแล้ว' },
+          { value: '1', label: 'ยกเลิกเอกสาร' },
+        ]}
       />
     </div>
   )
