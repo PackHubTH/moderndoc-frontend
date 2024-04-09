@@ -11,3 +11,8 @@ export type GetUsersByDepartmentId = {
   nameTh: string
   role: string
 }
+
+export type GetUsersByAllAgency = {
+  departmentId: string
+  users: GetUsersByDepartmentId[]
+}

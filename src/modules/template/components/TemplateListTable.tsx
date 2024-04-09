@@ -90,7 +90,7 @@ const TemplateListTable = () => {
   }, [table.getState().pagination.pageIndex])
 
   return (
-    <div className="p-2">
+    <div className="flex-1 p-2">
       <TableDisplay table={table} />
       <Pagination
         totalPage={1}

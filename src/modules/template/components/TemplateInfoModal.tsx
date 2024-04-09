@@ -1,19 +1,21 @@
+import * as CustomSelect from '@/components/Select'
+
 import { useEffect, useMemo } from 'react'
+import { Controller, useWatch } from 'react-hook-form'
 
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import RichTextInput from '@/components/RichTextInput'
-import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
 import useUploadFile from '@/hooks/useUploadFile'
 import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
-import { Controller } from 'react-hook-form'
 import { FaEdit } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import Select from 'react-select'
 import { toast } from 'react-toastify'
 import colors from 'tailwindcss/colors'
 import useCreateTemplate from '../hooks/api/useCreateTemplate'
-import useGetUsersByDepartmentId from '../hooks/api/useGetUsersByDepartmentId'
+import useGetUsersByAllAgency from '../hooks/api/useGetUsersByAllAgency'
 import useCreateTemplateForm from '../hooks/useCreateTemplateForm'
 import { CreateTemplateForm } from '../hooks/useCreateTemplateForm/validation'
 
@@ -31,9 +33,7 @@ const TemplateInfoModal = ({
   const { methods } = useCreateTemplateForm()
   const { mutate: createTemplate, isSuccess } = useCreateTemplate()
   const { data: rawDepartments } = useGetDepartments()
-  const { data: users } = useGetUsersByDepartmentId(
-    methods.getValues('operatorGroup') ?? ''
-  )
+  const { data: rawAgencyUsers } = useGetUsersByAllAgency()
   const { mutateAsync: uploadFile } = useUploadFile()
   const navigate = useNavigate()
 
@@ -97,9 +97,18 @@ const TemplateInfoModal = ({
     }
   }, [rawDepartments])
 
-  console.log('departments', departments)
-  console.log('users', users)
-  console.log('methods', methods.getFieldState('operatorGroup'))
+  const departmentId = useWatch({
+    control: methods.control,
+    name: 'operatorGroup',
+  })
+  const agencyUsers = useMemo(() => {
+    return (
+      rawAgencyUsers?.data.filter(
+        (user) => user.departmentId === departmentId
+      )[0]?.users ?? []
+    )
+  }, [rawAgencyUsers, departmentId])
+
   return (
     <Modal
       isOpen={isOpen}
@@ -134,10 +143,11 @@ const TemplateInfoModal = ({
             control={methods.control}
             name="operatorGroup"
             render={({ field: { onChange, value } }) => (
-              <Select
-                // className="w-1/3"
+              <CustomSelect.default
                 label="กำหนดกลุ่มผู้ดำเนินการเอกสาร"
-                onChange={onChange}
+                onChange={(e) => {
+                  onChange(e)
+                }}
                 value={value}
                 options={
                   departments?.map((department) => ({
@@ -148,24 +158,28 @@ const TemplateInfoModal = ({
               />
             )}
           />
-          {/* <Controller
-            control={methods.control}
-            name="operatorId"
-            render={({ field: { onChange, value } }) => (
-              <MultiSelect
-        options={tagsList.map((tag) => ({ value: tag.id, label: tag.name }))}
-        onChange={(selected) => {
-          onChange(selected.map((item) => item.value))
-        }}
-        value={tagsList
-          ?.filter((tag) => value?.includes(tag.id))
-          .map((tag) => ({ value: tag.id, label: tag.name }))}
-        name={label}
-        isSearchable
-        isMulti
-      />
-            )}
-          /> */}
+          {departmentId !== '' && (
+            <Controller
+              control={methods.control}
+              name="operatorId"
+              render={({ field: { value, onChange } }) => (
+                <Select
+                  options={agencyUsers.map((user) => ({
+                    value: user.id,
+                    label: user.nameTh,
+                  }))}
+                  onChange={(selected) => {
+                    onChange(selected.map((item) => item.value))
+                  }}
+                  value={agencyUsers
+                    ?.filter((user) => value?.includes(user.id))
+                    .map((user) => ({ value: user.id, label: user.nameTh }))}
+                  isSearchable
+                  isMulti
+                />
+              )}
+            />
+          )}
           <Controller
             control={methods.control}
             name="description"
@@ -181,14 +195,7 @@ const TemplateInfoModal = ({
             control={methods.control}
             name="exampleFile"
             render={({ field: { value, onChange } }) => (
-              // <label>
-              <input
-                type="file"
-                accept=".pdf"
-                // className="hidden"
-                onChange={onChange}
-              />
-              // </label>
+              <input type="file" accept=".pdf" onChange={onChange} />
             )}
           />
         </form>

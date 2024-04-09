@@ -1,10 +1,11 @@
 import Button from '@/components/Button'
-import { FaPlus } from 'react-icons/fa6'
 import PageContainer from '@/components/PageContainer'
-import TemplateListTable from '../components/TemplateListTable'
 import TextInput from '@/components/TextInput'
-import UploadModal from '../components/UploadModal'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import { FaPlus } from 'react-icons/fa6'
+import TemplateInfoBox from '../components/TemplateInfoBox'
+import TemplateListTable from '../components/TemplateListTable'
+import UploadModal from '../components/UploadModal'
 
 const TemplateManagementPage: React.FC = () => {
   const { isOpen, open, close } = useDisclosure()
@@ -21,7 +22,10 @@ const TemplateManagementPage: React.FC = () => {
         />
         <TextInput className="w-[240px]" placeholder="ค้นหา..." />
       </div>
-      <TemplateListTable />
+      <div className="flex">
+        <TemplateListTable />
+        <TemplateInfoBox />
+      </div>
       <UploadModal isOpen={isOpen} close={close} />
     </PageContainer>
   )
