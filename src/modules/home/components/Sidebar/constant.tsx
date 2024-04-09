@@ -27,7 +27,7 @@ export const SIDE_BAR_MENUS = [
   {
     name: 'รายการเทมเพลต',
     icon: <IoDocumentsOutline />,
-    link: null,
+    link: '/template-management',
   },
   {
     name: 'แก้ไขข้อมูลส่วนตัว',
