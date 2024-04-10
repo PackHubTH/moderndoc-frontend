@@ -198,6 +198,7 @@ const DepartmentMembersList: React.FC<PropsType> = ({
             leftIcon={<BiTransfer size={24} color={white} />}
             label="ย้าย"
             variant="yellow"
+            // todo: implement transfer
           />
         </div>
       ),

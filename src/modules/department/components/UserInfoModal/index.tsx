@@ -1,6 +1,7 @@
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import { formatPhoneNumber } from '@/utils/formatUtils'
+import { UserRole } from 'types/user'
 import { GetDepartmentMemberResponse } from '../../hooks/api/types'
 
 type PropsType = {
@@ -57,7 +58,13 @@ const UserInfoModal: React.FC<PropsType> = ({
           </div>
           <div className="flex items-center gap-2">
             <h4 className="w-28 font-semibold">รหัสประจำตัว :</h4>
-            <span>รหัสประจำตัว</span>
+            <span>
+              {userData.role === UserRole.STUDENT
+                ? userData.student!.studentNumber
+                : userData.role === UserRole.TEACHER
+                ? userData.teacher!.staffNumber
+                : userData.staff!.staffNumber}
+            </span>
           </div>
         </div>
       }
