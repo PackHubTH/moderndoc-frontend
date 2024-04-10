@@ -29,12 +29,12 @@ import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
 import { MdOutlineDeleteForever } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
+import CreateDocumentModal from '../components/CreateDocumentModal'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
 import DocumentToolbar from '../components/DocumentToolbar'
 import DraggableBox from '../components/DraggableBox'
 import GuidelineModalContent from '../components/GuidelineModalContent'
-import ProcessModalContent from '../components/ProcessModalContent'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
 import { useDocumentStore } from '../stores/documentStore'
@@ -192,22 +192,10 @@ const DocumentEditor = () => {
             variant="green"
             onClick={openProcessModal}
           />
-          <Modal
-            actions={
-              <>
-                <Button
-                  label="ยกเลิก"
-                  variant="gray"
-                  onClick={closeProcessModal}
-                />
-                <Button label="ยืนยัน" variant="blue" />
-              </>
-            }
-            content={<ProcessModalContent />}
+          <CreateDocumentModal
             isOpen={isProcessModalOpen}
-            title="ส่งเอกสาร"
-            width="531px"
-            onClose={closeProcessModal}
+            templateFile={null}
+            close={closeProcessModal}
           />
           <Button label="ยกเลิก" variant="gray" onClick={() => navigate('/')} />
         </div>

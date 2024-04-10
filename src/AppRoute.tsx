@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import { pdfjs } from 'react-pdf'
 import Document from './modules/document/pages'
+import DocumentManagementPage from './modules/document/pages/DocumentManagementPage'
 import FaqManagementPage from './modules/faq/pages/FaqManagementPage'
 import Home from './modules/home/pages'
 import TestPage from './modules/home/pages/TestPage'
@@ -27,6 +28,10 @@ function App() {
       <Routes>
         <Route index element={<Home />} />
         <Route path="/edit-document" element={<Document />} />
+        <Route
+          path="/document-management"
+          element={<DocumentManagementPage />}
+        />
         <Route path="/test" element={<TestPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create-profile" element={<CreateProfilePage />} />

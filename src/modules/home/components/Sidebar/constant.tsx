@@ -17,7 +17,7 @@ export const SIDE_BAR_MENUS = [
   {
     name: 'รายการเอกสาร',
     icon: <IoDocumentTextOutline />,
-    link: null,
+    link: '/document-management',
   },
   {
     name: 'ไทม์ไลน์',
