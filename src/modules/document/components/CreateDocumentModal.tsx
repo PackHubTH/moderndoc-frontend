@@ -6,13 +6,16 @@ import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
 import Select from '@/components/Select'
 import { Controller } from 'react-hook-form'
+import { toast } from 'react-toastify'
+import useAssignOperator from '../hooks/api/useAssignOperator'
 import useCreateDocument from '../hooks/api/useCreateDocument'
 import useCreateDocumentForm from '../hooks/useCreateDocumentForm'
+import { CreateDocumentForm } from '../hooks/useCreateDocumentForm/validation'
 import { DocumentStatus } from '../types/types'
 
 type PropsType = {
   isOpen: boolean
-  templateFile: File | null
+  templateId: string
   close: () => void
 }
 
@@ -22,13 +25,21 @@ type CreateDocument = {
   documentStatus: DocumentStatus
 }
 
+type AssignOperator = {
+  documentId: string
+  operatorUserId: string
+  message: string
+  isEditable: boolean
+}
+
 const CreateDocumentModal: React.FC<PropsType> = ({
   isOpen,
-  templateFile,
+  templateId,
   close,
 }: PropsType) => {
   const { methods } = useCreateDocumentForm()
-  const { mutate: createDocument, isSuccess } = useCreateDocument()
+  const { mutate: createDocument } = useCreateDocument()
+  const { mutate: assignOperator } = useAssignOperator()
   const [documentStatus, setDocumentStatus] = useState(
     DocumentStatus.PROCESSING
   )
@@ -39,20 +50,71 @@ const CreateDocumentModal: React.FC<PropsType> = ({
     }
   }, [isOpen])
 
-  const onSubmit = async (data: CreateDocument) => {
-    const response = await createDocument(
-      {
-        ...data,
-      },
-      {
-        onSuccess: () => {
-          console.log('success')
+  const onProcessSubmit = async (data: CreateDocumentForm) => {
+    console.log('submit', data)
+    try {
+      createDocument(
+        {
+          templateId,
+          element: {},
+          documentStatus,
         },
-        onError: (error) => {
-          console.log('error')
+        {
+          onSuccess: (res) => {
+            assignOperator(
+              {
+                documentId: res.data.id,
+                operatorUserId: data.operatorUserId,
+                message: data.message,
+                isEditable: data.isEditable,
+              },
+              {
+                onSuccess: () => {
+                  toast('สร้างเอกสารสำเร็จ', { type: 'success' })
+                },
+                onError: (error) => {
+                  toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+                    type: 'error',
+                  })
+                },
+              }
+            )
+          },
+          onError: (error) => {
+            toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+              type: 'error',
+            })
+          },
+        }
+      )
+    } catch (error) {
+      toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
+    }
+  }
+
+  const onNonProcessSubmit = async () => {
+    try {
+      createDocument(
+        {
+          templateId,
+          element: {},
+          documentStatus,
         },
-      }
-    )
+        {
+          onSuccess: () => {
+            toast('สร้างเอกสารสำเร็จ', { type: 'success' })
+            close()
+          },
+          onError: (error) => {
+            toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+              type: 'error',
+            })
+          },
+        }
+      )
+    } catch (error) {
+      toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
+    }
   }
 
   const renderCreateDocumentForm = () => {
@@ -82,10 +144,28 @@ const CreateDocumentModal: React.FC<PropsType> = ({
             />
           )}
         />
+        <Controller
+          control={methods.control}
+          name="isEditable"
+          render={({ field: { value, onChange } }) => (
+            <label className="mb-2.5 mt-4 flex items-center gap-2">
+              <input
+                className="rounded-sm accent-blue-500"
+                type="checkbox"
+                checked={value}
+                onChange={onChange}
+              />
+              <span className="text-sm">
+                อนุญาตให้ผู้รับเอกสารแก้ไขเอกสารแทนตนเองได้
+              </span>
+            </label>
+          )}
+        />
       </form>
     )
   }
 
+  console.log('metgods', methods, methods.formState.isValid, documentStatus)
   return (
     <Modal
       isOpen={isOpen}
@@ -96,9 +176,16 @@ const CreateDocumentModal: React.FC<PropsType> = ({
         <div className="flex gap-4">
           <Button label="ยกเลิก" variant="outline-blue" onClick={close} />
           <Button
-            label="สร้าง Template"
-            disabled={!methods.formState.isValid || isSuccess}
-            // onClick={() => methods.handleSubmit(onSubmit)()}
+            label="ยืนยัน"
+            disabled={
+              !methods.formState.isValid &&
+              documentStatus === DocumentStatus.PROCESSING
+            }
+            onClick={() => {
+              if (documentStatus === DocumentStatus.PROCESSING)
+                methods.handleSubmit(onProcessSubmit)()
+              else onNonProcessSubmit()
+            }}
           />
         </div>
       }

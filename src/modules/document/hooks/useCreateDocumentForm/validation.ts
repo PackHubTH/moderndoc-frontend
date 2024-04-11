@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
 export const CreateDocumentFormValidation = z.object({
-  isEditable: z.boolean(),
-  operatorUserId: z.string().uuid(),
-  message: z.string().optional(),
+  isEditable: z.boolean().default(false),
+  operatorUserId: z.string().uuid().default(''),
+  message: z.string().optional().default(''),
 })
 
 export type CreateDocumentForm = z.infer<typeof CreateDocumentFormValidation>

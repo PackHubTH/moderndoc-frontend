@@ -194,7 +194,7 @@ const DocumentEditor = () => {
           />
           <CreateDocumentModal
             isOpen={isProcessModalOpen}
-            templateFile={null}
+            templateId={'09ed9e77-67bc-465b-a643-93e13ef0b523'} // TODO: delete mock
             close={closeProcessModal}
           />
           <Button label="ยกเลิก" variant="gray" onClick={() => navigate('/')} />

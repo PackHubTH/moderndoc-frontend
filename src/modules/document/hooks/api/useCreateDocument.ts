@@ -11,7 +11,7 @@ type Params = {
 
 const useCreateDocument = () => {
   const context = useMutation(['create-document'], async (data: Params) => {
-    const response = await moderndocApi.post<ApiResponse<unknown | null>>(
+    const response = await moderndocApi.post<ApiResponse<any | null>>(
       '/document',
       data
     )
