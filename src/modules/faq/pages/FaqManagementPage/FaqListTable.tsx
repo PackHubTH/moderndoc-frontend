@@ -5,7 +5,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-import { MdModeEditOutline, MdRemoveRedEye } from 'react-icons/md'
+import { MdModeEditOutline } from 'react-icons/md'
 
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
@@ -99,10 +99,11 @@ const FaqListTable = () => {
                 openCreateFaqModal()
               }}
             />
-            <MdRemoveRedEye
+            // TODO: seperate page for each faq
+            {/* <MdRemoveRedEye
               size={18}
               className="cursor-pointer rounded-full text-blue-500"
-            />
+            /> */}
             <HiTrash
               size={18}
               className="cursor-pointer rounded-full text-red-500"
