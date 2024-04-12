@@ -5,18 +5,35 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-import { MdModeEditOutline, MdRemoveRedEye } from 'react-icons/md'
+import { MdModeEditOutline } from 'react-icons/md'
 
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import Tag from '@/components/Tag'
+import { useDisclosure } from '@/hooks/useDisclosure'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
 import { HiTrash } from 'react-icons/hi'
+import CreateFaqModal from '../../components/CreateFaqModal'
+import DeleteFaqModal from '../../components/DeleteFaqModal'
 import useGetDepartmentFaqs from '../../hooks/api/useGetDepartmentFaqs'
 import { Faq } from '../../types'
 
 const FaqListTable = () => {
+  const {
+    isOpen: isOpenCreateFaqModal,
+    close: closeCreateFaqModal,
+    open: openCreateFaqModal,
+  } = useDisclosure()
+
+  const {
+    isOpen: isOpenDeleteFaqModal,
+    close: closeDeleteFaqModal,
+    open: openDeleteFaqModal,
+  } = useDisclosure()
+
+  const [editFaq, setEditFaq] = useState<Faq | null>(null)
+
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -77,14 +94,23 @@ const FaqListTable = () => {
             <MdModeEditOutline
               size={18}
               className="cursor-pointer rounded-full text-blue-500"
+              onClick={() => {
+                setEditFaq(info.row.original)
+                openCreateFaqModal()
+              }}
             />
-            <MdRemoveRedEye
+            // TODO: seperate page for each faq
+            {/* <MdRemoveRedEye
               size={18}
               className="cursor-pointer rounded-full text-blue-500"
-            />
+            /> */}
             <HiTrash
               size={18}
               className="cursor-pointer rounded-full text-red-500"
+              onClick={() => {
+                setEditFaq(info.row.original)
+                openDeleteFaqModal()
+              }}
             />
           </div>
         </div>
@@ -108,15 +134,28 @@ const FaqListTable = () => {
   }, [table.getState().pagination.pageIndex])
 
   return (
-    <div className="p-2">
-      <TableDisplay table={table} />
-      <Pagination
-        totalPage={faqs?.data.totalPages ?? 0}
-        currentPage={table.getState().pagination.pageIndex + 1}
-        nextPage={table.nextPage}
-        prevPage={table.previousPage}
+    <>
+      <div className="p-2">
+        <TableDisplay table={table} />
+        <Pagination
+          totalPage={faqs?.data.totalPages ?? 0}
+          currentPage={table.getState().pagination.pageIndex + 1}
+          nextPage={table.nextPage}
+          prevPage={table.previousPage}
+        />
+      </div>
+      <CreateFaqModal
+        isOpen={isOpenCreateFaqModal}
+        onClose={closeCreateFaqModal}
+        mode="edit"
+        faq={editFaq!}
       />
-    </div>
+      <DeleteFaqModal
+        isOpen={isOpenDeleteFaqModal}
+        onClose={closeDeleteFaqModal}
+        faq={editFaq!}
+      />
+    </>
   )
 }
 

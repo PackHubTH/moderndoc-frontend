@@ -170,7 +170,7 @@ const AgenciesTab = () => {
             <Button label="เพิ่ม" variant="green" onClick={onCreateAgency} />
           </div>
         </div>
-        <TableDisplay table={table} />
+        <TableDisplay table={table} maxHeight="320px" />
       </div>
       <DeleteAgencyModal
         isOpen={isOpen}
