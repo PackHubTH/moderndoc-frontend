@@ -3,6 +3,7 @@ import PageContainer from '@/components/PageContainer'
 import TextInput from '@/components/TextInput'
 import { FaPlus } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
+import DocumentListTable from '../components/DocumentListTable'
 
 // import TemplateInfoBox from '../components/TemplateInfoBox'
 // import TemplateListTable from '../components/TemplateListTable'
@@ -26,6 +27,7 @@ const DocumentManagementPage: React.FC = () => {
       <div className="flex">
         {/* <TemplateListTable />
         <TemplateInfoBox /> */}
+        <DocumentListTable />
       </div>
       {/* <UploadModal isOpen={isOpen} close={close} /> */}
     </PageContainer>
