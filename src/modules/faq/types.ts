@@ -15,6 +15,9 @@ export type Tag = {
 export type Faq = {
   id: string
   templateId?: string
+  template?: {
+    title: string
+  }
   description: string
   isInternal: boolean
   createdBy: string
@@ -27,7 +30,7 @@ export type Faq = {
   sendChannelInfo: string
   titleEn: string
   titleTh: string
-  extraContact: object
+  extraContact: any
   files: string[]
   subFaqs: SubFaq[]
   faqTags: FaqTags[]

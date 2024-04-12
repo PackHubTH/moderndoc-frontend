@@ -10,18 +10,27 @@ import useCreateFaq from '@/modules/faq/hooks/api/useCreateFaq'
 import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
 import useCreateFaqForm from '@/modules/faq/hooks/useCreateFaqForm'
 import { CreateFaqForm } from '@/modules/faq/hooks/useCreateFaqForm/validation'
-import { SendChannel } from '@/modules/faq/types'
+import { Faq, SendChannel } from '@/modules/faq/types'
 import useGetAllTemplate from '@/modules/template/hooks/api/useGetAllTemplate'
 import { useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { FaPlus } from 'react-icons/fa6'
 import { toast } from 'react-toastify'
+import useGetDepartmentFaqs from '../../hooks/api/useGetDepartmentFaqs'
+import useUpdateFaq from '../../hooks/api/useUpdateFaq'
 
 type PropsType = {
   isOpen: boolean
   onClose: () => void
+  mode?: 'create' | 'edit'
+  faq?: Faq
 }
-const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
+const CreateFaqModal: React.FC<PropsType> = ({
+  isOpen,
+  onClose,
+  mode = 'create',
+  faq,
+}) => {
   const { methods } = useCreateFaqForm()
 
   const [searchTemplate, setSearchTemplate] = useState<string>('')
@@ -29,32 +38,51 @@ const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
   const { data: templates } = useGetAllTemplate(1, searchTemplate)
   const { data: tags } = useGetAllTags()
 
+  const { refetch } = useGetDepartmentFaqs(1)
+
   const { mutate: createFaq } = useCreateFaq()
+  const { mutate: updateFaq } = useUpdateFaq(faq?.id)
 
   const onSubmit = (data: CreateFaqForm) => {
     const templateId = templates?.data.data.find(
       (template) => template.title === data.templateId
     )?.id
-    createFaq(
-      { ...data, templateId: templateId ?? undefined },
+    const actionFunction = mode === 'create' ? createFaq : updateFaq
+
+    actionFunction(
+      { ...data, templateId: templateId ?? null },
       {
         onSuccess: () => {
-          toast('สร้าง FAQ สำเร็จ', { type: 'success' })
+          toast(mode === 'edit' ? 'แก้ไข FAQ สำเร็จ' : 'สร้าง FAQ สำเร็จ', {
+            type: 'success',
+          })
           onClose()
+          refetch()
         },
         onError: (error) => {
-          toast(`เกิดข้อผิดพลาดในการสร้าง FAQ ${error}`, { type: 'error' })
+          toast(
+            `เกิดข้อผิดพลาดในการ${
+              mode === 'edit' ? 'แก้ไข' : 'สร้าง'
+            } FAQ ${error}`,
+            { type: 'error' }
+          )
         },
       }
     )
   }
 
-  console.log(
-    methods.formState.errors,
-    methods.formState.isValid,
-    methods.formState.dirtyFields,
-    methods.watch()
-  )
+  useEffect(() => {
+    if (mode === 'edit' && faq) {
+      methods.reset({
+        ...faq,
+        fileUrl: faq.files ?? [],
+        tagIds: faq.faqTags.map((tag) => tag.tagId),
+        templateId: faq.template?.title,
+      })
+      methods.trigger()
+      console.log('edit', methods.formState.errors, methods.clearErrors())
+    }
+  }, [faq, mode])
 
   useEffect(() => {
     if (!isOpen) {
@@ -211,6 +239,7 @@ const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
                   field.onChange(value)
                   setSearchTemplate('')
                 }}
+                value={field.value ?? ''}
               />
             )}
           />
@@ -255,7 +284,7 @@ const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
         <div className="space-x-2">
           <Button label="ยกเลิก" onClick={onClose} variant="white" />
           <Button
-            label="สร้าง FAQ"
+            label={mode === 'edit' ? 'แก้ไข FAQ' : 'สร้าง FAQ'}
             disabled={!methods.formState.isValid}
             onClick={() => methods.handleSubmit(onSubmit)()}
           />
