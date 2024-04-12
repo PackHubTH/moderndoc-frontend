@@ -161,7 +161,7 @@ const TagsTab = () => {
             <Button label="เพิ่ม" variant="green" onClick={onCreateTag} />
           </div>
         </div>
-        <TableDisplay table={table} />
+        <TableDisplay table={table} maxHeight="320px" />
       </div>
       <DeleteTagModal isOpen={isOpen} onClose={close} tag={selectedDeleteTag} />
     </>

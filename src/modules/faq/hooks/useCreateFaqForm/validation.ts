@@ -12,7 +12,7 @@ export const CreateFaqFormValidation = z.object({
   extraContact: z.any().optional(),
   isInternal: z.boolean(),
   fileUrl: z.array(z.string()).optional(),
-  templateId: z.string().uuid().optional(),
+  templateId: z.string().optional(),
   tagIds: z.array(z.string().uuid()).optional(),
 })
 

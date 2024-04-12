@@ -1,3 +1,4 @@
+import AutocompleteInput from '@/components/AutocompleteInput'
 import Button from '@/components/Button'
 import JsonTextInput from '@/components/JsonTextInput'
 import Modal from '@/components/Modal'
@@ -10,7 +11,8 @@ import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
 import useCreateFaqForm from '@/modules/faq/hooks/useCreateFaqForm'
 import { CreateFaqForm } from '@/modules/faq/hooks/useCreateFaqForm/validation'
 import { SendChannel } from '@/modules/faq/types'
-import { useEffect } from 'react'
+import useGetAllTemplate from '@/modules/template/hooks/api/useGetAllTemplate'
+import { useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { FaPlus } from 'react-icons/fa6'
 import { toast } from 'react-toastify'
@@ -22,21 +24,37 @@ type PropsType = {
 const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
   const { methods } = useCreateFaqForm()
 
+  const [searchTemplate, setSearchTemplate] = useState<string>('')
+
+  const { data: templates } = useGetAllTemplate(1, searchTemplate)
   const { data: tags } = useGetAllTags()
 
   const { mutate: createFaq } = useCreateFaq()
 
   const onSubmit = (data: CreateFaqForm) => {
-    createFaq(data, {
-      onSuccess: () => {
-        toast('สร้าง FAQ สำเร็จ', { type: 'success' })
-        onClose()
-      },
-      onError: (error) => {
-        toast(`เกิดข้อผิดพลาดในการสร้าง FAQ ${error}`, { type: 'error' })
-      },
-    })
+    const templateId = templates?.data.data.find(
+      (template) => template.title === data.templateId
+    )?.id
+    createFaq(
+      { ...data, templateId: templateId ?? undefined },
+      {
+        onSuccess: () => {
+          toast('สร้าง FAQ สำเร็จ', { type: 'success' })
+          onClose()
+        },
+        onError: (error) => {
+          toast(`เกิดข้อผิดพลาดในการสร้าง FAQ ${error}`, { type: 'error' })
+        },
+      }
+    )
   }
+
+  console.log(
+    methods.formState.errors,
+    methods.formState.isValid,
+    methods.formState.dirtyFields,
+    methods.watch()
+  )
 
   useEffect(() => {
     if (!isOpen) {
@@ -58,50 +76,57 @@ const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
       }
       content={
         <form className="max-h-[400px] space-y-5 overflow-y-auto p-1">
-          <Controller
-            control={methods.control}
-            name="titleTh"
-            render={({ field }) => (
-              <TextInput
-                label="ชื่อรายการ FAQ (ภาษาไทย)"
-                placeholder="กรอกรหัสชื่อรายการ FAQ"
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            control={methods.control}
-            name="documentCodeTh"
-            render={({ field }) => (
-              <TextInput
-                label="รหัสเอกสาร (ภาษาไทย)"
-                placeholder="กรอกรหัสเอกสาร"
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            control={methods.control}
-            name="titleEn"
-            render={({ field }) => (
-              <TextInput
-                label="ชื่อรายการ FAQ (ภาษาอังกฤษ)"
-                placeholder="กรอกรหัสชื่อรายการ FAQ"
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            control={methods.control}
-            name="documentCodeEn"
-            render={({ field }) => (
-              <TextInput
-                label="รหัสเอกสาร (ภาษาอังกฤษ)"
-                placeholder="กรอกรหัสเอกสาร"
-                {...field}
-              />
-            )}
-          />
+          <div className="flex items-end gap-1">
+            <Controller
+              control={methods.control}
+              name="titleTh"
+              render={({ field }) => (
+                <TextInput
+                  label="ชื่อรายการ FAQ (ภาษาไทย)"
+                  placeholder="กรอกรหัสชื่อรายการ FAQ"
+                  className="flex-grow"
+                  {...field}
+                />
+              )}
+            />
+            <Controller
+              control={methods.control}
+              name="documentCodeTh"
+              render={({ field }) => (
+                <TextInput
+                  placeholder="รหัสเอกสาร (ภาษาไทย)"
+                  className="w-48"
+                  {...field}
+                />
+              )}
+            />
+          </div>
+          <div className="flex items-end gap-1">
+            <Controller
+              control={methods.control}
+              name="titleEn"
+              render={({ field }) => (
+                <TextInput
+                  label="ชื่อรายการ FAQ (ภาษาอังกฤษ)"
+                  placeholder="กรอกรหัสชื่อรายการ FAQ"
+                  className="flex-grow"
+                  {...field}
+                />
+              )}
+            />
+            <Controller
+              control={methods.control}
+              name="documentCodeEn"
+              render={({ field }) => (
+                <TextInput
+                  placeholder="รหัสเอกสาร (ภาษาอังกฤษ)"
+                  className="w-48"
+                  {...field}
+                />
+              )}
+            />
+          </div>
+
           <Controller
             control={methods.control}
             name="description"
@@ -169,7 +194,26 @@ const CreateFaqModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
               />
             )}
           />
-
+          <Controller
+            control={methods.control}
+            name="templateId"
+            render={({ field }) => (
+              <AutocompleteInput
+                label="เลือก Template"
+                options={
+                  templates?.data.data.map((template) => ({
+                    label: template.title,
+                    value: template.title,
+                  })) ?? []
+                }
+                onSearch={setSearchTemplate}
+                onChange={(value) => {
+                  field.onChange(value)
+                  setSearchTemplate('')
+                }}
+              />
+            )}
+          />
           <Controller
             control={methods.control}
             name="tagIds"

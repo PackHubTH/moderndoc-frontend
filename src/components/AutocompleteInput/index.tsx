@@ -13,6 +13,7 @@ type PropsType = {
   className?: string
   isError?: boolean
   onSearch?: (query: string) => void
+  placeholder?: string
 }
 
 const AutocompleteInput: React.FC<PropsType> = ({
@@ -23,6 +24,7 @@ const AutocompleteInput: React.FC<PropsType> = ({
   isError,
   options,
   onSearch,
+  placeholder = 'กรุณาเลือก...',
 }) => {
   const [query, setQuery] = useState('')
 
@@ -56,14 +58,16 @@ const AutocompleteInput: React.FC<PropsType> = ({
           }}
         />
         <Combobox.Options>
-          {filteredOptions.map((option) => (
-            <Combobox.Option
-              className="color-gray-800 mx-2 cursor-pointer border border-gray-200 px-4 py-2 text-sm hover:bg-gray-100"
-              value={option.value}
-            >
-              {option.label}
-            </Combobox.Option>
-          ))}
+          {[{ value: '', label: placeholder }, ...filteredOptions].map(
+            (option) => (
+              <Combobox.Option
+                className="color-gray-800 mx-2 cursor-pointer border border-gray-200 px-4 py-2 text-sm hover:bg-gray-100"
+                value={option.value}
+              >
+                {option.label}
+              </Combobox.Option>
+            )
+          )}
         </Combobox.Options>
       </div>
     </Combobox>
