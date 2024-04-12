@@ -24,7 +24,6 @@ const JsonTextInput: React.FC<PropsType> = ({
 
       <div className="space-y-2">
         {fields.map((field, index) => {
-          console.log(field, value?.[field] ?? '')
           return (
             <input
               type="text"

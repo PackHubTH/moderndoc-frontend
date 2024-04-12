@@ -15,6 +15,7 @@ import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
 import { HiTrash } from 'react-icons/hi'
 import CreateFaqModal from '../../components/CreateFaqModal'
+import DeleteFaqModal from '../../components/DeleteFaqModal'
 import useGetDepartmentFaqs from '../../hooks/api/useGetDepartmentFaqs'
 import { Faq } from '../../types'
 
@@ -24,6 +25,13 @@ const FaqListTable = () => {
     close: closeCreateFaqModal,
     open: openCreateFaqModal,
   } = useDisclosure()
+
+  const {
+    isOpen: isOpenDeleteFaqModal,
+    close: closeDeleteFaqModal,
+    open: openDeleteFaqModal,
+  } = useDisclosure()
+
   const [editFaq, setEditFaq] = useState<Faq | null>(null)
 
   const [paginationState, setPaginationState] = useState<PaginationState>({
@@ -98,6 +106,10 @@ const FaqListTable = () => {
             <HiTrash
               size={18}
               className="cursor-pointer rounded-full text-red-500"
+              onClick={() => {
+                setEditFaq(info.row.original)
+                openDeleteFaqModal()
+              }}
             />
           </div>
         </div>
@@ -135,6 +147,11 @@ const FaqListTable = () => {
         isOpen={isOpenCreateFaqModal}
         onClose={closeCreateFaqModal}
         mode="edit"
+        faq={editFaq!}
+      />
+      <DeleteFaqModal
+        isOpen={isOpenDeleteFaqModal}
+        onClose={closeDeleteFaqModal}
         faq={editFaq!}
       />
     </>
