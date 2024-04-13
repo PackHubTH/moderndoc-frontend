@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react'
-import { DocumentAction, DocumentStatus } from '../types/types'
 
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import RadioGroup from '@/components/RadioGroup'
-import useAssignOperator from '../hooks/api/useAssignOperator'
-import useCreateDocument from '../hooks/api/useCreateDocument'
-import useCreateDocumentForm from '../hooks/useCreateDocumentForm'
+import RichTextInput from '@/components/RichTextInput'
+import Select from '@/components/Select'
+import { Controller } from 'react-hook-form'
+import { toast } from 'react-toastify'
+import useActionDocument from '../hooks/api/useActionDocument'
+import useActionDocumentForm from '../hooks/useActionDocumentForm'
+import { ActionDocumentForm } from '../hooks/useActionDocumentForm/validation'
+import { DocumentAction } from '../types/types'
 
 type PropsType = {
   isOpen: boolean
@@ -14,27 +18,26 @@ type PropsType = {
   close: () => void
 }
 
-type CreateDocument = {
-  templateId: string
-  element: any
-  documentStatus: DocumentStatus
-}
+// type CreateDocument = {
+//   templateId: string
+//   element: any
+//   documentStatus: DocumentStatus
+// }
 
-type AssignOperator = {
-  documentId: string
-  operatorUserId: string
-  message: string
-  isEditable: boolean
-}
+// type AssignOperator = {
+//   documentId: string
+//   operatorUserId: string
+//   message: string
+//   isEditable: boolean
+// }
 
 const ActionDocumentModal: React.FC<PropsType> = ({
   isOpen,
   documentId,
   close,
 }: PropsType) => {
-  const { methods } = useCreateDocumentForm()
-  const { mutate: createDocument } = useCreateDocument()
-  const { mutate: assignOperator } = useAssignOperator()
+  const { methods } = useActionDocumentForm()
+  const { mutate: actionDocument } = useActionDocument()
   const [documentAction, setDocumentAction] = useState(
     DocumentAction.SEND_TO_REVIEW
   )
@@ -45,81 +48,69 @@ const ActionDocumentModal: React.FC<PropsType> = ({
     }
   }, [isOpen])
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: ActionDocumentForm) => {
     console.log('submit', methods.getValues())
-    // try {
-    //   createDocument(
-    //     {
-    //       templateId,
-    //       element: {},
-    //       documentStatus,
-    //     },
-    //     {
-    //       onSuccess: () => {
-    //         toast('สร้างเอกสารสำเร็จ', { type: 'success' })
-    //         close()
-    //       },
-    //       onError: (error) => {
-    //         toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
-    //           type: 'error',
-    //         })
-    //       },
-    //     }
-    //   )
-    // } catch (error) {
-    //   toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
-    // }
+    try {
+      actionDocument(
+        {
+          documentId,
+          element: {},
+          action: documentAction,
+          message: data.message,
+          receiverId: data.receiverId,
+        },
+        {
+          onSuccess: () => {
+            toast('ดำเนินการเอกสารสำเร็จ', { type: 'success' })
+            close()
+          },
+          onError: (error) => {
+            toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, {
+              type: 'error',
+            })
+          },
+        }
+      )
+    } catch (error) {
+      toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, { type: 'error' })
+    }
   }
 
-  // const renderCreateDocumentForm = () => {
-  //   if (documentStatus !== DocumentStatus.PROCESSING) return null
-  //   return (
-  //     <form className="max-h-[586px] space-y-5 overflow-y-auto p-1">
-  //       <Controller
-  //         control={methods.control}
-  //         name="operatorUserId"
-  //         render={({ field: { value, onChange } }) => (
-  //           <Select
-  //             label="เลือกผู้ลงนามหรือผู้ดำเนินการต่อ"
-  //             onChange={onChange}
-  //             value={value}
-  //             options={[]} // TODO: get from api
-  //           />
-  //         )}
-  //       />
-  //       <Controller
-  //         control={methods.control}
-  //         name="message"
-  //         render={({ field }) => (
-  //           <RichTextInput
-  //             label="รายละเอียดเอกสาร"
-  //             placeholder="กรอกรายละเอียด"
-  //             {...field}
-  //           />
-  //         )}
-  //       />
-  //       <Controller
-  //         control={methods.control}
-  //         name="isEditable"
-  //         render={({ field: { value, onChange } }) => (
-  //           <label className="mb-2.5 mt-4 flex items-center gap-2">
-  //             <input
-  //               className="rounded-sm accent-blue-500"
-  //               type="checkbox"
-  //               checked={value}
-  //               onChange={onChange}
-  //             />
-  //             <span className="text-sm">
-  //               อนุญาตให้ผู้รับเอกสารแก้ไขเอกสารแทนตนเองได้
-  //             </span>
-  //           </label>
-  //         )}
-  //       />
-  //     </form>
-  //   )
-  // }
+  const renderActionDocumentForm = () => {
+    if (
+      documentAction === DocumentAction.COMPLETE ||
+      documentAction === DocumentAction.REJECT
+    )
+      return null
+    return (
+      <form className="max-h-[586px] space-y-5 overflow-y-auto p-1">
+        <Controller
+          control={methods.control}
+          name="receiverId"
+          render={({ field: { value, onChange } }) => (
+            <Select
+              label="เลือกผู้รับเอกสาร"
+              onChange={onChange}
+              value={value}
+              options={[]} // TODO: get from api
+            />
+          )}
+        />
+        <Controller
+          control={methods.control}
+          name="message"
+          render={({ field }) => (
+            <RichTextInput
+              label="รายละเอียดเอกสาร"
+              placeholder="กรอกรายละเอียด"
+              {...field}
+            />
+          )}
+        />
+      </form>
+    )
+  }
 
-  // console.log('metgods', methods, methods.formState.isValid, documentStatus)
   return (
     <Modal
       isOpen={isOpen}
@@ -157,13 +148,16 @@ const ActionDocumentModal: React.FC<PropsType> = ({
             value={documentAction}
             onChange={setDocumentAction}
           />
-          {/* {renderCreateDocumentForm()} */}
-          {/* {documentStatus === DocumentStatus.COMPLETED && (
+          {renderActionDocumentForm()}
+          {documentAction === DocumentAction.COMPLETE && (
             <p>
               เอกสารจะถูกบันทึกไว้ในระบบ โดยมีสถานะเสร็จสิ้นแล้ว
               ท่านจะไม่สามารถเปลี่ยนแปลง หรือดำเนินการเอกสารต่อได้
             </p>
-          )} */}
+          )}
+          {documentAction === DocumentAction.REJECT && (
+            <p>เอกสารจะถูกยกเลิก ท่านจะไม่สามารถดำเนินการเอกสารต่อได้</p>
+          )}
         </div>
       }
     />
