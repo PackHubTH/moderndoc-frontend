@@ -13,6 +13,7 @@ import Pagination from '@/components/TableDisplay/Pagination'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
 import { FaRegEnvelope } from 'react-icons/fa6'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import useGetAllDocument from '../hooks/api/useGetAllDocument'
 import { Document } from '../types/types'
@@ -20,13 +21,14 @@ import { Document } from '../types/types'
 const StyledTableRow = styled.div`
   position: relative;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: end;
+  align-items: flex-end;
   padding-right: 20px;
   & > div {
     display: none;
   }
-  & > div:hover {
+  &:hover > div {
     display: block;
     position: absolute;
     top: 0;
@@ -35,6 +37,7 @@ const StyledTableRow = styled.div`
 `
 
 const DocumentListTable = () => {
+  const navigate = useNavigate()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -95,7 +98,7 @@ const DocumentListTable = () => {
             <Button
               label="ดำเนินการ"
               variant="outline-blue"
-              onClick={() => console.log('view')}
+              onClick={() => navigate(`/edit-document/${info.row.original.id}`)}
             />
           </div>
         </StyledTableRow>

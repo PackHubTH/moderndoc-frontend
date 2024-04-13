@@ -1,4 +1,3 @@
-import { useRef, useState } from 'react'
 import {
   FaAlignJustify,
   FaAlignLeft,
@@ -11,6 +10,7 @@ import {
   FaPenFancy,
 } from 'react-icons/fa'
 import { Document, Page } from 'react-pdf'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   saveCanvas,
   setTextAlign,
@@ -24,11 +24,11 @@ import Dropdown from '@/components/Dropdown'
 import Modal from '@/components/Modal'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import { PDFDocument } from 'pdf-lib'
-import { useDrop } from 'react-dnd'
+import { useRef } from 'react'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
 import { MdOutlineDeleteForever } from 'react-icons/md'
-import { useNavigate } from 'react-router-dom'
+import ActionDocumentModal from '../components/ActionDocumentModal'
 import CreateDocumentModal from '../components/CreateDocumentModal'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
@@ -37,12 +37,16 @@ import DraggableBox from '../components/DraggableBox'
 import GuidelineModalContent from '../components/GuidelineModalContent'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
+import useGetDocumentById from '../hooks/api/useGetDocumentById'
 import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
-import { DnDItem } from '../types/DocumentField'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 
-const DocumentEditor = () => {
+type PropsType = {
+  type: 'create' | 'edit'
+}
+
+const DocumentEditor = ({ type }: PropsType) => {
   const navigate = useNavigate()
   const {
     isOpen: isGuidelineModalOpen,
@@ -67,6 +71,11 @@ const DocumentEditor = () => {
     (state) => state.setActiveObject
   )
 
+  const { documentId = '', templateId = '' } = useParams()
+  // TODO: useGetTemplateById
+  const { data: documentData } = useGetDocumentById(documentId)
+  console.log('data', templateId, documentId, documentData)
+
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     console.log('numPages', numPages)
     setPageTotal(numPages)
@@ -87,19 +96,6 @@ const DocumentEditor = () => {
     email: 'a@a.com',
     timestamp: 1234567890,
   }
-
-  const [dropBox, setDropBox] = useState<DnDItem[]>([])
-  const [{ isOver }, dropRef] = useDrop(() => ({
-    accept: 'box',
-
-    drop: (item: DnDItem) => {
-      console.log(item)
-      setDropBox((dropBox) => [...dropBox, item])
-    },
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  }))
 
   //////////////////////////// modify pdf /////////////////////////////
   async function handlePDFUpload() {
@@ -140,10 +136,6 @@ const DocumentEditor = () => {
     link.click()
   }
 
-  // const pdfDoc = PDFDocument.load(existingPdfBytes)
-  // console.log('pdfDoc', pdfDoc)
-  console.log('documentEditor', activeObject)
-  console.log('documentEditor', activeCanvasId)
   return (
     <div>
       {/* Header */}
@@ -192,12 +184,24 @@ const DocumentEditor = () => {
             variant="green"
             onClick={openProcessModal}
           />
-          <CreateDocumentModal
-            isOpen={isProcessModalOpen}
-            templateId={'09ed9e77-67bc-465b-a643-93e13ef0b523'} // TODO: delete mock
-            close={closeProcessModal}
+          {type === 'create' ? (
+            <CreateDocumentModal
+              isOpen={isProcessModalOpen}
+              templateId={templateId}
+              close={closeProcessModal}
+            />
+          ) : (
+            <ActionDocumentModal
+              isOpen={isProcessModalOpen}
+              documentId={documentId}
+              close={closeProcessModal}
+            />
+          )}
+          <Button
+            label="ยกเลิก"
+            variant="gray"
+            onClick={() => navigate('/document-management')}
           />
-          <Button label="ยกเลิก" variant="gray" onClick={() => navigate('/')} />
         </div>
       </div>
       {/*  */}

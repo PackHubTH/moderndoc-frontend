@@ -20,7 +20,9 @@ const DocumentManagementPage: React.FC = () => {
           label="สร้าง mock"
           variant="green"
           leftIcon={<FaPlus size={18} />}
-          onClick={() => navigate('/edit-document')}
+          onClick={() =>
+            navigate('/create-document/eec42725-fdd6-4201-80ae-e2b8e788b97b')
+          }
         />
         <TextInput className="w-[240px]" placeholder="ค้นหา..." />
       </div>

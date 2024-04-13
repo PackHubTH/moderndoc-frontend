@@ -1,9 +1,11 @@
-// export enum DocumentStatus {
-//   SEND_DOCUMENT = '0',
-//   NOTIFY_SENDER = '1',
-//   COMPLETE = '2',
-//   CANCEL = '3',
-// }
+export enum DocumentAction {
+  SEND_BACK_TO_OWNER = 'SEND_BACK_TO_OWNER',
+  SEND_TO_OPERATOR = 'SEND_TO_OPERATOR',
+  SEND_TO_REVIEW = 'SEND_TO_REVIEW',
+  APPROVE = 'APPROVE',
+  COMPLETE = 'COMPLETE',
+  REJECT = 'REJECT',
+}
 
 export enum DocumentStatus {
   PROCESSING = 'PROCESSING',
