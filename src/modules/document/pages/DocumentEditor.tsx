@@ -33,7 +33,6 @@ import CreateDocumentModal from '../components/CreateDocumentModal'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
 import DocumentToolbar from '../components/DocumentToolbar'
-import DraggableBox from '../components/DraggableBox'
 import GuidelineModalContent from '../components/GuidelineModalContent'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
@@ -94,7 +93,8 @@ const DocumentEditor = ({ type }: PropsType) => {
   const user = {
     name: 'John Doe',
     email: 'a@a.com',
-    timestamp: 1234567890,
+    profileImg: 'https://via.placeholder.com/150',
+    timestamp: '2021-10-10T00:00:00.000Z',
   }
 
   //////////////////////////// modify pdf /////////////////////////////
@@ -338,37 +338,43 @@ const DocumentEditor = ({ type }: PropsType) => {
           {/*  */}
         </div>
         {/* sidebar */}
-        <div
-          className="hs-accordion-group w-1/4 overflow-y-auto"
-          data-hs-accordion-always-open
-        >
-          <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
-            <ProfileBox {...user} />
-            <div className="p-4">
-              <p>TEST</p>
-              <p>TEST</p>
-              <p>TEST</p>
-              <p>TEST</p>
-              <p>TEST</p>
-            </div>
-          </DocumentAccordion>
-          <DocumentAccordion title={'การแสดงความคิดเห็น'}>
-            <ProfileBox {...user} />
-            <p className="p-4">
-              Lorem ipsum dolor sit amet consectetur. Enim vestibulum dolor
-              libero purus habitant adipiscing tincidunt libero purus.
-            </p>
-          </DocumentAccordion>
-          <DocumentAccordion title={'ลากข้อมูลลงหน้ากระดาษ'}>
-            <div className="p-3">
-              <p>ข้อมูลเบื้องต้น</p>
-              <DraggableBox text="testtesttesttesttesttesttesttesttest testtesttesttesttest testtesttesttesttesttesttesttesttesttesttesttest" />
-              <DraggableBox text=" testtesttesttesttest testtesttesttesttesttesttesttesttesttesttesttest" />
-              <p>Date Stamp</p>
-              <p>ลายเซ็นลงนาม</p>
-            </div>
-          </DocumentAccordion>
-        </div>
+        {type === 'edit' && (
+          <div
+            className="hs-accordion-group w-1/4 overflow-y-auto"
+            data-hs-accordion-always-open
+          >
+            <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
+              <ProfileBox {...user} />
+              <div className="p-4">
+                <p>TEST</p>
+                <p>TEST</p>
+                <p>TEST</p>
+                <p>TEST</p>
+                <p>TEST</p>
+              </div>
+            </DocumentAccordion>
+            <DocumentAccordion title={'การแสดงความคิดเห็น'}>
+              {documentData &&
+                documentData?.data?.documentTimelines.map(
+                  (timeline: any, index) => (
+                    <div>
+                      <ProfileBox
+                        name={timeline.userUpdatedBy.nameTh}
+                        email={
+                          timeline.userUpdatedBy.emails[
+                            timeline.userUpdatedBy.defaultEmailIndex
+                          ]
+                        }
+                        profileImg={timeline.userUpdatedBy.profileImg}
+                        timestamp={timeline.createdAt}
+                      />
+                      <p className="mb-2 p-2 px-4">{timeline.message}</p>
+                    </div>
+                  )
+                )}
+            </DocumentAccordion>
+          </div>
+        )}
       </div>
       {/*  */}
       {/* pdf lib test */}
