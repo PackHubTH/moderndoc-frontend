@@ -27,15 +27,15 @@ const ApproveMemberModal: React.FC<PropsType> = ({
       { memberUserId, isApproved },
       {
         onSuccess: () => {
-          refetchMember()
           toast(isApproved ? 'ตอบรับสำเร็จ' : 'ไม่ตอบรับสำเร็จ', {
             type: 'success',
           })
-          close()
+          refetchMember()
+          onClose()
         },
         onError: () => {
           toast('เกิดข้อผิดพลาดในการตอบรับ', { type: 'error' })
-          close()
+          onClose()
         },
       }
     )

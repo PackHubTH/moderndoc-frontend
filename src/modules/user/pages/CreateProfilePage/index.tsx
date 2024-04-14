@@ -23,7 +23,11 @@ const CreateProfilePage = () => {
 
   const onSubmit = () => {
     const data = methods.getValues()
-    registerUser(data, {
+    const dataToSend = {
+      ...data,
+      departmentIds: [data.departmentId],
+    }
+    registerUser(dataToSend, {
       onSuccess: (response) => {
         setUser(response.data!, response.data!.token!)
         navigate('/')

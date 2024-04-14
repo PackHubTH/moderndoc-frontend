@@ -2,9 +2,12 @@ import PageContainer from '@/components/PageContainer'
 import Tabs from '@/components/Tabs'
 import useGetDepartmentById from '@/modules/user/hooks/api/useGetDepartmentById'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
+import { ApprovalStatus } from '@/modules/user/hooks/types'
 import { useMemo } from 'react'
 import { UserRole } from 'types/user'
 import DepartmentMembersList from './DepartmentMembersListTable'
+import DepartmentRejectedPage from './DepartmentRejectedPage'
+import WaitForApprovalPage from './WaitForApprovalPage'
 
 const DepartmentManagementPage = () => {
   const { data: userData } = useGetUser()
@@ -21,6 +24,27 @@ const DepartmentManagementPage = () => {
 
   if (userData?.data.role !== UserRole.STAFF) {
     return <PageContainer>คุณไม่มีสิทธิ์เข้าถึงหน้านี้</PageContainer>
+  }
+
+  if (
+    userData?.data.staff?.staffDepartments.find(
+      (department) => department.departmentId === defaultDepartmentId
+    )?.isApproved === ApprovalStatus.PENDING
+  ) {
+    return (
+      <WaitForApprovalPage departmentName={departmentData?.data.name || ''} />
+    )
+  }
+  if (
+    userData?.data.staff?.staffDepartments.find(
+      (department) => department.departmentId === defaultDepartmentId
+    )?.isApproved === ApprovalStatus.REJECTED
+  ) {
+    return (
+      <DepartmentRejectedPage
+        departmentName={departmentData?.data.name || ''}
+      />
+    )
   }
 
   if (!departmentData) return <PageContainer>Loading...</PageContainer>
