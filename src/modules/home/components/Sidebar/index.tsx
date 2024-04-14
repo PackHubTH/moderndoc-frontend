@@ -1,10 +1,13 @@
-import { SIDE_BAR_MENUS } from './constant'
-import tw from 'twin.macro'
+import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { useNavigate } from 'react-router-dom'
+import tw from 'twin.macro'
+import { SIDE_BAR_MENUS } from './constant'
 
 const Sidebar = () => {
   const navigate = useNavigate()
   const currentPath = window.location.pathname
+
+  const { data: userData } = useGetUser()
 
   return (
     <div
@@ -16,24 +19,27 @@ const Sidebar = () => {
         data-hs-accordion-always-open
       >
         <ul className="space-y-2">
-          {SIDE_BAR_MENUS.map((menu) => (
-            <li>
-              <a
-                css={[
-                  tw`flex cursor-pointer items-center gap-x-3.5 rounded-lg bg-transparent px-2.5 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white`,
-                  currentPath === menu.link && tw`bg-blue-600 text-white`,
-                ]}
-                onClick={() => {
-                  menu.link && currentPath !== menu.link
-                    ? navigate(menu.link)
-                    : undefined
-                }}
-              >
-                {menu.icon}
-                {menu.name}
-              </a>
-            </li>
-          ))}
+          {SIDE_BAR_MENUS.map(
+            (menu) =>
+              menu.role.includes(userData?.data.role!) && (
+                <li>
+                  <a
+                    css={[
+                      tw`flex cursor-pointer items-center gap-x-3.5 rounded-lg bg-transparent px-2.5 py-2.5 text-sm text-slate-700 hover:bg-blue-600 hover:text-white`,
+                      currentPath === menu.link && tw`bg-blue-600 text-white`,
+                    ]}
+                    onClick={() => {
+                      menu.link && currentPath !== menu.link
+                        ? navigate(menu.link)
+                        : undefined
+                    }}
+                  >
+                    {menu.icon}
+                    {menu.name}
+                  </a>
+                </li>
+              )
+          )}
         </ul>
       </nav>
     </div>

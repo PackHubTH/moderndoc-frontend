@@ -19,6 +19,10 @@ const DepartmentManagementPage = () => {
 
   const { data: departmentData } = useGetDepartmentById(defaultDepartmentId!)
 
+  if (userData?.data.role !== UserRole.STAFF) {
+    return <PageContainer>คุณไม่มีสิทธิ์เข้าถึงหน้านี้</PageContainer>
+  }
+
   if (!departmentData) return <PageContainer>Loading...</PageContainer>
 
   return (
