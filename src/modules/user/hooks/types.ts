@@ -33,6 +33,7 @@ export type Student = {
   advisorId?: string
   studentNumber: string
   advisor?: Advisor
+  isApproved: ApprovalStatus
 }
 
 export type Advisor = {
@@ -66,14 +67,20 @@ export type StaffDepartment = {
   id: string
   staffId: string
   departmentId: string
-  isApproved: boolean
+  isApproved: ApprovalStatus
 }
 
 export type TeacherDepartment = {
   id: string
   teacherId: string
   departmentId: string
-  isApproved: boolean
+  isApproved: ApprovalStatus
+}
+
+export enum ApprovalStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
 }
 
 export type User = {

@@ -1,13 +1,23 @@
 import { Table, flexRender } from '@tanstack/react-table'
+import tw from 'twin.macro'
 
 type PropsType = {
   table: Table<any>
+  maxHeight?: string | number
 }
 
-const TableDisplay: React.FC<PropsType> = ({ table }) => {
+const TableDisplay: React.FC<PropsType> = ({ table, maxHeight }) => {
   return (
-    <div className="p-2">
-      <table className="w-full rounded-2xl border">
+    <div
+      css={[
+        tw`overflow-x-auto p-2`,
+        maxHeight && {
+          maxHeight,
+          overflowY: 'auto',
+        },
+      ]}
+    >
+      <table className="w-full rounded-2xl">
         <thead className="">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="text-left">

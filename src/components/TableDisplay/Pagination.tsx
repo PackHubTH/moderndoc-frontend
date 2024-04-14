@@ -14,7 +14,7 @@ const Pagination: React.FC<Props> = ({
   totalPage,
 }) => {
   return (
-    <div className="flex items-center justify-end gap-2">
+    <div className="mt-4 flex items-center justify-end gap-2">
       <button
         onClick={prevPage}
         disabled={currentPage === 1}

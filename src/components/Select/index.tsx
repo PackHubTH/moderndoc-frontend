@@ -24,12 +24,6 @@ const Select: React.FC<PropsType> = ({
   disabled,
   placeholder = 'กรุณาเลือก...',
 }) => {
-  // useEffect(() => {
-  //   if (value === undefined && options[0]?.value) {
-  //     onChange?.(options[0].value)
-  //   }
-  // }, [options])
-
   return (
     <div className={className}>
       <label

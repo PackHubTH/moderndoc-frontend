@@ -18,7 +18,10 @@ const RadioGroup: React.FC<PropsType> = ({
 }) => {
   return (
     <div className={className}>
-      <label htmlFor={label} className="block font-semibold text-gray-800">
+      <label
+        htmlFor={label}
+        className="block text-sm font-semibold text-gray-800"
+      >
         {label}
       </label>
       <div>
@@ -27,7 +30,7 @@ const RadioGroup: React.FC<PropsType> = ({
             <input
               type="radio"
               name={`${option.label}-${index}`}
-              className="mt-0.5 shrink-0 rounded-full border-gray-200 text-blue-600 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50"
+              className=" mt-0.5 shrink-0 rounded-full border-gray-200 text-blue-600 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50"
               id={`${option.label}-${index}`}
               value={option.value}
               checked={value === option.value}
@@ -35,7 +38,7 @@ const RadioGroup: React.FC<PropsType> = ({
             />
             <label
               htmlFor={`${option.label}-${index}`}
-              className="text-gray-6000 ms-2"
+              className="text-gray-6000 ms-2 block text-sm"
             >
               {option.label}
             </label>

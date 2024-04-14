@@ -2,7 +2,7 @@ import Button from '@/components/Button'
 import TableDisplay from '@/components/TableDisplay'
 import TextInput from '@/components/TextInput'
 import { useDisclosure } from '@/hooks/useDisclosure'
-import DeleteTagModal from '@/modules/components/DeleteTagModal'
+import DeleteTagModal from '@/modules/faq/components/DeleteTagModal'
 import useCreateTag from '@/modules/faq/hooks/api/useCreateTag'
 import useEditTag from '@/modules/faq/hooks/api/useEditTag'
 import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
@@ -161,7 +161,7 @@ const TagsTab = () => {
             <Button label="เพิ่ม" variant="green" onClick={onCreateTag} />
           </div>
         </div>
-        <TableDisplay table={table} />
+        <TableDisplay table={table} maxHeight="320px" />
       </div>
       <DeleteTagModal isOpen={isOpen} onClose={close} tag={selectedDeleteTag} />
     </>
