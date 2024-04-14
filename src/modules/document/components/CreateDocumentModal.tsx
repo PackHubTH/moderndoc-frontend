@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 
+import AutocompleteInput from '@/components/AutocompleteInput'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
-import Select from '@/components/Select'
 import { Controller } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import useAssignOperator from '../hooks/api/useAssignOperator'
 import useCreateDocument from '../hooks/api/useCreateDocument'
+import useGetOperatorsByTemplateId from '../hooks/api/useGetOperatorsByTemplateId'
 import useCreateDocumentForm from '../hooks/useCreateDocumentForm'
 import { CreateDocumentForm } from '../hooks/useCreateDocumentForm/validation'
 import { DocumentStatus } from '../types/types'
@@ -37,9 +38,10 @@ const CreateDocumentModal: React.FC<PropsType> = ({
   templateId,
   close,
 }: PropsType) => {
-  const { methods } = useCreateDocumentForm()
-  const { mutate: createDocument } = useCreateDocument()
   const { mutate: assignOperator } = useAssignOperator()
+  const { mutate: createDocument } = useCreateDocument()
+  const { methods } = useCreateDocumentForm()
+  const { data: operators } = useGetOperatorsByTemplateId(templateId)
   const [documentStatus, setDocumentStatus] = useState(
     DocumentStatus.PROCESSING
   )
@@ -125,11 +127,20 @@ const CreateDocumentModal: React.FC<PropsType> = ({
           control={methods.control}
           name="operatorUserId"
           render={({ field: { value, onChange } }) => (
-            <Select
+            <AutocompleteInput
               label="เลือกผู้ลงนามหรือผู้ดำเนินการต่อ"
               onChange={onChange}
-              value={value}
-              options={[]} // TODO: get from api
+              value={
+                operators?.data.find(
+                  (operator) => operator.operatorId === value
+                )?.operator.nameTh ?? ''
+              }
+              options={
+                operators?.data.map((operator) => ({
+                  label: operator.operator.nameTh,
+                  value: operator.operatorId,
+                })) ?? []
+              }
             />
           )}
         />

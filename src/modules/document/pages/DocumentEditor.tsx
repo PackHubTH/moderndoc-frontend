@@ -19,15 +19,19 @@ import {
 } from '../utils/documentEditorUtils'
 
 import exampleFile from '@/assets/FO-TO-44.pdf'
+import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
+import MainLogo from '@/components/MainLogo'
 import Modal from '@/components/Modal'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import { useUserStore } from '@/stores/userStore'
 import { PDFDocument } from 'pdf-lib'
 import { useRef } from 'react'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
 import { MdOutlineDeleteForever } from 'react-icons/md'
+import tw from 'twin.macro'
 import ActionDocumentModal from '../components/ActionDocumentModal'
 import CreateDocumentModal from '../components/CreateDocumentModal'
 import DocumentAccordion from '../components/DocumentAccordion'
@@ -73,6 +77,7 @@ const DocumentEditor = ({ type }: PropsType) => {
   const { documentId = '', templateId = '' } = useParams()
   // TODO: useGetTemplateById
   const { data: documentData } = useGetDocumentById(documentId)
+  const user = useUserStore((state) => state.user)
   console.log('data', templateId, documentId, documentData)
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
@@ -90,7 +95,7 @@ const DocumentEditor = ({ type }: PropsType) => {
       )
   }
 
-  const user = {
+  const _user = {
     name: 'John Doe',
     email: 'a@a.com',
     profileImg: 'https://via.placeholder.com/150',
@@ -139,18 +144,21 @@ const DocumentEditor = ({ type }: PropsType) => {
   return (
     <div>
       {/* Header */}
-      <div className="flex h-[92px] items-center border-b-2 px-5 py-4">
-        <img src="https://via.placeholder.com/150" alt="logo" />
-        <div className="flex-1">
+      <div className="flex h-[92px] items-center gap-8 border-b-2 px-5 py-4">
+        <MainLogo />
+        <div className="flex-1 space-y-2">
           <h1 className="text-xl font-semibold text-gray-600">
-            ใบลงทะเบียนเพิ่ม-ลด-ถอน-เปลี่ยนกลุ่มเรียน
+            {documentData?.data?.title ?? 'เอกสาร'}
           </h1>
-          <div className="flex h-7">
+          <div className="flex h-7 gap-4">
             <Button
               label="Guideline"
               leftIcon={<IoEyeOutline />}
               onClick={openGuidelineModal}
             />
+            {documentData?.data?.documentSents.find(
+              (sent: any) => sent.receiverId === user.id && sent.editable
+            ) && <Badge label="ได้รับสิทธิ์แก้ไขได้" variant="success" />}
           </div>
           <Modal
             actions={
@@ -193,6 +201,7 @@ const DocumentEditor = ({ type }: PropsType) => {
           ) : (
             <ActionDocumentModal
               isOpen={isProcessModalOpen}
+              createdById={documentData?.data?.createdBy ?? ''}
               documentId={documentId}
               close={closeProcessModal}
             />
@@ -207,7 +216,7 @@ const DocumentEditor = ({ type }: PropsType) => {
       {/*  */}
       {/* Main */}
       <div className="flex h-[calc(100vh-92px)]">
-        <div className="w-3/4">
+        <div css={[type === 'edit' ? tw`w-3/4` : tw`w-full`]}>
           <DocumentToolbar>
             <ToolbarButton icon={<FaMousePointer />} id={ButtonId.Default} />
             <ToolbarButton icon={<FaA />} id={ButtonId.Text} />
@@ -344,7 +353,11 @@ const DocumentEditor = ({ type }: PropsType) => {
             data-hs-accordion-always-open
           >
             <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
-              <ProfileBox {...user} />
+              <ProfileBox
+                name={documentData?.data?.createdBy ?? ''}
+                email={documentData?.data?.createdBy ?? ''}
+                profileImg={documentData?.data?.createdBy ?? ''}
+              />
               <div className="p-4">
                 <p>TEST</p>
                 <p>TEST</p>

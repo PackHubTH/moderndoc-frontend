@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 
+import AutocompleteInput from '@/components/AutocompleteInput'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
-import Select from '@/components/Select'
+import TextInput from '@/components/TextInput'
 import { Controller } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import useActionDocument from '../hooks/api/useActionDocument'
@@ -14,25 +15,14 @@ import { DocumentAction } from '../types/types'
 
 type PropsType = {
   isOpen: boolean
+  createdById: string
   documentId: string
   close: () => void
 }
 
-// type CreateDocument = {
-//   templateId: string
-//   element: any
-//   documentStatus: DocumentStatus
-// }
-
-// type AssignOperator = {
-//   documentId: string
-//   operatorUserId: string
-//   message: string
-//   isEditable: boolean
-// }
-
 const ActionDocumentModal: React.FC<PropsType> = ({
   isOpen,
+  createdById,
   documentId,
   close,
 }: PropsType) => {
@@ -84,18 +74,29 @@ const ActionDocumentModal: React.FC<PropsType> = ({
       return null
     return (
       <form className="max-h-[586px] space-y-5 overflow-y-auto p-1">
-        <Controller
-          control={methods.control}
-          name="receiverId"
-          render={({ field: { value, onChange } }) => (
-            <Select
-              label="เลือกผู้รับเอกสาร"
-              onChange={onChange}
-              value={value}
-              options={[]} // TODO: get from api
-            />
-          )}
-        />
+        {documentAction !== DocumentAction.SEND_BACK_TO_OWNER && (
+          <Controller
+            control={methods.control}
+            name="receiverId"
+            render={({ field: { value, onChange } }) => (
+              <AutocompleteInput
+                label="เลือกผู้รับเอกสาร"
+                options={[]}
+                onChange={onChange}
+                value={value ?? ''}
+              />
+            )}
+          />
+        )}
+        {documentAction === DocumentAction.SEND_BACK_TO_OWNER && (
+          <Controller
+            control={methods.control}
+            name="receiverId"
+            render={() => (
+              <TextInput label="เลือกผู้รับเอกสาร" value={createdById} />
+            )}
+          />
+        )}
         <Controller
           control={methods.control}
           name="message"

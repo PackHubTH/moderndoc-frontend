@@ -14,3 +14,23 @@ export type GetDocumentById = {
   documentTimelines: any[]
 }
 interface Element {}
+
+export type GetOperatorsByTemplateId = {
+  templateId: string
+  operatorId: string
+  operator: Operator
+}
+interface Operator {
+  id: string
+  role: string
+  emails: string[]
+  defaultEmailIndex: number
+  phones: string[]
+  defaultPhoneIndex: number
+  profileImg: string
+  signatures: any[]
+  notificationConfig: number[]
+  createdAt: string
+  nameEn: string
+  nameTh: string
+}
