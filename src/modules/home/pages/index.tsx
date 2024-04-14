@@ -1,6 +1,8 @@
 import PageContainer from '@/components/PageContainer'
+import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
 import FaqImage from '@/modules/Home/assets/faq-image.png'
+import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
 import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { useUserStore } from '@/stores/userStore'
@@ -13,15 +15,21 @@ import GuestHomePage from './GuestHomePage'
 
 const Home = () => {
   const { isLogin } = useUserStore()
-  const { data: userData } = useGetUser()
 
   const [search, setSearch] = useState('')
+  const [filterTagId, setFilterTagId] = useState<string>('')
 
-  if (!isLogin) return <GuestHomePage />
+  const { data: userData } = useGetUser()
+  const { data: tags } = useGetAllTags()
 
-  const { data: faqs, fetchNextPage, hasNextPage } = useGetPublicFaqs()
+  const {
+    data: faqs,
+    fetchNextPage,
+    hasNextPage,
+    refetch,
+  } = useGetPublicFaqs(search, filterTagId)
 
-  const faqsData = faqs?.pages.map((page) => page.data.faqs).flat()
+  const faqsData = faqs?.pages.map((page) => page.data.data).flat()
 
   const { ref, inView } = useInView({
     threshold: 0,
@@ -33,16 +41,37 @@ const Home = () => {
     }
   }, [inView])
 
+  useEffect(() => {
+    refetch()
+  }, [search, filterTagId])
+
+  if (!isLogin) return <GuestHomePage />
+
   return (
     <PageContainer className="p-4 ">
       <div className="space-y-2 text-center">
         <img src={FaqImage} alt="faq" className="mx-auto" />
-        <TextInput
-          className="relative z-10 mx-auto w-full max-w-lg"
-          value={search}
-          onChange={(val) => setSearch(val)}
-          placeholder="ค้นหาเอกสาร..."
-        />
+        <div className="flex items-center justify-center gap-4">
+          <TextInput
+            className="w-[600px]"
+            value={search}
+            onChange={(val) => setSearch(val)}
+            placeholder="ค้นหาเอกสาร..."
+          />
+          <Select
+            className="w-48"
+            placeholder="No tags filter"
+            options={
+              tags?.data.map((tag) => ({
+                label: tag.name,
+                value: tag.id,
+              })) ?? []
+            }
+            onChange={(val) => setFilterTagId(val as string)}
+            value={filterTagId ?? ''}
+            label=""
+          />
+        </div>
       </div>
       <div className="space-y-2.5">
         {faqsData?.map((faq, index) => {
