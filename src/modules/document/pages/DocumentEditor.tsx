@@ -24,6 +24,7 @@ import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
 import MainLogo from '@/components/MainLogo'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
 import { useUserStore } from '@/stores/userStore'
 import { PDFDocument } from 'pdf-lib'
 import { useRef } from 'react'
@@ -76,6 +77,7 @@ const DocumentEditor = ({ type }: PropsType) => {
   const { documentId = '', templateId = '' } = useParams()
   // TODO: useGetTemplateById
   const { data: documentData } = useGetDocumentById(documentId)
+  const { data: templateData } = useGetTemplateById(templateId)
   const user = useUserStore((state) => state.user)
   console.log('data', templateId, documentId, documentData)
 
@@ -147,7 +149,7 @@ const DocumentEditor = ({ type }: PropsType) => {
         <MainLogo />
         <div className="flex-1 space-y-2">
           <h1 className="text-xl font-semibold text-gray-600">
-            {documentData?.data?.title ?? 'เอกสาร'}
+            {documentData?.data?.title || templateData?.data?.title || ''}
           </h1>
           <div className="flex h-7 gap-4">
             <Button
@@ -160,9 +162,19 @@ const DocumentEditor = ({ type }: PropsType) => {
             ) && <Badge label="ได้รับสิทธิ์แก้ไขได้" variant="success" />}
           </div>
           <GuidelineModal
-            description={documentData?.data?.description || '-'}
-            fileName={documentData?.data?.title || '-'}
-            filePath={documentData?.data?.exampleFile ?? ''}
+            description={
+              documentData?.data?.description ||
+              templateData?.data?.description ||
+              '-'
+            }
+            fileName={
+              documentData?.data?.title || templateData?.data?.title || '-'
+            }
+            filePath={
+              documentData?.data?.exampleFile ||
+              templateData?.data?.exampleFile ||
+              ''
+            }
             isOpen={isGuidelineModalOpen}
             onClose={closeGuidelineModal}
           />
@@ -304,11 +316,13 @@ const DocumentEditor = ({ type }: PropsType) => {
             ref={canvasRef}
           >
             <Document
-              file={exampleFile}
+              file={
+                documentData?.data?.templateFile ||
+                templateData?.data?.templateFile
+              }
               // renderMode="svg"
               onLoadSuccess={onDocumentLoadSuccess}
             >
-              {/* TODO: fix bug 1 page */}
               {Array.apply(null, Array(pageTotal))
                 .map((x, i) => i + 1)
                 .map((page) => {
@@ -322,7 +336,7 @@ const DocumentEditor = ({ type }: PropsType) => {
                         scale={2}
                         width={400}
                         className="mt-2 border-black"
-                        renderMode="svg"
+                        // renderMode="svg"
                         onLoadSuccess={() => onPageLoadSuccess(page)}
                       />
                     </div>

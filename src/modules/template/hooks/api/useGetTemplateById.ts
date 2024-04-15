@@ -1,13 +1,13 @@
 import moderndocApi from '@/moderndocApi'
 import { useQuery } from '@tanstack/react-query'
 import { ApiResponse } from 'types/response'
-import { GetDocumentById } from '../../types/response'
+import { GetDocumentById } from '../../../document/types/response'
 
-const useGetDocumentById = (id: string) => {
+const useGetTemplateById = (id: string) => {
   if (!id) return { data: null }
-  const context = useQuery(['get-document', id], async () => {
+  const context = useQuery(['get-template', id], async () => {
     const response = await moderndocApi.get<ApiResponse<GetDocumentById>>(
-      `/document/${id}`
+      `/template/${id}`
     )
     return response.data
   })
@@ -15,4 +15,4 @@ const useGetDocumentById = (id: string) => {
   return context
 }
 
-export default useGetDocumentById
+export default useGetTemplateById
