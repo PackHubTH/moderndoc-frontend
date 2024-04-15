@@ -23,7 +23,6 @@ import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
 import MainLogo from '@/components/MainLogo'
-import Modal from '@/components/Modal'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import { useUserStore } from '@/stores/userStore'
 import { PDFDocument } from 'pdf-lib'
@@ -37,7 +36,7 @@ import CreateDocumentModal from '../components/CreateDocumentModal'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
 import DocumentToolbar from '../components/DocumentToolbar'
-import GuidelineModalContent from '../components/GuidelineModalContent'
+import GuidelineModal from '../components/GuidelineModal'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
 import useGetDocumentById from '../hooks/api/useGetDocumentById'
@@ -160,24 +159,11 @@ const DocumentEditor = ({ type }: PropsType) => {
               (sent: any) => sent.receiverId === user.id && sent.editable
             ) && <Badge label="ได้รับสิทธิ์แก้ไขได้" variant="success" />}
           </div>
-          <Modal
-            actions={
-              <Button
-                label="ปิด"
-                variant="gray"
-                onClick={closeGuidelineModal}
-              />
-            }
-            content={
-              <GuidelineModalContent
-                description="test"
-                fileName="test.pdf"
-                filePath="test"
-              />
-            }
+          <GuidelineModal
+            description={documentData?.data?.description || '-'}
+            fileName={documentData?.data?.title || '-'}
+            filePath={documentData?.data?.exampleFile ?? ''}
             isOpen={isGuidelineModalOpen}
-            title="รายละเอียดเอกสาร/ตัวอย่างเอกสาร"
-            width="763px"
             onClose={closeGuidelineModal}
           />
         </div>
