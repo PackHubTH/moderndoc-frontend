@@ -5,6 +5,7 @@ import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { ApprovalStatus } from '@/modules/user/hooks/types'
 import { useMemo } from 'react'
 import { UserRole } from 'types/user'
+import AllDepartmentsList from '../AllDepartmentsList'
 import DepartmentMembersList from './DepartmentMembersListTable'
 import DepartmentRejectedPage from './DepartmentRejectedPage'
 import WaitForApprovalPage from './WaitForApprovalPage'
@@ -21,6 +22,10 @@ const DepartmentManagementPage = () => {
   }, [userData])
 
   const { data: departmentData } = useGetDepartmentById(defaultDepartmentId!)
+
+  if (userData?.data.role === UserRole.ADMIN) {
+    return <AllDepartmentsList />
+  }
 
   if (userData?.data.role !== UserRole.STAFF) {
     return <PageContainer>คุณไม่มีสิทธิ์เข้าถึงหน้านี้</PageContainer>
