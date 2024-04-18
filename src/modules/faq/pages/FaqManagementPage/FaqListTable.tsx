@@ -11,9 +11,11 @@ import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
 import { HiTrash } from 'react-icons/hi'
+import { UserRole } from 'types/user'
 import CreateFaqModal from '../../components/CreateFaqModal'
 import DeleteFaqModal from '../../components/DeleteFaqModal'
 import useGetDepartmentFaqs from '../../hooks/api/useGetDepartmentFaqs'
@@ -39,8 +41,12 @@ const FaqListTable = () => {
     pageSize: 10,
   })
 
+  const { data: userData } = useGetUser()
+
   const { data: faqs, refetch } = useGetDepartmentFaqs(
-    paginationState.pageIndex + 1
+    paginationState.pageIndex + 1,
+    '',
+    userData?.data?.role === UserRole.ADMIN
   )
 
   const columns: ColumnDef<Faq>[] = [
