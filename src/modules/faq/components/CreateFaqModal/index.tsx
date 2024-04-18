@@ -77,10 +77,9 @@ const CreateFaqModal: React.FC<PropsType> = ({
         ...faq,
         fileUrl: faq.files ?? [],
         tagIds: faq.faqTags.map((tag) => tag.tagId),
-        templateId: faq.template?.title,
+        templateId: faq.template?.title ?? null,
       })
       methods.trigger()
-      console.log('edit', methods.formState.errors, methods.clearErrors())
     }
   }, [faq, mode])
 
