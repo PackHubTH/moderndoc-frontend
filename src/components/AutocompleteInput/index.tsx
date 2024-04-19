@@ -50,7 +50,7 @@ const AutocompleteInput: React.FC<PropsType> = ({
             isError &&
               tw`border-red-500 focus:border-red-500 focus:ring-red-500`,
           ]}
-          placeholder="เลือก..."
+          placeholder={placeholder}
           value={value}
           onChange={(e) => {
             setQuery(e.target.value)

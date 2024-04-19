@@ -96,13 +96,6 @@ const DocumentEditor = ({ type }: PropsType) => {
       )
   }
 
-  const _user = {
-    name: 'John Doe',
-    email: 'a@a.com',
-    profileImg: 'https://via.placeholder.com/150',
-    timestamp: '2021-10-10T00:00:00.000Z',
-  }
-
   //////////////////////////// modify pdf /////////////////////////////
   async function handlePDFUpload() {
     // Step 1: Retrieve the file from the input
@@ -141,7 +134,10 @@ const DocumentEditor = ({ type }: PropsType) => {
     link.download = 'modified_document.pdf'
     link.click()
   }
-
+  console.log(
+    'file',
+    documentData?.data?.templateFile || templateData?.data?.templateFile
+  )
   return (
     <div>
       {/* Header */}
@@ -192,7 +188,9 @@ const DocumentEditor = ({ type }: PropsType) => {
           />
           {type === 'create' ? (
             <CreateDocumentModal
+              departmentId={templateData?.data?.departmentId ?? ''}
               isOpen={isProcessModalOpen}
+              suggestOperator={templateData?.data?.operators ?? []}
               templateId={templateId}
               close={closeProcessModal}
             />
@@ -201,6 +199,7 @@ const DocumentEditor = ({ type }: PropsType) => {
               isOpen={isProcessModalOpen}
               createdById={documentData?.data?.createdBy ?? ''}
               documentId={documentId}
+              // departmentId={documentData?.data?.departmentId ?? ''}
               close={closeProcessModal}
             />
           )}
@@ -354,12 +353,16 @@ const DocumentEditor = ({ type }: PropsType) => {
           >
             <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
               <ProfileBox
-                name={documentData?.data?.createdBy ?? ''}
-                email={documentData?.data?.createdBy ?? ''}
-                profileImg={documentData?.data?.createdBy ?? ''}
+                name={documentData?.data?.userCreated.nameTh ?? ''}
+                email={
+                  documentData?.data?.userCreated.emails[
+                    documentData?.data?.userCreated.defaultEmailIndex
+                  ] ?? ''
+                }
+                profileImg={documentData?.data?.userCreated.profileImg ?? ''}
               />
               <div className="p-4">
-                <p>TEST</p>
+                <p>{documentData?.data?.userCreated.phones[0]}</p>
                 <p>TEST</p>
                 <p>TEST</p>
                 <p>TEST</p>
@@ -391,9 +394,9 @@ const DocumentEditor = ({ type }: PropsType) => {
       </div>
       {/*  */}
       {/* pdf lib test */}
-      <button id="a" onClick={() => handlePDFUpload()}>
+      {/* <button id="a" onClick={() => handlePDFUpload()}>
         TeSt
-      </button>
+      </button> */}
     </div>
   )
 }

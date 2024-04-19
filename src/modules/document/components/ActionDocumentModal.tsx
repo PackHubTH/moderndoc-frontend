@@ -6,31 +6,40 @@ import Modal from '@/components/Modal'
 import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
+import useGetUsersByDepartmentId from '@/modules/user/hooks/api/useGetUsersByDepartmentId'
+import { useUserStore } from '@/stores/userStore'
 import { Controller } from 'react-hook-form'
-import { toast } from 'react-toastify'
+import { UserRole } from 'types/user'
 import useActionDocument from '../hooks/api/useActionDocument'
 import useActionDocumentForm from '../hooks/useActionDocumentForm'
 import { ActionDocumentForm } from '../hooks/useActionDocumentForm/validation'
 import { DocumentAction } from '../types/types'
 
 type PropsType = {
-  isOpen: boolean
   createdById: string
   documentId: string
+  departmentId?: string
+  isOpen: boolean
   close: () => void
 }
 
 const ActionDocumentModal: React.FC<PropsType> = ({
-  isOpen,
   createdById,
   documentId,
+  departmentId,
+  isOpen,
   close,
 }: PropsType) => {
   const { methods } = useActionDocumentForm()
   const { mutate: actionDocument } = useActionDocument()
+  const { data: staffList } = useGetUsersByDepartmentId(departmentId ?? '')
+  const userRole = useUserStore((state) => state.user?.role)
   const [documentAction, setDocumentAction] = useState(
-    DocumentAction.SEND_TO_REVIEW
+    userRole === UserRole.TEACHER
+      ? DocumentAction.SEND_TO_OPERATOR
+      : DocumentAction.SEND_TO_REVIEW
   )
+  const [searchStaffList, setSearchStaffList] = useState('')
 
   useEffect(() => {
     if (!isOpen) {
@@ -38,32 +47,43 @@ const ActionDocumentModal: React.FC<PropsType> = ({
     }
   }, [isOpen])
 
-  const onSubmit = async (data: ActionDocumentForm) => {
-    console.log('submit', methods.getValues())
-    try {
-      actionDocument(
-        {
-          documentId,
-          element: {},
-          action: documentAction,
-          message: data.message,
-          receiverId: data.receiverId,
-        },
-        {
-          onSuccess: () => {
-            toast('ดำเนินการเอกสารสำเร็จ', { type: 'success' })
-            close()
-          },
-          onError: (error) => {
-            toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, {
-              type: 'error',
-            })
-          },
-        }
-      )
-    } catch (error) {
-      toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, { type: 'error' })
+  useEffect(() => {
+    methods.reset({ receiverId: '', message: '' })
+    if (
+      documentAction === DocumentAction.SEND_BACK_TO_OWNER ||
+      documentAction === DocumentAction.SEND_TO_OPERATOR
+    ) {
+      methods.reset({ receiverId: createdById, message: '' })
     }
+    methods.trigger()
+  }, [documentAction])
+
+  const onSubmit = async (data: ActionDocumentForm) => {
+    console.log('submit', data)
+    // try {
+    //   actionDocument(
+    //     {
+    //       documentId,
+    //       element: {},
+    //       action: documentAction,
+    //       message: data.message ?? '',
+    //       receiverId: data.receiverId ?? '',
+    //     },
+    //     {
+    //       onSuccess: () => {
+    //         toast('ดำเนินการเอกสารสำเร็จ', { type: 'success' })
+    //         close()
+    //       },
+    //       onError: (error) => {
+    //         toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, {
+    //           type: 'error',
+    //         })
+    //       },
+    //     }
+    //   )
+    // } catch (error) {
+    //   toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, { type: 'error' })
+    // }
   }
 
   const renderActionDocumentForm = () => {
@@ -74,21 +94,31 @@ const ActionDocumentModal: React.FC<PropsType> = ({
       return null
     return (
       <form className="max-h-[586px] space-y-5 overflow-y-auto p-1">
-        {documentAction !== DocumentAction.SEND_BACK_TO_OWNER && (
+        {documentAction === DocumentAction.SEND_TO_REVIEW && (
           <Controller
             control={methods.control}
             name="receiverId"
-            render={({ field: { value, onChange } }) => (
+            render={({ field: { onChange } }) => (
               <AutocompleteInput
                 label="เลือกผู้รับเอกสาร"
-                options={[]}
-                onChange={onChange}
-                value={value ?? ''}
+                options={
+                  staffList?.data?.map((staff) => ({
+                    label: staff.nameTh,
+                    value: staff.id,
+                  })) ?? []
+                }
+                onChange={(e) => {
+                  onChange(e)
+                  setSearchStaffList('')
+                }}
+                onSearch={setSearchStaffList}
+                value={searchStaffList ?? ''}
               />
             )}
           />
         )}
-        {documentAction === DocumentAction.SEND_BACK_TO_OWNER && (
+        {(documentAction === DocumentAction.SEND_BACK_TO_OWNER ||
+          documentAction === DocumentAction.SEND_TO_OPERATOR) && (
           <Controller
             control={methods.control}
             name="receiverId"
@@ -123,32 +153,40 @@ const ActionDocumentModal: React.FC<PropsType> = ({
           <Button label="ยกเลิก" variant="outline-blue" onClick={close} />
           <Button
             label="ยืนยัน"
-            // disabled={
-            //   !methods.formState.isValid &&
-            //   documentStatus === DocumentStatus.PROCESSING
-            // }
+            disabled={
+              !methods.formState.isValid &&
+              documentAction !== DocumentAction.COMPLETE &&
+              documentAction !== DocumentAction.REJECT
+            }
             onClick={() => {
-              methods.handleSubmit(onSubmit)()
+              if (
+                documentAction !== DocumentAction.COMPLETE &&
+                documentAction !== DocumentAction.REJECT
+              )
+                methods.handleSubmit(onSubmit)()
+              else onSubmit(methods.getValues())
             }}
           />
         </div>
       }
       content={
         <div className="flex flex-col gap-5 px-6">
-          <RadioGroup
-            label="เลือกดำเนินการ"
-            options={[
-              { value: DocumentAction.SEND_TO_REVIEW, label: 'ส่งต่อเอกสาร' },
-              {
-                value: DocumentAction.SEND_BACK_TO_OWNER,
-                label: 'แจ้งผู้ส่งแก้ไขเอกสาร',
-              },
-              { value: DocumentAction.COMPLETE, label: 'ดำเนินการเสร็จสิ้น' },
-              { value: DocumentAction.REJECT, label: 'ยกเลิกเอกสาร' },
-            ]}
-            value={documentAction}
-            onChange={setDocumentAction}
-          />
+          {userRole === UserRole.STAFF && (
+            <RadioGroup
+              label="เลือกดำเนินการ"
+              options={[
+                { value: DocumentAction.SEND_TO_REVIEW, label: 'ส่งต่อเอกสาร' },
+                {
+                  value: DocumentAction.SEND_BACK_TO_OWNER,
+                  label: 'แจ้งผู้ส่งแก้ไขเอกสาร',
+                },
+                { value: DocumentAction.COMPLETE, label: 'ดำเนินการเสร็จสิ้น' },
+                { value: DocumentAction.REJECT, label: 'ยกเลิกเอกสาร' },
+              ]}
+              value={documentAction}
+              onChange={setDocumentAction}
+            />
+          )}
           {renderActionDocumentForm()}
           {documentAction === DocumentAction.COMPLETE && (
             <p>

@@ -1,6 +1,7 @@
 import moderndocApi from '@/moderndocApi'
 import { useMutation } from '@tanstack/react-query'
 import { ApiResponse } from 'types/response'
+import { CreateDocument } from '../../types/response'
 import { DocumentStatus } from '../../types/types'
 
 type Params = {
@@ -11,7 +12,7 @@ type Params = {
 
 const useCreateDocument = () => {
   const context = useMutation(['create-document'], async (data: Params) => {
-    const response = await moderndocApi.post<ApiResponse<any | null>>(
+    const response = await moderndocApi.post<ApiResponse<CreateDocument>>(
       '/document',
       data
     )

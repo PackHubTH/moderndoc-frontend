@@ -1,59 +1,65 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import AutocompleteInput from '@/components/AutocompleteInput'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
+import { Operator } from '@/modules/template/types/response'
+import useGetUsersByDepartmentId from '@/modules/user/hooks/api/useGetUsersByDepartmentId'
 import { Controller } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import useAssignOperator from '../hooks/api/useAssignOperator'
 import useCreateDocument from '../hooks/api/useCreateDocument'
-import useGetOperatorsByTemplateId from '../hooks/api/useGetOperatorsByTemplateId'
 import useCreateDocumentForm from '../hooks/useCreateDocumentForm'
 import { CreateDocumentForm } from '../hooks/useCreateDocumentForm/validation'
 import { DocumentStatus } from '../types/types'
 
 type PropsType = {
+  departmentId: string
   isOpen: boolean
+  suggestOperator: Operator[]
   templateId: string
   close: () => void
 }
 
-type CreateDocument = {
-  templateId: string
-  element: any
-  documentStatus: DocumentStatus
-}
-
-type AssignOperator = {
-  documentId: string
-  operatorUserId: string
-  message: string
-  isEditable: boolean
-}
-
 const CreateDocumentModal: React.FC<PropsType> = ({
+  departmentId,
   isOpen,
+  suggestOperator,
   templateId,
   close,
 }: PropsType) => {
   const { mutate: assignOperator } = useAssignOperator()
   const { mutate: createDocument } = useCreateDocument()
   const { methods } = useCreateDocumentForm()
-  const { data: operators } = useGetOperatorsByTemplateId(templateId)
+  const { data: userList } = useGetUsersByDepartmentId(departmentId)
   const [documentStatus, setDocumentStatus] = useState(
     DocumentStatus.PROCESSING
   )
+  const [searchOperator, setSearchOperator] = useState('')
 
   useEffect(() => {
     if (!isOpen) {
       methods.reset()
+      setSearchOperator('')
     }
   }, [isOpen])
 
+  const operators = useMemo(() => {
+    if (!userList) return suggestOperator
+    const filterStaffList = userList.data
+      .filter(
+        (user) => !suggestOperator.some((operator) => operator.id === user.id)
+      )
+      .map((user) => ({
+        id: user.id,
+        nameTh: user.nameTh,
+      }))
+    return [...suggestOperator, ...filterStaffList]
+  }, [userList, suggestOperator])
+
   const onProcessSubmit = async (data: CreateDocumentForm) => {
-    console.log('submit', data)
     try {
       createDocument(
         {
@@ -126,19 +132,22 @@ const CreateDocumentModal: React.FC<PropsType> = ({
         <Controller
           control={methods.control}
           name="operatorUserId"
-          render={({ field: { value, onChange } }) => (
+          render={({ field: { onChange } }) => (
             <AutocompleteInput
               label="เลือกผู้ลงนามหรือผู้ดำเนินการต่อ"
-              onChange={onChange}
-              value={
-                operators?.data.find(
-                  (operator) => operator.operatorId === value
-                )?.operator.nameTh ?? ''
-              }
+              placeholder="เลือกหรือค้นหารายชื่อ"
+              onChange={(e) => {
+                const name = operators.find((operator) => operator.id === e)
+                  ?.nameTh
+                onChange(e)
+                setSearchOperator(name ?? '')
+              }}
+              onSearch={setSearchOperator}
+              value={searchOperator}
               options={
-                operators?.data.map((operator) => ({
-                  label: operator.operator.nameTh,
-                  value: operator.operatorId,
+                operators?.map((operator) => ({
+                  label: operator.nameTh,
+                  value: operator.id,
                 })) ?? []
               }
             />
@@ -159,24 +168,28 @@ const CreateDocumentModal: React.FC<PropsType> = ({
           control={methods.control}
           name="isEditable"
           render={({ field: { value, onChange } }) => (
-            <label className="mb-2.5 mt-4 flex items-center gap-2">
-              <input
-                className="rounded-sm accent-blue-500"
-                type="checkbox"
-                checked={value}
-                onChange={onChange}
-              />
-              <span className="text-sm">
-                อนุญาตให้ผู้รับเอกสารแก้ไขเอกสารแทนตนเองได้
-              </span>
-            </label>
+            <div>
+              <p className="block text-sm font-medium text-gray-800">
+                สิทธิ์การแก้ไข
+              </p>
+              <label className="mt-2 flex items-center gap-2">
+                <input
+                  className="rounded-sm accent-blue-500"
+                  type="checkbox"
+                  checked={value}
+                  onChange={onChange}
+                />
+                <span className="text-sm">
+                  อนุญาตให้ผู้รับเอกสารแก้ไขเอกสารแทนตนเองได้
+                </span>
+              </label>
+            </div>
           )}
         />
       </form>
     )
   }
 
-  console.log('metgods', methods, methods.formState.isValid, documentStatus)
   return (
     <Modal
       isOpen={isOpen}
