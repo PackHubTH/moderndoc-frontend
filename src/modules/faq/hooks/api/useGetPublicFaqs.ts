@@ -3,7 +3,7 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { ApiResponse } from 'types/response'
 import { GetFaqsListResponse } from '../types'
 
-const useGetPublicFaqs = () => {
+const useGetPublicFaqs = (search?: string, tagId?: string) => {
   return useInfiniteQuery(
     ['public-faqs'],
     async ({ pageParam = 1 }) => {
@@ -12,6 +12,8 @@ const useGetPublicFaqs = () => {
         {
           params: {
             page: pageParam,
+            search,
+            tagId,
           },
         }
       )
