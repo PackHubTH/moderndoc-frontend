@@ -1,4 +1,3 @@
-import { useRef, useState } from 'react'
 import {
   FaAlignJustify,
   FaAlignLeft,
@@ -11,6 +10,7 @@ import {
   FaPenFancy,
 } from 'react-icons/fa'
 import { Document, Page } from 'react-pdf'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   saveCanvas,
   setTextAlign,
@@ -19,37 +19,38 @@ import {
 } from '../utils/documentEditorUtils'
 
 import exampleFile from '@/assets/FO-TO-44.pdf'
+import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
-import Modal from '@/components/Modal'
+import MainLogo from '@/components/MainLogo'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
+import { useUserStore } from '@/stores/userStore'
 import { PDFDocument } from 'pdf-lib'
-import { useDrop } from 'react-dnd'
+import { useRef } from 'react'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
 import { MdOutlineDeleteForever } from 'react-icons/md'
-import { useNavigate } from 'react-router-dom'
+import tw from 'twin.macro'
+import ActionDocumentModal from '../components/ActionDocumentModal'
+import CreateDocumentModal from '../components/CreateDocumentModal'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
 import DocumentToolbar from '../components/DocumentToolbar'
-import DraggableBox from '../components/DraggableBox'
-import FinalizeModalContent from '../components/FinalizeModalContent'
-import GuidelineModalContent from '../components/GuidelineModalContent'
-import ProcessModalContent from '../components/ProcessModalContent'
+import GuidelineModal from '../components/GuidelineModal'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
+import useGetDocumentById from '../hooks/api/useGetDocumentById'
 import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
-import { DnDItem } from '../types/DocumentField'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 
-const DocumentEditor = () => {
+type PropsType = {
+  type: 'create' | 'edit'
+}
+
+const DocumentEditor = ({ type }: PropsType) => {
   const navigate = useNavigate()
-  const {
-    isOpen: isFinalizeModalOpen,
-    open: openFinalizeModal,
-    close: closeFinalizeModal,
-  } = useDisclosure()
   const {
     isOpen: isGuidelineModalOpen,
     open: openGuidelineModal,
@@ -73,6 +74,13 @@ const DocumentEditor = () => {
     (state) => state.setActiveObject
   )
 
+  const { documentId = '', templateId = '' } = useParams()
+  // TODO: useGetTemplateById
+  const { data: documentData } = useGetDocumentById(documentId)
+  const { data: templateData } = useGetTemplateById(templateId)
+  const user = useUserStore((state) => state.user)
+  console.log('data', templateId, documentId, documentData)
+
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     console.log('numPages', numPages)
     setPageTotal(numPages)
@@ -87,25 +95,6 @@ const DocumentEditor = () => {
         pages.children[pageNumber - 1].clientWidth
       )
   }
-
-  const user = {
-    name: 'John Doe',
-    email: 'a@a.com',
-    timestamp: 1234567890,
-  }
-
-  const [dropBox, setDropBox] = useState<DnDItem[]>([])
-  const [{ isOver }, dropRef] = useDrop(() => ({
-    accept: 'box',
-
-    drop: (item: DnDItem) => {
-      console.log(item)
-      setDropBox((dropBox) => [...dropBox, item])
-    },
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  }))
 
   //////////////////////////// modify pdf /////////////////////////////
   async function handlePDFUpload() {
@@ -145,45 +134,44 @@ const DocumentEditor = () => {
     link.download = 'modified_document.pdf'
     link.click()
   }
-
-  // const pdfDoc = PDFDocument.load(existingPdfBytes)
-  // console.log('pdfDoc', pdfDoc)
-  console.log('documentEditor', activeObject)
-  console.log('documentEditor', activeCanvasId)
+  console.log(
+    'file',
+    documentData?.data?.templateFile || templateData?.data?.templateFile
+  )
   return (
     <div>
       {/* Header */}
-      <div className="flex h-[92px] items-center border-b-2 px-5 py-4">
-        <img src="https://via.placeholder.com/150" alt="logo" />
-        <div className="flex-1">
+      <div className="flex h-[92px] items-center gap-8 border-b-2 px-5 py-4">
+        <MainLogo />
+        <div className="flex-1 space-y-2">
           <h1 className="text-xl font-semibold text-gray-600">
-            ใบลงทะเบียนเพิ่ม-ลด-ถอน-เปลี่ยนกลุ่มเรียน
+            {documentData?.data?.title || templateData?.data?.title || ''}
           </h1>
-          <div className="flex h-7">
+          <div className="flex h-7 gap-4">
             <Button
               label="Guideline"
               leftIcon={<IoEyeOutline />}
               onClick={openGuidelineModal}
             />
+            {documentData?.data?.documentSents.find(
+              (sent: any) => sent.receiverId === user.id && sent.editable
+            ) && <Badge label="ได้รับสิทธิ์แก้ไขได้" variant="success" />}
           </div>
-          <Modal
-            actions={
-              <Button
-                label="ปิด"
-                variant="gray"
-                onClick={closeGuidelineModal}
-              />
+          <GuidelineModal
+            description={
+              documentData?.data?.description ||
+              templateData?.data?.description ||
+              '-'
             }
-            content={
-              <GuidelineModalContent
-                description="test"
-                fileName="test.pdf"
-                filePath="test"
-              />
+            fileName={
+              documentData?.data?.title || templateData?.data?.title || '-'
+            }
+            filePath={
+              documentData?.data?.exampleFile ||
+              templateData?.data?.exampleFile ||
+              ''
             }
             isOpen={isGuidelineModalOpen}
-            title="รายละเอียดเอกสาร/ตัวอย่างเอกสาร"
-            width="763px"
             onClose={closeGuidelineModal}
           />
         </div>
@@ -194,57 +182,39 @@ const DocumentEditor = () => {
             onClick={() => saveCanvas(canvasList, exampleFile)}
           />
           <Button
-            label="Finalize"
-            variant="yellow"
-            onClick={openFinalizeModal}
-          />
-          <Modal
-            actions={
-              <>
-                <Button
-                  label="ยกเลิก"
-                  variant="gray"
-                  onClick={closeFinalizeModal}
-                />
-                <Button label="ยืนยัน" variant="blue" />
-              </>
-            }
-            content={<FinalizeModalContent />}
-            isOpen={isFinalizeModalOpen}
-            title="ยืนยันการเสร็จสิ้นดำเนินการเอกสาร"
-            variant="confirm"
-            width="515px"
-            onClose={closeFinalizeModal}
-          />
-          <Button
             label="ดำเนินการ"
             variant="green"
             onClick={openProcessModal}
           />
-          <Modal
-            actions={
-              <>
-                <Button
-                  label="ยกเลิก"
-                  variant="gray"
-                  onClick={closeProcessModal}
-                />
-                <Button label="ยืนยันการส่ง" variant="blue" />
-              </>
-            }
-            content={<ProcessModalContent />}
-            isOpen={isProcessModalOpen}
-            title="ส่งเอกสาร"
-            width="531px"
-            onClose={closeProcessModal}
+          {type === 'create' ? (
+            <CreateDocumentModal
+              departmentId={templateData?.data?.departmentId ?? ''}
+              isOpen={isProcessModalOpen}
+              suggestOperators={templateData?.data?.operators ?? []}
+              templateId={templateId}
+              close={closeProcessModal}
+            />
+          ) : (
+            <ActionDocumentModal
+              isOpen={isProcessModalOpen}
+              createdById={documentData?.data?.createdBy ?? ''}
+              createdByName={documentData?.data?.userCreated.nameTh ?? ''}
+              documentId={documentId}
+              // departmentId={documentData?.data?.departmentId ?? ''}
+              close={closeProcessModal}
+            />
+          )}
+          <Button
+            label="ยกเลิก"
+            variant="gray"
+            onClick={() => navigate('/document-management')}
           />
-          <Button label="ยกเลิก" variant="gray" onClick={() => navigate('/')} />
         </div>
       </div>
       {/*  */}
       {/* Main */}
       <div className="flex h-[calc(100vh-92px)]">
-        <div className="w-3/4">
+        <div css={[type === 'edit' ? tw`w-3/4` : tw`w-full`]}>
           <DocumentToolbar>
             <ToolbarButton icon={<FaMousePointer />} id={ButtonId.Default} />
             <ToolbarButton icon={<FaA />} id={ButtonId.Text} />
@@ -346,11 +316,13 @@ const DocumentEditor = () => {
             ref={canvasRef}
           >
             <Document
-              file={exampleFile}
+              file={
+                documentData?.data?.templateFile ||
+                templateData?.data?.templateFile
+              }
               // renderMode="svg"
               onLoadSuccess={onDocumentLoadSuccess}
             >
-              {/* TODO: fix bug 1 page */}
               {Array.apply(null, Array(pageTotal))
                 .map((x, i) => i + 1)
                 .map((page) => {
@@ -364,7 +336,7 @@ const DocumentEditor = () => {
                         scale={2}
                         width={400}
                         className="mt-2 border-black"
-                        renderMode="svg"
+                        // renderMode="svg"
                         onLoadSuccess={() => onPageLoadSuccess(page)}
                       />
                     </div>
@@ -375,43 +347,57 @@ const DocumentEditor = () => {
           {/*  */}
         </div>
         {/* sidebar */}
-        <div
-          className="hs-accordion-group w-1/4 overflow-y-auto"
-          data-hs-accordion-always-open
-        >
-          <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
-            <ProfileBox {...user} />
-            <div className="p-4">
-              <p>TEST</p>
-              <p>TEST</p>
-              <p>TEST</p>
-              <p>TEST</p>
-              <p>TEST</p>
-            </div>
-          </DocumentAccordion>
-          <DocumentAccordion title={'การแสดงความคิดเห็น'}>
-            <ProfileBox {...user} />
-            <p className="p-4">
-              Lorem ipsum dolor sit amet consectetur. Enim vestibulum dolor
-              libero purus habitant adipiscing tincidunt libero purus.
-            </p>
-          </DocumentAccordion>
-          <DocumentAccordion title={'ลากข้อมูลลงหน้ากระดาษ'}>
-            <div className="p-3">
-              <p>ข้อมูลเบื้องต้น</p>
-              <DraggableBox text="testtesttesttesttesttesttesttesttest testtesttesttesttest testtesttesttesttesttesttesttesttesttesttesttest" />
-              <DraggableBox text=" testtesttesttesttest testtesttesttesttesttesttesttesttesttesttesttest" />
-              <p>Date Stamp</p>
-              <p>ลายเซ็นลงนาม</p>
-            </div>
-          </DocumentAccordion>
-        </div>
+        {type === 'edit' && (
+          <div
+            className="hs-accordion-group w-1/4 overflow-y-auto"
+            data-hs-accordion-always-open
+          >
+            <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
+              <ProfileBox
+                name={documentData?.data?.userCreated.nameTh ?? ''}
+                email={
+                  documentData?.data?.userCreated.emails[
+                    documentData?.data?.userCreated.defaultEmailIndex
+                  ] ?? ''
+                }
+                profileImg={documentData?.data?.userCreated.profileImg ?? ''}
+              />
+              <div className="p-4">
+                <p>{documentData?.data?.userCreated.phones[0]}</p>
+                <p>TEST</p>
+                <p>TEST</p>
+                <p>TEST</p>
+                <p>TEST</p>
+              </div>
+            </DocumentAccordion>
+            <DocumentAccordion title={'การแสดงความคิดเห็น'}>
+              {documentData &&
+                documentData?.data?.documentTimelines.map(
+                  (timeline: any, index) => (
+                    <div>
+                      <ProfileBox
+                        name={timeline.userUpdatedBy.nameTh}
+                        email={
+                          timeline.userUpdatedBy.emails[
+                            timeline.userUpdatedBy.defaultEmailIndex
+                          ]
+                        }
+                        profileImg={timeline.userUpdatedBy.profileImg}
+                        timestamp={timeline.createdAt}
+                      />
+                      <p className="mb-2 p-2 px-4">{timeline.message}</p>
+                    </div>
+                  )
+                )}
+            </DocumentAccordion>
+          </div>
+        )}
       </div>
       {/*  */}
       {/* pdf lib test */}
-      <button id="a" onClick={() => handlePDFUpload()}>
+      {/* <button id="a" onClick={() => handlePDFUpload()}>
         TeSt
-      </button>
+      </button> */}
     </div>
   )
 }

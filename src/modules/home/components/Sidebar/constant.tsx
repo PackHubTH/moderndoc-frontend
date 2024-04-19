@@ -7,6 +7,7 @@ import {
   IoNotificationsOutline,
   IoPersonOutline,
 } from 'react-icons/io5'
+
 import { UserRole } from 'types/user'
 
 export const SIDE_BAR_MENUS = [
@@ -19,7 +20,7 @@ export const SIDE_BAR_MENUS = [
   {
     name: 'รายการเอกสาร',
     icon: <IoDocumentTextOutline />,
-    link: null,
+    link: '/document-management',
     role: [UserRole.ADMIN, UserRole.STAFF, UserRole.TEACHER, UserRole.STUDENT],
   },
   {

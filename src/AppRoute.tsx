@@ -1,7 +1,9 @@
-import { pdfjs } from 'react-pdf'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
+import { pdfjs } from 'react-pdf'
 import DepartmentManagementPage from './modules/department/pages/DepartmentManagementPage'
-import Document from './modules/document/pages'
+import DocumentEditor from './modules/document/pages/DocumentEditor'
+import DocumentManagementPage from './modules/document/pages/DocumentManagementPage'
 import FaqManagementPage from './modules/faq/pages/FaqManagementPage'
 import Home from './modules/home/pages'
 import TestPage from './modules/home/pages/TestPage'
@@ -26,7 +28,18 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route index element={<Home />} />
-        <Route path="document" element={<Document />} />
+        <Route
+          path="/create-document/:templateId"
+          element={<DocumentEditor type="create" />}
+        />
+        <Route
+          path="/edit-document/:documentId"
+          element={<DocumentEditor type="edit" />}
+        />
+        <Route
+          path="/document-management"
+          element={<DocumentManagementPage />}
+        />
         <Route path="/test" element={<TestPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create-profile" element={<CreateProfilePage />} />
