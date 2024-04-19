@@ -27,12 +27,14 @@ type PropsType = {
   facultyName: string
   departmentName?: string
   isApproved?: boolean
+  departmentId?: string
 }
 
 const DepartmentMembersList: React.FC<PropsType> = ({
   facultyName,
   departmentName,
   isApproved = false,
+  departmentId,
 }) => {
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -44,7 +46,12 @@ const DepartmentMembersList: React.FC<PropsType> = ({
     isApproved: boolean
   } | null>(null)
 
-  const { data: members } = useGetDepartmentMembers(isApproved)
+  const { data: members, refetch } = useGetDepartmentMembers(
+    paginationState.pageIndex + 1,
+    isApproved,
+    departmentId
+  )
+
   const {
     isOpen: isOpenUserInfo,
     close: closeUserInfo,
@@ -226,6 +233,10 @@ const DepartmentMembersList: React.FC<PropsType> = ({
       pageSize: table.getState().pagination.pageSize,
     })
   }, [table.getState().pagination.pageIndex])
+
+  useEffect(() => {
+    refetch()
+  }, [departmentId])
 
   return (
     <>

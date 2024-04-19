@@ -3,17 +3,26 @@ import { useQuery } from '@tanstack/react-query'
 import { ListResponse } from 'types/response'
 import { GetDepartmentMemberResponse } from './types'
 
-const useGetDepartmentMembers = (isApproved: boolean = true) => {
-  const context = useQuery(['departments', isApproved], async () => {
-    const response = await moderndocApi.get<
-      ListResponse<GetDepartmentMemberResponse>
-    >('/department/members', {
-      params: {
-        isApproved,
-      },
-    })
-    return response.data
-  })
+const useGetDepartmentMembers = (
+  page: number = 1,
+  isApproved: boolean = true,
+  departmentId?: string
+) => {
+  const context = useQuery(
+    ['department-members', page, isApproved, departmentId],
+    async () => {
+      const response = await moderndocApi.get<
+        ListResponse<GetDepartmentMemberResponse>
+      >('/department/members', {
+        params: {
+          page,
+          isApproved,
+          departmentId,
+        },
+      })
+      return response.data
+    }
+  )
 
   return context
 }

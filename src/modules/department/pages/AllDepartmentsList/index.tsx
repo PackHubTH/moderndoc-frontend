@@ -8,10 +8,14 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
+import { FaEye } from 'react-icons/fa6'
+import { useNavigate } from 'react-router-dom'
 import { GetAllDepartmentsResponse } from '../../hooks/api/types'
 import useGetAllDepartments from '../../hooks/api/useGetAllDepartments'
 
 const AllDepartmentsList = () => {
+  const navigate = useNavigate()
+
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -62,6 +66,19 @@ const AllDepartmentsList = () => {
         <span className="font-medium text-gray-500">
           {info.row.original.awaitingApprovalCount}
         </span>
+      ),
+    },
+    {
+      header: `ดูข้อมูล`,
+      cell: (info) => (
+        <div
+          className="cursor-pointer "
+          onClick={() => {
+            navigate(`/department-management/${info.row.original.id}`)
+          }}
+        >
+          <FaEye />
+        </div>
       ),
     },
   ]

@@ -109,5 +109,5 @@ export type GetCourseByIdResponse = Course & {
 }
 
 export type GetDepartmentByIdResponse = Department & {
-  faculty: Faculty
+  faculty: Faculty | null
 }
