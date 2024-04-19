@@ -9,7 +9,6 @@ import TextInput from '@/components/TextInput'
 import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
 import { useUserStore } from '@/stores/userStore'
 import { Controller } from 'react-hook-form'
-import { toast } from 'react-toastify'
 import { UserRole } from 'types/user'
 import useActionDocument from '../hooks/api/useActionDocument'
 import useActionDocumentForm from '../hooks/useActionDocumentForm'
@@ -60,30 +59,31 @@ const ActionDocumentModal: React.FC<PropsType> = ({
   }, [documentAction])
 
   const onSubmit = async (data: ActionDocumentForm) => {
-    try {
-      actionDocument(
-        {
-          documentId,
-          element: {},
-          action: documentAction,
-          message: data.message ?? '',
-          receiverId: data.receiverId ?? '',
-        },
-        {
-          onSuccess: () => {
-            toast('ดำเนินการเอกสารสำเร็จ', { type: 'success' })
-            close()
-          },
-          onError: (error) => {
-            toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, {
-              type: 'error',
-            })
-          },
-        }
-      )
-    } catch (error) {
-      toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, { type: 'error' })
-    }
+    console.log('submit', data)
+    // try {
+    //   actionDocument(
+    //     {
+    //       documentId,
+    //       element: {},
+    //       action: documentAction,
+    //       message: data.message ?? '',
+    //       receiverId: data.receiverId ?? '',
+    //     },
+    //     {
+    //       onSuccess: () => {
+    //         toast('ดำเนินการเอกสารสำเร็จ', { type: 'success' })
+    //         close()
+    //       },
+    //       onError: (error) => {
+    //         toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, {
+    //           type: 'error',
+    //         })
+    //       },
+    //     }
+    //   )
+    // } catch (error) {
+    //   toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, { type: 'error' })
+    // }
   }
 
   const renderActionDocumentForm = () => {
@@ -108,10 +108,17 @@ const ActionDocumentModal: React.FC<PropsType> = ({
                   })) ?? []
                 }
                 onChange={(e) => {
+                  const name = userList?.data.find((user) => user.id === e)
+                    ?.nameTh
                   onChange(e)
-                  setSearchUserList('')
+                  setSearchUserList(name ?? '')
                 }}
-                onSearch={setSearchUserList}
+                onSearch={(e) => {
+                  setSearchUserList(e)
+                  const name = userList?.data.find((user) => user.id === e)
+                    ?.nameTh
+                  if (!name) onChange('')
+                }}
                 value={searchUserList ?? ''}
               />
             )}
