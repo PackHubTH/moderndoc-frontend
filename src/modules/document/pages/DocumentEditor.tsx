@@ -190,7 +190,7 @@ const DocumentEditor = ({ type }: PropsType) => {
             <CreateDocumentModal
               departmentId={templateData?.data?.departmentId ?? ''}
               isOpen={isProcessModalOpen}
-              suggestOperator={templateData?.data?.operators ?? []}
+              suggestOperators={templateData?.data?.operators ?? []}
               templateId={templateId}
               close={closeProcessModal}
             />
@@ -198,6 +198,7 @@ const DocumentEditor = ({ type }: PropsType) => {
             <ActionDocumentModal
               isOpen={isProcessModalOpen}
               createdById={documentData?.data?.createdBy ?? ''}
+              createdByName={documentData?.data?.userCreated.nameTh ?? ''}
               documentId={documentId}
               // departmentId={documentData?.data?.departmentId ?? ''}
               close={closeProcessModal}

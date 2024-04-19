@@ -11,6 +11,7 @@ type PropsType = {
   className?: string
   isError?: boolean
   patternFormat?: string
+  disabled?: boolean
 }
 
 const TextInput: React.FC<PropsType> = ({
@@ -22,6 +23,7 @@ const TextInput: React.FC<PropsType> = ({
   onChange,
   isError,
   patternFormat,
+  disabled,
 }) => {
   return (
     <div className={className}>
@@ -66,6 +68,7 @@ const TextInput: React.FC<PropsType> = ({
                 }
               : undefined
           }
+          disabled={disabled}
         />
       )}
     </div>

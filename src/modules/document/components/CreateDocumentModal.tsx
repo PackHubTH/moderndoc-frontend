@@ -6,7 +6,7 @@ import Modal from '@/components/Modal'
 import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
 import { Operator } from '@/modules/template/types/response'
-import useGetUsersByDepartmentId from '@/modules/user/hooks/api/useGetUsersByDepartmentId'
+import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
 import { Controller } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import useAssignOperator from '../hooks/api/useAssignOperator'
@@ -18,7 +18,7 @@ import { DocumentStatus } from '../types/types'
 type PropsType = {
   departmentId: string
   isOpen: boolean
-  suggestOperator: Operator[]
+  suggestOperators: Operator[]
   templateId: string
   close: () => void
 }
@@ -26,18 +26,18 @@ type PropsType = {
 const CreateDocumentModal: React.FC<PropsType> = ({
   departmentId,
   isOpen,
-  suggestOperator,
+  suggestOperators,
   templateId,
   close,
 }: PropsType) => {
   const { mutate: assignOperator } = useAssignOperator()
   const { mutate: createDocument } = useCreateDocument()
   const { methods } = useCreateDocumentForm()
-  const { data: userList } = useGetUsersByDepartmentId(departmentId)
   const [documentStatus, setDocumentStatus] = useState(
     DocumentStatus.PROCESSING
   )
   const [searchOperator, setSearchOperator] = useState('')
+  const { data: userList } = useGetUsersByName(searchOperator)
 
   useEffect(() => {
     if (!isOpen) {
@@ -47,17 +47,17 @@ const CreateDocumentModal: React.FC<PropsType> = ({
   }, [isOpen])
 
   const operators = useMemo(() => {
-    if (!userList) return suggestOperator
+    if (!userList) return suggestOperators
     const filterStaffList = userList.data
       .filter(
-        (user) => !suggestOperator.some((operator) => operator.id === user.id)
+        (user) => !suggestOperators.some((operator) => operator.id === user.id)
       )
       .map((user) => ({
         id: user.id,
         nameTh: user.nameTh,
       }))
-    return [...suggestOperator, ...filterStaffList]
-  }, [userList, suggestOperator])
+    return [...suggestOperators, ...filterStaffList]
+  }, [userList, suggestOperators])
 
   const onProcessSubmit = async (data: CreateDocumentForm) => {
     try {
