@@ -60,45 +60,44 @@ const CreateDocumentModal: React.FC<PropsType> = ({
   }, [userList, suggestOperators])
 
   const onProcessSubmit = async (data: CreateDocumentForm) => {
-    console.log('submit', data)
-    // try {
-    //   createDocument(
-    //     {
-    //       templateId,
-    //       element: {},
-    //       documentStatus,
-    //     },
-    //     {
-    //       onSuccess: (res) => {
-    //         assignOperator(
-    //           {
-    //             documentId: res.data.id,
-    //             operatorUserId: data.operatorUserId,
-    //             message: data.message,
-    //             isEditable: data.isEditable,
-    //           },
-    //           {
-    //             onSuccess: () => {
-    //               toast('สร้างเอกสารสำเร็จ', { type: 'success' })
-    //             },
-    //             onError: (error) => {
-    //               toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
-    //                 type: 'error',
-    //               })
-    //             },
-    //           }
-    //         )
-    //       },
-    //       onError: (error) => {
-    //         toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
-    //           type: 'error',
-    //         })
-    //       },
-    //     }
-    //   )
-    // } catch (error) {
-    //   toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
-    // }
+    try {
+      createDocument(
+        {
+          templateId,
+          element: {},
+          documentStatus,
+        },
+        {
+          onSuccess: (res) => {
+            assignOperator(
+              {
+                documentId: res.data.id,
+                operatorUserId: data.operatorUserId,
+                message: data.message,
+                isEditable: data.isEditable,
+              },
+              {
+                onSuccess: () => {
+                  toast('สร้างเอกสารสำเร็จ', { type: 'success' })
+                },
+                onError: (error) => {
+                  toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+                    type: 'error',
+                  })
+                },
+              }
+            )
+          },
+          onError: (error) => {
+            toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+              type: 'error',
+            })
+          },
+        }
+      )
+    } catch (error) {
+      toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
+    }
   }
 
   const onNonProcessSubmit = async () => {
@@ -140,7 +139,6 @@ const CreateDocumentModal: React.FC<PropsType> = ({
               onChange={(e) => {
                 const name = operators.find((operator) => operator.id === e)
                   ?.nameTh
-                console.log('name', name)
                 onChange(e)
                 setSearchOperator(name ?? '')
               }}
