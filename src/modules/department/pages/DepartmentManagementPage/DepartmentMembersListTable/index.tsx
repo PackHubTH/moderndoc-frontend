@@ -260,6 +260,8 @@ const DepartmentMembersList: React.FC<PropsType> = ({
         onClose={closeApproveMember}
         userId={approveMemberModalData?.userId}
         isApproved={approveMemberModalData?.isApproved}
+        page={paginationState.pageIndex + 1}
+        departmentId={departmentId}
       />
     </>
   )
