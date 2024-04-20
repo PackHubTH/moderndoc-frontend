@@ -17,20 +17,6 @@ const StudentSection = () => {
   const { data: courses } = useGetCourses(methods.watch('departmentId'))
 
   useEffect(() => {
-    if (faculties?.data.length) {
-      methods.setValue('facultyId', faculties.data[0].id, { shouldDirty: true })
-    }
-
-    if (departments?.data.length) {
-      methods.setValue('departmentId', departments.data[0].id, {
-        shouldDirty: true,
-      })
-    }
-
-    if (courses?.data.length) {
-      methods.setValue('courseId', courses.data[0].id, { shouldDirty: true })
-    }
-
     methods.trigger()
   }, [faculties, departments, courses])
 
