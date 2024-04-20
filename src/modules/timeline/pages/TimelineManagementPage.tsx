@@ -21,11 +21,7 @@ const TimelineManagementPage: React.FC = () => {
         />
         <TextInput className="w-[240px]" placeholder="ค้นหา..." />
       </div>
-      <div className="flex">
-        {/* <TemplateListTable /> */}
-        {/* <TemplateInfoBox /> */}
-        <TimelineListTable />
-      </div>
+      <TimelineListTable />
     </PageContainer>
   )
 }

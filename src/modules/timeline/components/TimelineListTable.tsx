@@ -10,35 +10,16 @@ import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import TableInfoBox from '@/components/TableInfoBox'
 import TableStatusBox from '@/components/TableStatusBox'
+import { useDisclosure } from '@/hooks/useDisclosure'
+import useGetDocumentById from '@/modules/document/hooks/api/useGetDocumentById'
 import { FaRegEnvelope } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
-import styled from 'styled-components'
 import useGetAllTimeline from '../hooks/api/useGetAllTimeline'
 import { Timeline } from '../types/response'
 import TimelineDescriptionBox from './TimelineDescriptionBox'
 
-// import useGetAllDocument from '../hooks/api/useGetAllDocument'
-// import { Document } from '../types/types'
-
-const StyledTableRow = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
-  align-items: flex-end;
-  padding-right: 20px;
-  & > div {
-    display: none;
-  }
-  &:hover > div {
-    display: block;
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-`
-
 const TimelineListTable = () => {
+  const { isOpen, open } = useDisclosure()
   const navigate = useNavigate()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -46,8 +27,11 @@ const TimelineListTable = () => {
   })
 
   const { data: timeline } = useGetAllTimeline(paginationState.pageIndex + 1)
+  const [documentId, setDocumentId] = useState('')
+  const { data: documentData, refetch } = useGetDocumentById(documentId)
 
   console.log('timeline', timeline?.data)
+  console.log('documentData', documentData?.data?.documentTimelines)
   const columns: ColumnDef<Timeline>[] = [
     {
       id: 'index',
@@ -116,10 +100,16 @@ const TimelineListTable = () => {
     })
   }, [table.getState().pagination.pageIndex])
 
+  const onRowClick = (row: any) => {
+    setDocumentId(row.original.documentId)
+    if (documentId) refetch()
+    open()
+  }
+
   return (
     <div className="flex">
       <div className="flex-1 p-2">
-        <TableDisplay table={table} />
+        <TableDisplay table={table} onClick={onRowClick} />
         <Pagination
           totalPage={1}
           currentPage={table.getState().pagination.pageIndex + 1}
@@ -127,7 +117,9 @@ const TimelineListTable = () => {
           prevPage={table.previousPage}
         />
       </div>
-      <TimelineDescriptionBox />
+      {isOpen && documentData && (
+        <TimelineDescriptionBox data={documentData?.data} />
+      )}
     </div>
   )
 }

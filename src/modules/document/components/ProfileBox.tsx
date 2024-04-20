@@ -10,7 +10,7 @@ type PropsType = {
 
 const ProfileBox = ({ email, name, profileImg, timestamp }: PropsType) => {
   return (
-    <div className="mx-4 flex items-center gap-x-1 border-b-2 py-4">
+    <div className="mx-4 flex items-center gap-x-1 py-4">
       <img
         className="h-7 w-7 rounded-full object-cover"
         src={profileImg ?? 'https://via.placeholder.com/150'}
