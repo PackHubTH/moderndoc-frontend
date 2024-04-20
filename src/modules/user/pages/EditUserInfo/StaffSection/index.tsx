@@ -31,7 +31,6 @@ const StaffSection = () => {
   const { data: departments, refetch } = useGetDepartments(
     isAgency ? undefined : facultyId
   )
-  console.log('🚀 ~ StaffSection ~ departments:', departments)
 
   const defaultDepartmentId =
     userData?.data.role === UserRole.STAFF
@@ -102,72 +101,76 @@ const StaffSection = () => {
           />
         )}
       />
-      <RadioGroup
-        label="ประเภท"
-        value={departmentType}
-        onChange={(val) => setDepartmentType(val)}
-        options={[
-          { label: 'คณะ/ภาควิชา', value: DepartmentType.DEPARTMENT },
-          { label: 'หน่วยงาน', value: DepartmentType.AGENCY },
-        ]}
-      />
-      {!isAgency ? (
-        <div className="flex w-full justify-between">
-          <Controller
-            control={methods.control}
-            name="facultyId"
-            render={({ field: { onChange, value } }) => (
-              <Select
-                className="w-1/2"
-                label="คณะ"
-                onChange={onChange}
-                value={value}
-                options={
-                  faculties?.data.map((faculty) => ({
-                    label: faculty.name,
-                    value: faculty.id,
-                  })) ?? []
-                }
-              />
-            )}
+      {userData?.data.role !== UserRole.ADMIN && (
+        <>
+          <RadioGroup
+            label="ประเภท"
+            value={departmentType}
+            onChange={(val) => setDepartmentType(val)}
+            options={[
+              { label: 'คณะ/ภาควิชา', value: DepartmentType.DEPARTMENT },
+              { label: 'หน่วยงาน', value: DepartmentType.AGENCY },
+            ]}
           />
-          <Controller
-            control={methods.control}
-            name="departmentId"
-            render={({ field: { onChange, value } }) => (
-              <Select
-                className="w-1/2"
-                label="สาขาวิชา"
-                onChange={onChange}
-                value={value}
-                options={
-                  departments?.data.map((department) => ({
-                    label: department.name,
-                    value: department.id,
-                  })) ?? []
-                }
+          {!isAgency ? (
+            <div className="flex w-full justify-between">
+              <Controller
+                control={methods.control}
+                name="facultyId"
+                render={({ field: { onChange, value } }) => (
+                  <Select
+                    className="w-1/2"
+                    label="คณะ"
+                    onChange={onChange}
+                    value={value}
+                    options={
+                      faculties?.data.map((faculty) => ({
+                        label: faculty.name,
+                        value: faculty.id,
+                      })) ?? []
+                    }
+                  />
+                )}
               />
-            )}
-          />
-        </div>
-      ) : (
-        <Controller
-          control={methods.control}
-          name="departmentId"
-          render={({ field: { onChange, value } }) => (
-            <Select
-              label="หน่วยงาน"
-              onChange={onChange}
-              value={value}
-              options={
-                departments?.data.map((department) => ({
-                  label: department.name,
-                  value: department.id,
-                })) ?? []
-              }
+              <Controller
+                control={methods.control}
+                name="departmentId"
+                render={({ field: { onChange, value } }) => (
+                  <Select
+                    className="w-1/2"
+                    label="สาขาวิชา"
+                    onChange={onChange}
+                    value={value}
+                    options={
+                      departments?.data.map((department) => ({
+                        label: department.name,
+                        value: department.id,
+                      })) ?? []
+                    }
+                  />
+                )}
+              />
+            </div>
+          ) : (
+            <Controller
+              control={methods.control}
+              name="departmentId"
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  label="หน่วยงาน"
+                  onChange={onChange}
+                  value={value}
+                  options={
+                    departments?.data.map((department) => ({
+                      label: department.name,
+                      value: department.id,
+                    })) ?? []
+                  }
+                />
+              )}
             />
           )}
-        />
+        </>
       )}
       <Controller
         control={methods.control}

@@ -48,6 +48,10 @@ function App() {
           path="/department-management"
           element={<DepartmentManagementPage />}
         />
+        <Route
+          path="/department-management/:departmentId"
+          element={<DepartmentManagementPage />}
+        />
         <Route path="/faq-management" element={<FaqManagementPage />} />
         <Route
           path="/template-management"

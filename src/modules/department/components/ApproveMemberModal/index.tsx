@@ -11,6 +11,8 @@ type PropsType = {
   onClose: () => void
   isApproved?: boolean
   userId?: string
+  page?: number
+  departmentId?: string
 }
 
 const ApproveMemberModal: React.FC<PropsType> = ({
@@ -18,8 +20,14 @@ const ApproveMemberModal: React.FC<PropsType> = ({
   onClose,
   isApproved,
   userId,
+  page,
+  departmentId,
 }) => {
-  const { refetch: refetchMember } = useGetDepartmentMembers(isApproved)
+  const { refetch: refetchMember } = useGetDepartmentMembers(
+    page,
+    !isApproved,
+    departmentId
+  )
 
   const { mutate: approveMember } = useApproveDepartmentMember()
   const onApprove = (memberUserId: string, isApproved: boolean) => {
