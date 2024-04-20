@@ -39,6 +39,7 @@ const EditUserInfo = () => {
         student: userData.data.student,
         staff: userData.data.staff,
         teacher: userData.data.teacher,
+        courseId: userData.data.student?.courseId,
       })
     }
   }, [userData])

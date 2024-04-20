@@ -10,7 +10,7 @@ import useGetDepartmentById from '@/modules/user/hooks/api/useGetDepartmentById'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { DepartmentType } from '@/modules/user/hooks/types'
 import { EditProfileForm } from '@/modules/user/hooks/useEditUserProfile/validation'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { UserRole } from 'types/user'
 
@@ -25,17 +25,19 @@ const StaffSection = () => {
   const { data: userData } = useGetUser()
 
   const isAgency = departmentType === DepartmentType.AGENCY
-  console.log('🚀 ~ StaffSection ~ isAgency:', isAgency)
 
   const { data: faculties } = useGetAllFaculties()
   const { data: departments, refetch } = useGetDepartments(
     isAgency ? undefined : facultyId
   )
 
-  const defaultDepartmentId =
-    userData?.data.role === UserRole.STAFF
-      ? userData?.data.staff?.staffDepartments[0].departmentId
-      : userData?.data?.teacher?.teacherDepartments[0].departmentId
+  const defaultDepartmentId = useMemo(
+    () =>
+      userData?.data.role === UserRole.STAFF
+        ? userData?.data.staff?.staffDepartments[0].departmentId
+        : userData?.data?.teacher?.teacherDepartments[0].departmentId,
+    []
+  )
 
   const { data: departmentData } = useGetDepartmentById(defaultDepartmentId!)
 
@@ -45,11 +47,9 @@ const StaffSection = () => {
   useEffect(() => {
     if (departmentData) {
       if (departmentData.data.type === DepartmentType.AGENCY) {
-        setDepartmentType(DepartmentType.AGENCY)
         methods.setValue('departmentId', defaultDepartmentId)
         refetch()
       } else {
-        setDepartmentType(DepartmentType.DEPARTMENT)
         setFacultyId(departmentData.data.facultyId)
         methods.setValue('facultyId', departmentData.data.facultyId)
         methods.setValue('departmentId', defaultDepartmentId)
@@ -57,6 +57,16 @@ const StaffSection = () => {
       }
     }
   }, [departmentData, defaultDepartmentId, departments])
+
+  useEffect(() => {
+    if (departmentData) {
+      if (departmentData.data.type === DepartmentType.AGENCY) {
+        setDepartmentType(DepartmentType.AGENCY)
+      } else {
+        setDepartmentType(DepartmentType.DEPARTMENT)
+      }
+    }
+  }, [departmentData, defaultDepartmentId])
 
   return (
     <div className="mt-5 flex flex-col gap-5">
