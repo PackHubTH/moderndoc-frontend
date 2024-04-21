@@ -1,12 +1,16 @@
+import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
 import Tabs from '@/components/Tabs'
+import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetDepartmentById from '@/modules/user/hooks/api/useGetDepartmentById'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { ApprovalStatus } from '@/modules/user/hooks/types'
 import { useMemo } from 'react'
+import { IoIosSend } from 'react-icons/io'
 import { MdArrowBackIos } from 'react-icons/md'
 import { useNavigate, useParams } from 'react-router-dom'
 import { UserRole } from 'types/user'
+import UserInviteModal from '../../components/UserInviteModal'
 import AllDepartmentsList from '../AllDepartmentsList'
 import DepartmentMembersList from './DepartmentMembersListTable'
 import DepartmentRejectedPage from './DepartmentRejectedPage'
@@ -17,6 +21,8 @@ const DepartmentManagementPage = () => {
   const navigate = useNavigate()
 
   const { data: userData } = useGetUser()
+
+  const { isOpen, close, open } = useDisclosure()
 
   const defaultDepartmentId = useMemo(() => {
     if (userData?.data.role === UserRole.ADMIN) {
@@ -66,50 +72,61 @@ const DepartmentManagementPage = () => {
   if (!departmentData) return <PageContainer>Loading...</PageContainer>
 
   return (
-    <PageContainer className="p-8">
-      <h1 className="mb-6 flex items-center gap-4 text-2xl font-bold">
-        {departmentId && (
-          <span
-            className="cursor-pointer"
-            onClick={() => {
-              navigate(-1)
-            }}
-          >
-            <MdArrowBackIos />
-          </span>
-        )}
-        สังกัด: {departmentData.data.name}
-      </h1>
-      <Tabs
-        tabs={[
-          {
-            content: (
-              <DepartmentMembersList
-                isApproved
-                facultyName={
-                  departmentData.data.faculty?.name ?? departmentData.data.name
-                }
-                departmentName={departmentData.data.name}
-                departmentId={departmentId}
-              />
-            ),
-            title: 'สังกัด/หน่วยงานของฉัน',
-          },
-          {
-            content: (
-              <DepartmentMembersList
-                facultyName={
-                  departmentData.data.faculty?.name ?? departmentData.data.name
-                }
-                departmentName={departmentData.data.name}
-                departmentId={defaultDepartmentId}
-              />
-            ),
-            title: 'รอการตอบรับ',
-          },
-        ]}
-      />
-    </PageContainer>
+    <>
+      <PageContainer className="p-8">
+        <h1 className="mb-6 flex items-center gap-4 text-2xl font-bold">
+          {departmentId && (
+            <span
+              className="cursor-pointer"
+              onClick={() => {
+                navigate(-1)
+              }}
+            >
+              <MdArrowBackIos />
+            </span>
+          )}
+          สังกัด: {departmentData.data.name}
+          <Button
+            label="ส่งคำเชิญสร้างบัญชี"
+            variant="green"
+            leftIcon={<IoIosSend />}
+            onClick={open}
+          />
+        </h1>
+        <Tabs
+          tabs={[
+            {
+              content: (
+                <DepartmentMembersList
+                  isApproved
+                  facultyName={
+                    departmentData.data.faculty?.name ??
+                    departmentData.data.name
+                  }
+                  departmentName={departmentData.data.name}
+                  departmentId={departmentId}
+                />
+              ),
+              title: 'สังกัด/หน่วยงานของฉัน',
+            },
+            {
+              content: (
+                <DepartmentMembersList
+                  facultyName={
+                    departmentData.data.faculty?.name ??
+                    departmentData.data.name
+                  }
+                  departmentName={departmentData.data.name}
+                  departmentId={defaultDepartmentId}
+                />
+              ),
+              title: 'รอการตอบรับ',
+            },
+          ]}
+        />
+      </PageContainer>
+      <UserInviteModal isOpen={isOpen} onClose={close} />
+    </>
   )
 }
 
