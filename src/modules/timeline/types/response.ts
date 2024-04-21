@@ -5,17 +5,23 @@ export interface GetAllTimeline {
 }
 
 export interface Timeline {
-  id: string
   documentId: string
   message: string
   updatedBy: string
   createdAt: string
   userId: string
+  id: string
   status: string
   document: Document
 }
-
 interface Document {
   title: string
   description: string
+  userCreated: UserCreated
+  operator: UserCreated
+}
+interface UserCreated {
+  nameTh: string
+  nameEn: string
+  profileImg: string
 }

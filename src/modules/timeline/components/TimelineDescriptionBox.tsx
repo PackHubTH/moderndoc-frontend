@@ -31,13 +31,25 @@ const TimelineDescriptionBox = ({ data }: PropsType) => {
           <p>2</p>
         </div>
         <h1 className="font-semibold">ผู้สร้างเอกสาร</h1>
-        <ProfileBox name={data.createdBy} email="test" profileImg="" />
+        <ProfileBox
+          name={data.userCreated.nameTh}
+          email={data.userCreated.emails[data.userCreated.defaultEmailIndex]}
+          profileImg={data.userCreated.profileImg}
+        />
         <h1 className="font-semibold">ผู้รับเอกสาร</h1>
-        <ProfileBox name={data.updatedBy} email="test" profileImg="" />
+        <ProfileBox
+          name={data.operator.nameTh}
+          email={data.operator.emails[data.operator.defaultEmailIndex]}
+          profileImg={data.operator.profileImg}
+        />
         <h1 className="font-semibold">ผู้อนุมัติหรือผู้ที่เกี่ยวข้อง</h1>
         {data?.documentSents.map((sent, index) => (
           <div key={index}>
-            <ProfileBox name={'test'} email="test" profileImg="" />
+            <ProfileBox
+              name={sent.receiver.nameTh}
+              email={sent.receiver.emails[sent.receiver.defaultEmailIndex]}
+              profileImg={sent.receiver.profileImg}
+            />
           </div>
         ))}
         <h1 className="font-semibold">ไทม์ไลน์</h1>

@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import useGetAllTimeline from '../hooks/api/useGetAllTimeline'
 import { Timeline } from '../types/response'
 import TimelineDescriptionBox from './TimelineDescriptionBox'
+import TimelineStatusBox from './TimelineStatusBox'
 
 const TimelineListTable = () => {
   const { isOpen, open } = useDisclosure()
@@ -54,11 +55,7 @@ const TimelineListTable = () => {
         </div>
         // </div>
       ),
-      cell: (info) => (
-        <span className="font-semibold text-blue-500">
-          {info.row.original.status}
-        </span>
-      ),
+      cell: (info) => <TimelineStatusBox status={info.row.original.status} />,
     },
     {
       id: 'documentId',
@@ -68,8 +65,10 @@ const TimelineListTable = () => {
         <TableInfoBox
           title={info.row.original.document.title}
           createdAt={new Date(info.row.original.createdAt).toLocaleDateString()}
-          createdBy={'test'}
-          updatedBy={'test'}
+          createdBy={info.row.original.document.userCreated.nameTh}
+          createdByImg={info.row.original.document.userCreated.profileImg}
+          updatedBy={info.row.original.document.operator.nameTh}
+          updatedByImg={info.row.original.document.operator.profileImg}
         />
       ),
     },
