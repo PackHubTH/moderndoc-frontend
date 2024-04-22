@@ -4,13 +4,18 @@ import { ApiResponse } from 'types/response'
 import { GetDocumentById } from '../../types/response'
 
 const useGetDocumentById = (id: string) => {
-  if (!id) return { data: null }
-  const context = useQuery(['get-document', id], async () => {
-    const response = await moderndocApi.get<ApiResponse<GetDocumentById>>(
-      `/document/${id}`
-    )
-    return response.data
-  })
+  const context = useQuery(
+    ['get-document', id],
+    async () => {
+      const response = await moderndocApi.get<ApiResponse<GetDocumentById>>(
+        `/document/${id}`
+      )
+      return response.data
+    },
+    {
+      enabled: !!id,
+    }
+  )
 
   return context
 }

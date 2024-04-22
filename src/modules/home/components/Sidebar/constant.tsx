@@ -26,7 +26,7 @@ export const SIDE_BAR_MENUS = [
   {
     name: 'ไทม์ไลน์',
     icon: <IoNotificationsOutline />,
-    link: null,
+    link: '/timeline-management',
     role: [UserRole.ADMIN, UserRole.STAFF, UserRole.TEACHER, UserRole.STUDENT],
   },
   {

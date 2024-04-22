@@ -9,6 +9,7 @@ import Home from './modules/home/pages'
 import TestPage from './modules/home/pages/TestPage'
 import TemplateEditor from './modules/template/pages/TemplateEditor'
 import TemplateManagementPage from './modules/template/pages/TemplateManagementPage'
+import TimelineManagementPage from './modules/timeline/pages/TimelineManagementPage'
 import CreateProfilePage from './modules/user/pages/CreateProfilePage'
 import EditUserInfo from './modules/user/pages/EditUserInfo'
 import Login from './modules/user/pages/Login'
@@ -60,6 +61,10 @@ function App() {
         <Route
           path="/edit-template"
           element={<TemplateEditor type="create" />}
+        />
+        <Route
+          path="/timeline-management"
+          element={<TimelineManagementPage />}
         />
       </Routes>
     </BrowserRouter>

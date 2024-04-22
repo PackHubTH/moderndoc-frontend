@@ -1,6 +1,7 @@
 import {
   ColumnDef,
   PaginationState,
+  Row,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
@@ -25,15 +26,6 @@ const StyledTableRow = styled.div`
   justify-content: end;
   align-items: flex-end;
   padding-right: 20px;
-  & > div {
-    display: none;
-  }
-  &:hover > div {
-    display: block;
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
 `
 
 const DocumentListTable = () => {
@@ -42,6 +34,7 @@ const DocumentListTable = () => {
     pageIndex: 0,
     pageSize: 10,
   })
+  const [hoveredRow, setHoveredRow] = useState<Row<Document> | null>(null)
 
   const { data: document, refetch } = useGetAllDocument(
     paginationState.pageIndex + 1,
@@ -94,13 +87,17 @@ const DocumentListTable = () => {
               locale: th,
             })}
           </p>
-          <div className="absolute top-0">
-            <Button
-              label="ดำเนินการ"
-              variant="outline-blue"
-              onClick={() => navigate(`/edit-document/${info.row.original.id}`)}
-            />
-          </div>
+          {hoveredRow && hoveredRow.id === info.row.id && (
+            <div className="absolute right-0">
+              <Button
+                label="ดำเนินการ"
+                variant="outline-blue"
+                onClick={() =>
+                  navigate(`/edit-document/${info.row.original.id}`)
+                }
+              />
+            </div>
+          )}
         </StyledTableRow>
         // </div>
       ),
@@ -124,7 +121,7 @@ const DocumentListTable = () => {
 
   return (
     <div className="flex-1 p-2">
-      <TableDisplay table={table} />
+      <TableDisplay table={table} onHoverRow={setHoveredRow} />
       <Pagination
         totalPage={1}
         currentPage={table.getState().pagination.pageIndex + 1}
