@@ -105,7 +105,7 @@ const FaqListTable = () => {
                 openCreateFaqModal()
               }}
             />
-            // TODO: seperate page for each faq
+            {/* // TODO: seperate page for each faq */}
             {/* <MdRemoveRedEye
               size={18}
               className="cursor-pointer rounded-full text-blue-500"

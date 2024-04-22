@@ -4,7 +4,7 @@ import Modal from '@/components/Modal'
 import RichTextInput from '@/components/RichTextInput'
 import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { IoIosSend } from 'react-icons/io'
 import { toast } from 'react-toastify'
@@ -48,6 +48,16 @@ const UserInviteModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
     setDepartmentSearch('')
   }
 
+  useEffect(() => {
+    if (methods.watch('role') === UserRole.ADMIN) {
+      methods.setValue('departmentId', undefined, {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
+      setDepartmentSearch('')
+    }
+  }, [methods.watch('role')])
+
   return (
     <Modal
       width="800px"
@@ -67,30 +77,6 @@ const UserInviteModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
             name="nameTh"
             render={({ field }) => (
               <TextInput {...field} label="ชื่อ-นามสกุลผู้รับ" />
-            )}
-          />
-          <Controller
-            control={methods.control}
-            name="departmentId"
-            render={({ field }) => (
-              <AutocompleteInput
-                onSearch={setDepartmentSearch}
-                onChange={(value) => {
-                  setDepartmentSearch(
-                    departments?.data.data.find((d) => d.id === value)?.name ??
-                      ''
-                  )
-                  field.onChange(value)
-                }}
-                value={departmentSearch}
-                label="หน่วยงานที่สังกัด"
-                options={
-                  departments?.data.data.map((department) => ({
-                    label: department.name,
-                    value: department.id,
-                  })) ?? []
-                }
-              />
             )}
           />
           <Controller
@@ -115,6 +101,31 @@ const UserInviteModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
                 ]}
                 onChange={field.onChange}
                 value={field.value}
+              />
+            )}
+          />
+          <Controller
+            control={methods.control}
+            name="departmentId"
+            render={({ field }) => (
+              <AutocompleteInput
+                disabled={methods.watch('role') === UserRole.ADMIN}
+                onSearch={setDepartmentSearch}
+                onChange={(value) => {
+                  setDepartmentSearch(
+                    departments?.data.data.find((d) => d.id === value)?.name ??
+                      ''
+                  )
+                  field.onChange(value)
+                }}
+                value={departmentSearch}
+                label="หน่วยงานที่สังกัด"
+                options={
+                  departments?.data.data.map((department) => ({
+                    label: department.name,
+                    value: department.id,
+                  })) ?? []
+                }
               />
             )}
           />
