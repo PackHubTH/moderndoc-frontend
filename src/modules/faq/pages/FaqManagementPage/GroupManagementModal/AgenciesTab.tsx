@@ -2,7 +2,7 @@ import Button from '@/components/Button'
 import TableDisplay from '@/components/TableDisplay'
 import TextInput from '@/components/TextInput'
 import { useDisclosure } from '@/hooks/useDisclosure'
-import DeleteAgencyModal from '@/modules/faq/components/DeleteAgencyModal'
+import DeleteDepartmentModal from '@/modules/faq/components/DeleteDepartmentModal'
 import useCreateAgencyDepartment from '@/modules/faq/hooks/api/useCreateAgency'
 import useDeleteTag from '@/modules/faq/hooks/api/useDeleteTag'
 import useUpdateDepartment from '@/modules/faq/hooks/api/useUpdateDepartment'
@@ -19,6 +19,26 @@ import { MdModeEditOutline } from 'react-icons/md'
 import { toast } from 'react-toastify'
 
 const AgenciesTab = () => {
+  const { data: agencies, refetch: refetchAgencies } = useGetDepartments()
+  const { mutate: createAgency } = useCreateAgencyDepartment()
+  const { mutate: deleteTag } = useDeleteTag()
+  const { mutate: editDepartment } = useUpdateDepartment()
+
+  const { isOpen, open, close } = useDisclosure()
+
+  const [addDepartmentInputValue, setAddDepartmentInputValue] = useState('')
+  const [selectedDeleteDepartment, setSelectedDeleteDepartment] =
+    useState<Department | null>(null)
+  const [deleteDepartment, setDeleteDepartment] = useState<Department | null>(
+    null
+  )
+
+  const {
+    isOpen: isOpenDeleteDepartmentModal,
+    open: openDeleteDepartmentModal,
+    close: closeDeleteDepartmentModal,
+  } = useDisclosure()
+
   const columns: ColumnDef<Department>[] = [
     {
       id: 'index',
@@ -51,10 +71,10 @@ const AgenciesTab = () => {
                   />
                   <HiTrash
                     size={25}
-                    className="cursor-not-allowed rounded-full bg-red-500 p-1 text-white"
+                    className="cursor-pointer rounded-full bg-red-500 p-1 text-white"
                     onClick={() => {
-                      // setSelectedDeleteDepartment(info.row.original)
-                      // open()
+                      setDeleteDepartment(info.row.original)
+                      openDeleteDepartmentModal()
                     }}
                   />
                 </div>
@@ -107,23 +127,11 @@ const AgenciesTab = () => {
       },
     },
   ]
-
-  const { data: agencies, refetch: refetchAgencies } = useGetDepartments()
-  const { mutate: createAgency } = useCreateAgencyDepartment()
-  const { mutate: deleteTag } = useDeleteTag()
-  const { mutate: editDepartment } = useUpdateDepartment()
-
-  const { isOpen, open, close } = useDisclosure()
-
   const table = useReactTable({
     columns,
     data: agencies?.data ?? [],
     getCoreRowModel: getCoreRowModel(),
   })
-
-  const [addDepartmentInputValue, setAddDepartmentInputValue] = useState('')
-  const [selectedDeleteDepartment, setSelectedDeleteDepartment] =
-    useState<Department | null>(null)
 
   const onCreateAgency = () => {
     createAgency(addDepartmentInputValue, {
@@ -172,10 +180,10 @@ const AgenciesTab = () => {
         </div>
         <TableDisplay table={table} maxHeight="320px" />
       </div>
-      <DeleteAgencyModal
-        isOpen={isOpen}
-        onClose={close}
-        agency={selectedDeleteDepartment}
+      <DeleteDepartmentModal
+        isOpen={isOpenDeleteDepartmentModal}
+        onClose={closeDeleteDepartmentModal}
+        department={deleteDepartment}
       />
     </>
   )
