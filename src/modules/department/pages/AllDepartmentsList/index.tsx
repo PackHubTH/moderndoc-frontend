@@ -1,6 +1,8 @@
+import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
+import { useDisclosure } from '@/hooks/useDisclosure'
 import {
   ColumnDef,
   PaginationState,
@@ -9,12 +11,16 @@ import {
 } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import { FaEye } from 'react-icons/fa6'
+import { IoIosSend } from 'react-icons/io'
 import { useNavigate } from 'react-router-dom'
+import UserInviteModal from '../../components/UserInviteModal'
 import { GetAllDepartmentsResponse } from '../../hooks/api/types'
 import useGetAllDepartments from '../../hooks/api/useGetAllDepartments'
 
 const AllDepartmentsList = () => {
   const navigate = useNavigate()
+
+  const { open, close, isOpen } = useDisclosure()
 
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -100,7 +106,16 @@ const AllDepartmentsList = () => {
   return (
     <>
       <PageContainer className="p-8">
-        <h1 className="mb-6 text-2xl font-bold">จัดการหน่วยงาน</h1>
+        <h1 className="mb-6 flex items-center gap-4 text-2xl font-bold">
+          จัดการหน่วยงาน{' '}
+          <Button
+            label="ส่งคำเชิญสร้างบัญชี"
+            variant="green"
+            leftIcon={<IoIosSend />}
+            onClick={open}
+          />
+        </h1>
+
         <div className="p-2">
           <TableDisplay table={table} />
           <Pagination
@@ -111,6 +126,7 @@ const AllDepartmentsList = () => {
           />
         </div>
       </PageContainer>
+      <UserInviteModal isOpen={isOpen} onClose={close} />
     </>
   )
 }
