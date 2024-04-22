@@ -3,6 +3,7 @@ import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import ApproveMemberModal from '@/modules/department/components/ApproveMemberModal'
+import SwapMemberModal from '@/modules/department/components/SwapMemberDepartment'
 import UserInfoModal from '@/modules/department/components/UserInfoModal'
 import { GetDepartmentMemberResponse } from '@/modules/department/hooks/api/types'
 import useGetDepartmentMembers from '@/modules/department/hooks/api/useGetDepartmentMembers'
@@ -46,6 +47,11 @@ const DepartmentMembersList: React.FC<PropsType> = ({
     isApproved: boolean
   } | null>(null)
 
+  const [swapMemberModalData, setSwapMemberModalData] = useState<{
+    userId: string
+    departmentId: string
+  } | null>(null)
+
   const { data: members, refetch } = useGetDepartmentMembers(
     paginationState.pageIndex + 1,
     isApproved,
@@ -61,6 +67,11 @@ const DepartmentMembersList: React.FC<PropsType> = ({
     isOpen: isOpenApproveMember,
     close: closeApproveMember,
     open: openApproveMember,
+  } = useDisclosure()
+  const {
+    isOpen: isOpenSwapMember,
+    close: closeSwapMember,
+    open: openSwapMember,
   } = useDisclosure()
 
   const [userData, setUserData] = useState<GetDepartmentMemberResponse | null>(
@@ -205,7 +216,13 @@ const DepartmentMembersList: React.FC<PropsType> = ({
             leftIcon={<BiTransfer size={24} color={white} />}
             label="ย้าย"
             variant="yellow"
-            // todo: implement transfer
+            onClick={() => {
+              setSwapMemberModalData({
+                userId: info.row.original.id,
+                departmentId: departmentId!,
+              })
+              openSwapMember()
+            }}
           />
         </div>
       ),
@@ -262,6 +279,12 @@ const DepartmentMembersList: React.FC<PropsType> = ({
         isApproved={approveMemberModalData?.isApproved}
         page={paginationState.pageIndex + 1}
         departmentId={departmentId}
+      />
+      <SwapMemberModal
+        isOpen={isOpenSwapMember}
+        onClose={closeSwapMember}
+        oldDepartmentName={departmentName}
+        memberUserId={swapMemberModalData?.userId}
       />
     </>
   )
