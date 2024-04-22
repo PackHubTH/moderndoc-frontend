@@ -1,14 +1,23 @@
-import { Table, flexRender } from '@tanstack/react-table'
+import { Row, Table, flexRender } from '@tanstack/react-table'
 
+import { useState } from 'react'
 import tw from 'twin.macro'
 
 type PropsType = {
   table: Table<any>
   maxHeight?: string | number
   onClick?: any
+  onHoverRow?: (row: Row<any> | null) => void
 }
 
-const TableDisplay: React.FC<PropsType> = ({ table, maxHeight, onClick }) => {
+const TableDisplay: React.FC<PropsType> = ({
+  table,
+  maxHeight,
+  onClick,
+  onHoverRow,
+}) => {
+  const [hoveredRow, setHoveredRow] = useState<string | null>(null)
+
   return (
     <div
       css={[
@@ -44,17 +53,27 @@ const TableDisplay: React.FC<PropsType> = ({ table, maxHeight, onClick }) => {
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr
-              key={row.id}
-              onClick={() => onClick && onClick(row)}
-              className="cursor-pointer transition-colors duration-200 ease-in-out hover:bg-gray-100"
-            >
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="border-t px-2.5 py-3">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
+            <>
+              <tr
+                key={row.id}
+                css={[tw`relative`, hoveredRow === row.id && tw`bg-gray-100`]}
+                onClick={() => onClick && onClick(row)}
+                onMouseEnter={() => {
+                  onHoverRow?.(row)
+                  setHoveredRow(row.id)
+                }}
+                onMouseLeave={() => {
+                  onHoverRow?.(null)
+                  setHoveredRow(null)
+                }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="border-t px-2.5 py-3">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            </>
           ))}
         </tbody>
         <tfoot>
