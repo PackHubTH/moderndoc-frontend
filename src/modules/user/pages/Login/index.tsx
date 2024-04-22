@@ -4,6 +4,7 @@ import TextInput from '@/components/TextInput'
 import { useUserStore } from '@/stores/userStore'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { UserRole } from 'types/user'
 import useLogin from '../../hooks/api/useLogin'
 
 const Login = () => {
@@ -17,7 +18,10 @@ const Login = () => {
   const handleLogin = (email: string) => {
     login(email, {
       onSuccess: (data) => {
-        if (data.data === null || !data.data.isFinishRegister) {
+        if (
+          data.data?.role !== UserRole.ADMIN &&
+          !data.data?.isFinishRegister
+        ) {
           setUserEmail(email)
           return navigate('/create-profile', { replace: true })
         }

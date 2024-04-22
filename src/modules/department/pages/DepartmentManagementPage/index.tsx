@@ -4,25 +4,41 @@ import useGetDepartmentById from '@/modules/user/hooks/api/useGetDepartmentById'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { ApprovalStatus } from '@/modules/user/hooks/types'
 import { useMemo } from 'react'
+import { MdArrowBackIos } from 'react-icons/md'
+import { useNavigate, useParams } from 'react-router-dom'
 import { UserRole } from 'types/user'
+import AllDepartmentsList from '../AllDepartmentsList'
 import DepartmentMembersList from './DepartmentMembersListTable'
 import DepartmentRejectedPage from './DepartmentRejectedPage'
 import WaitForApprovalPage from './WaitForApprovalPage'
 
 const DepartmentManagementPage = () => {
+  const departmentId = useParams<{ departmentId?: string }>().departmentId ?? ''
+  const navigate = useNavigate()
+
   const { data: userData } = useGetUser()
 
   const defaultDepartmentId = useMemo(() => {
+    if (userData?.data.role === UserRole.ADMIN) {
+      return departmentId ?? ''
+    }
     if (userData?.data.role === UserRole.STAFF) {
       return userData?.data.staff?.staffDepartments[0].departmentId
     } else if (userData?.data.role === UserRole.TEACHER) {
       return userData?.data?.teacher?.teacherDepartments[0].departmentId
     }
-  }, [userData])
+  }, [userData, departmentId])
 
   const { data: departmentData } = useGetDepartmentById(defaultDepartmentId!)
 
-  if (userData?.data.role !== UserRole.STAFF) {
+  if (userData?.data.role === UserRole.ADMIN && departmentId === '') {
+    return <AllDepartmentsList />
+  }
+
+  if (
+    userData?.data.role !== UserRole.STAFF &&
+    userData?.data.role !== UserRole.ADMIN
+  ) {
     return <PageContainer>คุณไม่มีสิทธิ์เข้าถึงหน้านี้</PageContainer>
   }
 
@@ -51,7 +67,17 @@ const DepartmentManagementPage = () => {
 
   return (
     <PageContainer className="p-8">
-      <h1 className="mb-6 text-2xl font-bold">
+      <h1 className="mb-6 flex items-center gap-4 text-2xl font-bold">
+        {departmentId && (
+          <span
+            className="cursor-pointer"
+            onClick={() => {
+              navigate(-1)
+            }}
+          >
+            <MdArrowBackIos />
+          </span>
+        )}
         สังกัด: {departmentData.data.name}
       </h1>
       <Tabs
@@ -60,8 +86,11 @@ const DepartmentManagementPage = () => {
             content: (
               <DepartmentMembersList
                 isApproved
-                facultyName={departmentData.data.faculty.name}
+                facultyName={
+                  departmentData.data.faculty?.name ?? departmentData.data.name
+                }
                 departmentName={departmentData.data.name}
+                departmentId={departmentId}
               />
             ),
             title: 'สังกัด/หน่วยงานของฉัน',
@@ -69,8 +98,11 @@ const DepartmentManagementPage = () => {
           {
             content: (
               <DepartmentMembersList
-                facultyName={departmentData.data.faculty.name}
+                facultyName={
+                  departmentData.data.faculty?.name ?? departmentData.data.name
+                }
                 departmentName={departmentData.data.name}
+                departmentId={defaultDepartmentId}
               />
             ),
             title: 'รอการตอบรับ',

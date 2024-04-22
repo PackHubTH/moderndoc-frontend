@@ -20,13 +20,14 @@ const StudentSection = () => {
 
   const [searchAdvisor, setSearchAdvisor] = useState<string>('')
 
+  const [facultyId, setFacultyId] = useState<string>('')
+
+  const { data: userData } = useGetUser()
   const { data: courseData } = useGetCourseById(
     methods.watch('student.courseId')
   )
-  const { data: userData } = useGetUser()
-
   const { data: faculties } = useGetAllFaculties()
-  const { data: departments } = useGetDepartments(methods.watch('facultyId'))
+  const { data: departments } = useGetDepartments(facultyId)
   const { data: courses } = useGetCourses(
     methods.watch('departmentId'),
     methods.watch('level')
@@ -38,12 +39,13 @@ const StudentSection = () => {
       methods.setValue('facultyId', courseData.data.department.facultyId, {
         shouldDirty: true,
       })
+      setFacultyId(courseData.data.department.facultyId)
       methods.setValue('departmentId', courseData.data.department.id, {
         shouldDirty: true,
       })
       methods.setValue('level', courseData.data.level, { shouldDirty: true })
     }
-  }, [courseData])
+  }, [courseData, departments])
 
   useEffect(() => {
     setSearchAdvisor(userData?.data.student.advisor?.user?.nameTh ?? '')

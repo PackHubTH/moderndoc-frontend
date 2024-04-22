@@ -45,8 +45,6 @@ const CreateProfilePage = () => {
     methods.setValue('defaultEmailIndex', 0, { shouldDirty: true })
   }, [])
 
-  console.log('click', methods.watch(), methods.formState)
-
   return (
     <PageContainer>
       <div className="h-full min-h-[100vh] w-full bg-blue-100 p-6">

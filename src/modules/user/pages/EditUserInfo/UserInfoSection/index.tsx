@@ -29,6 +29,10 @@ const UserInfoSection = () => {
                 value: UserRole.STAFF,
                 label: 'เจ้าหน้าที่',
               },
+              {
+                value: UserRole.ADMIN,
+                label: 'แอดมิน',
+              },
             ]}
             onChange={onChange}
             value={value}
