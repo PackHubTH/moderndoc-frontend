@@ -1,12 +1,20 @@
-import { Table, flexRender } from '@tanstack/react-table'
+import { Row, Table, flexRender } from '@tanstack/react-table'
+import { useState } from 'react'
 import tw from 'twin.macro'
 
 type PropsType = {
   table: Table<any>
   maxHeight?: string | number
+  onHoverRow?: (row: Row<any> | null) => void
 }
 
-const TableDisplay: React.FC<PropsType> = ({ table, maxHeight }) => {
+const TableDisplay: React.FC<PropsType> = ({
+  table,
+  maxHeight,
+  onHoverRow,
+}) => {
+  const [hoveredRow, setHoveredRow] = useState<string | null>(null)
+
   return (
     <div
       css={[
@@ -42,13 +50,26 @@ const TableDisplay: React.FC<PropsType> = ({ table, maxHeight }) => {
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="border-t px-2.5 py-3">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
+            <>
+              <tr
+                key={row.id}
+                css={[tw`relative`, hoveredRow === row.id && tw`bg-gray-100`]}
+                onMouseEnter={() => {
+                  onHoverRow?.(row)
+                  setHoveredRow(row.id)
+                }}
+                onMouseLeave={() => {
+                  onHoverRow?.(null)
+                  setHoveredRow(null)
+                }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="border-t px-2.5 py-3">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            </>
           ))}
         </tbody>
         <tfoot>
