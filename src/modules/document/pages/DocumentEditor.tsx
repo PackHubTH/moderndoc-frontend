@@ -12,6 +12,9 @@ import {
 import { Document, Page } from 'react-pdf'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
+  getJson,
+  hexToRgb,
+  rgbToHex,
   saveCanvas,
   setTextAlign,
   setTextBold,
@@ -30,7 +33,6 @@ import { PDFDocument } from 'pdf-lib'
 import { useRef } from 'react'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
-import { MdOutlineDeleteForever } from 'react-icons/md'
 import tw from 'twin.macro'
 import ActionDocumentModal from '../components/ActionDocumentModal'
 import CreateDocumentModal from '../components/CreateDocumentModal'
@@ -216,14 +218,23 @@ const DocumentEditor = ({ type }: PropsType) => {
       <div className="flex h-[calc(100vh-92px)]">
         <div css={[type === 'edit' ? tw`w-3/4` : tw`w-full`]}>
           <DocumentToolbar>
-            <ToolbarButton icon={<FaMousePointer />} id={ButtonId.Default} />
-            <ToolbarButton icon={<FaA />} id={ButtonId.Text} />
-            <ToolbarButton icon={<FaPenFancy />} id={ButtonId.Pen} />
+            <ToolbarButton icon={<FaA />} id={ButtonId.Text} label="Text" />
             <ToolbarButton
-              icon={<MdOutlineDeleteForever />}
-              id={ButtonId.Delete}
+              icon={<FaPenFancy />}
+              id={ButtonId.Pen}
+              label="Sign"
             />
-            <ToolbarButton icon={<FaCheck />} id={ButtonId.Correct} />
+            <ToolbarButton
+              icon={<FaCheck />}
+              id={ButtonId.Correct}
+              label="Check"
+            />
+            <ToolbarButton
+              onClick={() => console.log(getJson(canvasList))}
+              icon={<FaMousePointer />}
+              id={ButtonId.Default}
+              label="Select"
+            />
             {activeObject ? (
               <>
                 <Dropdown
@@ -231,9 +242,23 @@ const DocumentEditor = ({ type }: PropsType) => {
                   dropdownSection={[
                     {
                       lists: [
-                        { displayText: '14' },
+                        {
+                          displayText: '14',
+                          onClick: () => {
+                            activeObject?.set('fontSize', 14)
+                            canvasList
+                              .find((page) => page.id === activeCanvasId)
+                              ?.canvas?.renderAll()
+                          },
+                        },
                         {
                           displayText: '16',
+                          onClick: () => {
+                            activeObject?.set('fontSize', 16)
+                            canvasList
+                              .find((page) => page.id === activeCanvasId)
+                              ?.canvas?.renderAll()
+                          },
                         },
                       ],
                     },
@@ -307,6 +332,17 @@ const DocumentEditor = ({ type }: PropsType) => {
                     setTextItalic(canvasList, activeCanvasId, setActiveObject)
                   }
                 />
+                <input
+                  type="color"
+                  value={rgbToHex(activeObject?.fill)}
+                  onChange={(e) => {
+                    console.log('color', e.target.value)
+                    activeObject?.set('fill', hexToRgb(e.target.value))
+                    canvasList
+                      .find((page) => page.id === activeCanvasId)
+                      ?.canvas?.renderAll()
+                  }}
+                />
               </>
             ) : null}
           </DocumentToolbar>
@@ -317,10 +353,10 @@ const DocumentEditor = ({ type }: PropsType) => {
           >
             <Document
               file={
-                documentData?.data?.templateFile ||
-                templateData?.data?.templateFile
+                exampleFile
+                // documentData?.data?.templateFile ||
+                // templateData?.data?.templateFile
               }
-              // renderMode="svg"
               onLoadSuccess={onDocumentLoadSuccess}
             >
               {Array.apply(null, Array(pageTotal))
@@ -328,7 +364,10 @@ const DocumentEditor = ({ type }: PropsType) => {
                 .map((page) => {
                   return (
                     <div key={page} className="relative">
-                      <DocumentCanvas id={`${page - 1}`} />
+                      <DocumentCanvas
+                        id={`${page - 1}`}
+                        element={documentData?.data?.element}
+                      />
                       <Page
                         pageNumber={page}
                         renderTextLayer={false}
@@ -336,7 +375,6 @@ const DocumentEditor = ({ type }: PropsType) => {
                         scale={2}
                         width={400}
                         className="mt-2 border-black"
-                        // renderMode="svg"
                         onLoadSuccess={() => onPageLoadSuccess(page)}
                       />
                     </div>

@@ -13,7 +13,9 @@ import useAssignOperator from '../hooks/api/useAssignOperator'
 import useCreateDocument from '../hooks/api/useCreateDocument'
 import useCreateDocumentForm from '../hooks/useCreateDocumentForm'
 import { CreateDocumentForm } from '../hooks/useCreateDocumentForm/validation'
+import { useDocumentStore } from '../stores/documentStore'
 import { DocumentStatus } from '../types/types'
+import { getJson } from '../utils/documentEditorUtils'
 
 type PropsType = {
   departmentId: string
@@ -33,6 +35,7 @@ const CreateDocumentModal: React.FC<PropsType> = ({
   const { mutate: assignOperator } = useAssignOperator()
   const { mutate: createDocument } = useCreateDocument()
   const { methods } = useCreateDocumentForm()
+  const canvasList = useDocumentStore((state) => state.canvasList)
   const [documentStatus, setDocumentStatus] = useState(
     DocumentStatus.PROCESSING
   )
@@ -64,7 +67,7 @@ const CreateDocumentModal: React.FC<PropsType> = ({
       createDocument(
         {
           templateId,
-          element: {},
+          element: getJson(canvasList),
           documentStatus,
         },
         {
@@ -105,7 +108,7 @@ const CreateDocumentModal: React.FC<PropsType> = ({
       createDocument(
         {
           templateId,
-          element: {},
+          element: getJson(canvasList),
           documentStatus,
         },
         {
