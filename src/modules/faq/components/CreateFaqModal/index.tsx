@@ -5,6 +5,7 @@ import Modal from '@/components/Modal'
 import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
+import useGetAllDepartments from '@/modules/department/hooks/api/useGetAllDepartments'
 import TagsSelect from '@/modules/faq/components/TagsSelect'
 import useCreateFaq from '@/modules/faq/hooks/api/useCreateFaq'
 import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
@@ -12,10 +13,13 @@ import useCreateFaqForm from '@/modules/faq/hooks/useCreateFaqForm'
 import { CreateFaqForm } from '@/modules/faq/hooks/useCreateFaqForm/validation'
 import { Faq, SendChannel } from '@/modules/faq/types'
 import useGetAllTemplate from '@/modules/template/hooks/api/useGetAllTemplate'
+import useGetDepartmentById from '@/modules/user/hooks/api/useGetDepartmentById'
+import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { FaPlus } from 'react-icons/fa6'
 import { toast } from 'react-toastify'
+import { UserRole } from 'types/user'
 import useGetDepartmentFaqs from '../../hooks/api/useGetDepartmentFaqs'
 import useUpdateFaq from '../../hooks/api/useUpdateFaq'
 
@@ -32,12 +36,16 @@ const CreateFaqModal: React.FC<PropsType> = ({
   faq,
 }) => {
   const { methods } = useCreateFaqForm()
+  const [departmentSearch, setDepartmentSearch] = useState('')
 
   const [searchTemplate, setSearchTemplate] = useState<string>('')
 
+  const { data: userData } = useGetUser()
   const { data: templates } = useGetAllTemplate(1, searchTemplate)
   const { data: tags } = useGetAllTags()
-
+  const { data: departments } = useGetAllDepartments(1, departmentSearch)
+  const { data: departmentData, refetch: refetchDepartmentData } =
+    useGetDepartmentById(methods.watch('departmentId') ?? '')
   const { refetch } = useGetDepartmentFaqs(1)
 
   const { mutate: createFaq } = useCreateFaq()
@@ -88,6 +96,24 @@ const CreateFaqModal: React.FC<PropsType> = ({
       methods.reset()
     }
   }, [isOpen])
+
+  useEffect(() => {
+    if (methods.watch('departmentId')) {
+      refetchDepartmentData()
+    }
+  }, [methods.watch('departmentId')])
+
+  useEffect(() => {
+    if (userData?.data.role === UserRole.ADMIN) {
+      methods.setValue('departmentId', '')
+    }
+  }, [userData])
+
+  useEffect(() => {
+    if (departmentData) {
+      setDepartmentSearch(departmentData.data.name)
+    }
+  }, [departmentData])
 
   return (
     <Modal
@@ -254,6 +280,32 @@ const CreateFaqModal: React.FC<PropsType> = ({
               />
             )}
           />
+          {userData?.data.role === UserRole.ADMIN && (
+            <Controller
+              control={methods.control}
+              name="departmentId"
+              render={({ field }) => (
+                <AutocompleteInput
+                  onSearch={setDepartmentSearch}
+                  onChange={(value) => {
+                    setDepartmentSearch(
+                      departments?.data.data.find((d) => d.id === value)
+                        ?.name ?? ''
+                    )
+                    field.onChange(value)
+                  }}
+                  value={departmentSearch}
+                  label="หน่วยงานที่สังกัด"
+                  options={
+                    departments?.data.data.map((department) => ({
+                      label: department.name,
+                      value: department.id,
+                    })) ?? []
+                  }
+                />
+              )}
+            />
+          )}
           <Controller
             control={methods.control}
             name="isInternal"

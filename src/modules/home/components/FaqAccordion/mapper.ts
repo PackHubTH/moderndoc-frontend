@@ -1,9 +1,9 @@
 import { SendChannel } from '@/modules/faq/types'
 import { gray, lime, sky, white, yellow } from 'tailwindcss/colors'
 export const SendChannelTextMapper = {
-  [SendChannel.ONSITE]: 'ไม่สามารถส่งภายในระบบได้ (Onsite)',
-  [SendChannel.ONLINE]: 'สามารถส่งภายในระบบได้ (Online)',
-  [SendChannel.BOTH]: 'สามารถส่งภายในระบบได้ และสามารถส่งนอกระบบได้ (Both)',
+  [SendChannel.ONSITE]: 'ส่งในสถานที่ (Onsite)',
+  [SendChannel.ONLINE]: 'ส่งภายในระบบ (Online)',
+  [SendChannel.BOTH]: 'ส่งได้ทั้งในระบบ Online และ Onsite',
   [SendChannel.OTHER]: 'อื่นๆ (Other)',
 }
 

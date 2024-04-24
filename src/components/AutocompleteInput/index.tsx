@@ -14,6 +14,7 @@ type PropsType = {
   isError?: boolean
   onSearch?: (query: string) => void
   placeholder?: string
+  disabled?: boolean
 }
 
 const AutocompleteInput: React.FC<PropsType> = ({
@@ -25,6 +26,7 @@ const AutocompleteInput: React.FC<PropsType> = ({
   options,
   onSearch,
   placeholder = 'กรุณาเลือก...',
+  disabled,
 }) => {
   const [query, setQuery] = useState('')
 
@@ -35,7 +37,7 @@ const AutocompleteInput: React.FC<PropsType> = ({
   )
 
   return (
-    <Combobox value={value} onChange={onChange}>
+    <Combobox value={value} onChange={onChange} disabled={disabled}>
       <div className={className}>
         <label
           htmlFor={label}

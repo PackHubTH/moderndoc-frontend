@@ -14,6 +14,7 @@ export const CreateFaqFormValidation = z.object({
   fileUrl: z.array(z.string()).optional(),
   templateId: z.string().nullable(),
   tagIds: z.array(z.string().uuid()).optional(),
+  departmentId: z.string().uuid().optional(),
 })
 
 export type CreateFaqForm = z.infer<typeof CreateFaqFormValidation>
