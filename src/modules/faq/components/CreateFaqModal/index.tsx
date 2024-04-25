@@ -264,7 +264,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
                   field.onChange(value)
                   setSearchTemplate('')
                 }}
-                value={field.value ?? ''}
+                value={searchTemplate ?? ''}
               />
             )}
           />

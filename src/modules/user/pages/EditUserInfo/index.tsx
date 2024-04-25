@@ -109,7 +109,7 @@ const EditUserInfo = () => {
           ) : (
             <StaffSection />
           )}
-          <div className="mt-8 w-full">
+          <div className="my-8 w-full">
             <div className="text-right">
               <Button
                 label="บันทึกข้อมูลส่วนตัว"

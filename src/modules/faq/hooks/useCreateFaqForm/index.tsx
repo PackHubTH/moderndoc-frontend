@@ -7,6 +7,7 @@ const useCreateFaqForm = () => {
     resolver: zodResolver(CreateFaqFormValidation),
     defaultValues: {
       tagIds: [],
+      templateId: null,
     },
     reValidateMode: 'onChange',
   })
