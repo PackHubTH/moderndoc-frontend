@@ -3,7 +3,8 @@ import PageContainer from '@/components/PageContainer'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import { useDisclosure } from '@/hooks/useDisclosure'
-import { DepartmentType } from '@/modules/user/hooks/types'
+import DeleteDepartmentModal from '@/modules/faq/components/DeleteDepartmentModal'
+import { Department, DepartmentType } from '@/modules/user/hooks/types'
 import {
   ColumnDef,
   PaginationState,
@@ -25,6 +26,18 @@ import useGetAllDepartments from '../../hooks/api/useGetAllDepartments'
 const AllDepartmentsList = () => {
   const navigate = useNavigate()
 
+  const [deleteDepartment, setDeleteDepartment] = useState<Department | null>(
+    null
+  )
+  const [editDepartment, setEditDepartment] = useState<Department | null>(null)
+
+  const [isEdit, setIsEdit] = useState(false)
+
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
+
   const {
     open: openInviteModal,
     close: closeInviteModal,
@@ -37,10 +50,12 @@ const AllDepartmentsList = () => {
     isOpen: isOpenCreateDepartmentModal,
   } = useDisclosure()
 
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
+  const {
+    open: openDeleteDepartmentModal,
+    close: closeDeleteDepartmentModal,
+    isOpen: isOpenDeleteDepartmentModal,
+  } = useDisclosure()
+
   const { data: departments, refetch } = useGetAllDepartments(
     paginationState.pageIndex + 1
   )
@@ -126,7 +141,11 @@ const AllDepartmentsList = () => {
                   ? 'pointer'
                   : 'not-allowed',
             }}
-            // onClick={() => setIsEdit(true)}
+            onClick={() => {
+              setEditDepartment(info.row.original as Department)
+              setIsEdit(true)
+              openCreateDepartmentModal()
+            }}
           />
           <HiTrash
             size={24}
@@ -141,10 +160,10 @@ const AllDepartmentsList = () => {
                   ? 'pointer'
                   : 'not-allowed',
             }}
-            // onClick={() => {
-            //   setDeleteDepartment(info.row.original)
-            //   openDeleteDepartmentModal()
-            // }}
+            onClick={() => {
+              setDeleteDepartment(info.row.original as Department)
+              openDeleteDepartmentModal()
+            }}
           />
         </div>
       ),
@@ -198,6 +217,15 @@ const AllDepartmentsList = () => {
       <CreateDepartmentModal
         isOpen={isOpenCreateDepartmentModal}
         onClose={closeCreateDepartmentModal}
+        mode={isEdit ? 'edit' : 'create'}
+        department={isEdit ? editDepartment : null}
+        callback={refetch}
+      />
+      <DeleteDepartmentModal
+        department={deleteDepartment}
+        isOpen={isOpenDeleteDepartmentModal}
+        onClose={closeDeleteDepartmentModal}
+        callback={refetch}
       />
     </>
   )
