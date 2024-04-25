@@ -42,7 +42,7 @@ const _json = {
       fill: 'rgb(255, 0, 0)',
       // width: 200,
       minWidth: 20,
-      left: 164,
+      left: 364,
       top: 199,
       lockScalingY: true,
       version: '6.0.0-beta9',
@@ -50,6 +50,21 @@ const _json = {
       // custom field
       // is_locked: true,
       elName: 'nameTh',
+    },
+    {
+      fontSize: 40,
+      text: 'moveable text',
+      type: 'Textbox',
+      fill: 'rgb(255, 0, 0)',
+      // width: 200,
+      minWidth: 20,
+      left: 164,
+      top: 199,
+      lockScalingY: true,
+      version: '6.0.0-beta9',
+      // editable: false,
+      // custom field
+      // is_locked: true,
     },
   ],
 }
@@ -111,6 +126,32 @@ const temp = {
       skewY: 0,
     },
   ],
+}
+
+const addAutoFill = (
+  canvas: Fabric.Canvas,
+  text: string,
+  x: number,
+  y: number,
+  setActiveButton: (button: ActiveToolbarButton) => void
+) => {
+  console.log('addAutoFill')
+
+  const fabricText = new Fabric.Textbox('text', {
+    top: y,
+    left: x,
+    fontSize: 14,
+    fill: 'rgb(0, 0, 0)',
+    width: 200,
+    minWidth: 20,
+    backgroundColor: '#DBEAFE',
+    textAlign: 'center',
+  })
+  canvas.add(fabricText)
+  canvas.setActiveObject(fabricText)
+  canvas.renderAll()
+
+  setActiveButton(ActiveToolbarButton.Default)
 }
 
 const addCheck = (canvas: Fabric.Canvas, x: number, y: number) => {
@@ -198,9 +239,37 @@ const initCanvas = (
   data?: DataProps
 ) => {
   console.log('initCanvas')
+  // check if canvas already exist then re-render
+  // if (document.getElementById(id)) {
+  //   console.log('canvas exist')
+  //   return
+  // }
   const newCanvas = new Fabric.Canvas(id)
+  //extend textbox to add custom field
+  // Extend the Textbox class to include elName as a custom attribute
+
+  const originalToObject = newCanvas.toObject.bind(newCanvas)
+
+  newCanvas.toObject = () => ({
+    ...originalToObject(
+      ['elName'] // Add the custom property to the list of properties to include
+    ),
+    // elName: 'test', // Adding custom property
+  })
+
+  // Fabric.Textbox.fromObject = (function (originalFn) {
+  //   return function (object, callback) {
+  //     return originalFn.call(Fabric.Textbox, object, (result, error) => {
+  //       // Attach new properties or methods here
+  //       if (object.elName) {
+  //         result.elName = object.elName;
+  //       }
+  //       callback(result, error);
+  //     });
+  //   };
+  // })(Fabric.Textbox.fromObject);
   // newCanvas.loadFromJSON(json, newCanvas.renderAll.bind(newCanvas))
-  newCanvas.loadFromJSON(_jsonStr).then(() => {
+  newCanvas.loadFromJSON({}).then(() => {
     newCanvas.forEachObject((obj: any) => {
       if (!obj.editable) {
         obj.set({ selectable: false })
@@ -210,6 +279,7 @@ const initCanvas = (
       if (obj?.elName && _data[obj?.elName]) {
         obj.set({ text: _data[obj?.elName] as string })
       }
+      console.log('obj from json', obj)
     })
     newCanvas.renderAll()
   })
@@ -240,6 +310,10 @@ const mouseHandler = (
     })
   }
   switch (activeButton) {
+    case ActiveToolbarButton.AutoFill:
+      console.log('autofill')
+      addAutoFill(canvas, option.text, option.x, option.y, setActiveButton)
+      break
     case ActiveToolbarButton.Text:
       console.log('text')
       addField(canvas, option.text, option.x, option.y, setActiveButton)
@@ -390,19 +464,25 @@ const setTextItalic = (
   }
 }
 
+const setAutoFillType = (
+  canvasList: CanvasProps[],
+  id: string,
+  elName: string,
+  text: string
+) => {
+  const canvas = canvasList.find((page) => page.id === id)?.canvas
+  const activeObject = canvas?.getActiveObject()
+
+  if (activeObject && canvas) {
+    const updatedObject = activeObject.set({ elName, text })
+    console.log('Updated Object', updatedObject)
+    canvas.renderAll()
+  }
+}
+
 const getJson = (canvasList: CanvasProps[]) => {
   const jsonList: any = []
   canvasList.forEach((item, index) => {
-    console.log('canvas', item)
-    // remove active object
-    // item.canvas.remove(item.canvas.getActiveObject() as Fabric.Object)
-
-    // change color of active object
-    // const activeObject = item.canvas.getActiveObject()
-    // if (activeObject) {
-    //   activeObject.set('fill', 'yellow')
-    //   item.canvas.renderAll()
-    // }
     const json = JSON.stringify(item.canvas.toJSON())
     console.log('json', json)
     jsonList.push(json)
@@ -450,6 +530,7 @@ const hexToRgb = (hex: string): string => {
 }
 
 export {
+  addAutoFill,
   addCheck,
   addField,
   getJson,
@@ -458,6 +539,7 @@ export {
   mouseHandler,
   rgbToHex,
   saveCanvas,
+  setAutoFillType,
   setTextAlign,
   setTextBold,
   setTextItalic,

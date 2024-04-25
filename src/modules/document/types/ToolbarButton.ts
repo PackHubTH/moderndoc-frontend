@@ -1,4 +1,5 @@
 export enum ActiveToolbarButton {
+  AutoFill,
   Default,
   Undo,
   Redo,

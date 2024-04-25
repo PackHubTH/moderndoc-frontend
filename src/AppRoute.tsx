@@ -59,7 +59,7 @@ function App() {
           element={<TemplateManagementPage />}
         />
         <Route
-          path="/edit-template"
+          path="/create-template"
           element={<TemplateEditor type="create" />}
         />
         <Route

@@ -37,15 +37,18 @@ const DocumentCanvas = ({ id, element }: DocumentCanvasProps) => {
     // pdf should be loaded first before canvas from Fabric.js
     const isHasPage = canvasSizes.findIndex((page) => page.id === id) !== -1
     const isHasCanvas = canvasList.findIndex((page) => page.id === id) !== -1
+    console.log('isHasPage', isHasPage, 'isHasCanvas', isHasCanvas, canvasList)
     if (isHasPage && !isHasCanvas) {
       initCanvas(id, element, setCanvasList)
     }
 
     return () => {
       const cleanup = async () => {
-        const canvas = canvasList.find((page) => page.id === id)?.canvas
-        if (canvas) {
-          await canvas.dispose()
+        const canvasEntry = canvasList.find((page) => page.id === id)
+        if (canvasEntry && canvasEntry.canvas) {
+          // await canvasEntry.canvas.dispose()
+          canvasEntry.canvas.clear()
+          resetCanvasList(id)
         }
       }
       console.log('cleanup')
@@ -81,15 +84,16 @@ const DocumentCanvas = ({ id, element }: DocumentCanvasProps) => {
       canvas.on('mouse:down', handler)
       canvas.on('selection:created', handler2)
       canvas.on('selection:cleared', handler3)
+      canvas.on('selection:updated', handler2)
       return () => {
         canvas.off('mouse:down', handler)
         canvas.off('selection:created', handler2)
         canvas.off('selection:cleared', handler3)
+        canvas.off('selection:updated', handler2)
       }
     }
   }, [activeButton, canvasList, id])
 
-  console.log('canvas', canvasList)
   console.log('selected obj', activeObject)
   return (
     <div className="absolute z-10">

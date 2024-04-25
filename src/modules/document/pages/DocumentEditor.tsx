@@ -218,7 +218,12 @@ const DocumentEditor = ({ type }: PropsType) => {
       <div className="flex h-[calc(100vh-92px)]">
         <div css={[type === 'edit' ? tw`w-3/4` : tw`w-full`]}>
           <DocumentToolbar>
-            <ToolbarButton icon={<FaA />} id={ButtonId.Text} label="Text" />
+            <ToolbarButton
+              icon={<FaA />}
+              id={ButtonId.Text}
+              label="Text"
+              onClick={() => console.log(getJson(canvasList))}
+            />
             <ToolbarButton
               icon={<FaPenFancy />}
               id={ButtonId.Pen}

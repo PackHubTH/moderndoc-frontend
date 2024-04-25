@@ -6,7 +6,7 @@ export const CreateTemplateFormValidation = z.object({
   //   element
   exampleFile: z.instanceof(File).optional(),
   operatorId: z.array(z.string().uuid()).optional(),
-  operatorGroup: z.string().optional(),
+  operatorGroup: z.string().min(1),
 })
 
 export type CreateTemplateForm = z.infer<typeof CreateTemplateFormValidation>

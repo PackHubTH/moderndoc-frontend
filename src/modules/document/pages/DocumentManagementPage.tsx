@@ -21,10 +21,7 @@ const DocumentManagementPage: React.FC = () => {
           variant="green"
           leftIcon={<FaPlus size={18} />}
           onClick={() => {
-            // need this to navigate to create document page with full reload
-            // will change if we have a better solution
-            window.location.href =
-              '/create-document/eec42725-fdd6-4201-80ae-e2b8e788b97b'
+            navigate('/create-document/eec42725-fdd6-4201-80ae-e2b8e788b97b')
           }}
         />
         <TextInput className="w-[240px]" placeholder="ค้นหา..." />

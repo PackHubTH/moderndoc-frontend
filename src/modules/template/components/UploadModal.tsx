@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { DropTargetMonitor, useDrop } from 'react-dnd'
 
 import Button from '@/components/Button'
@@ -14,9 +14,16 @@ interface UploadModalProps {
 }
 
 const UploadModal = ({ isOpen, close }: UploadModalProps) => {
-  const templateFile = useTemplateStore((state) => state.templateFile)
-  const setTemplateFile = useTemplateStore((state) => state.setTemplateFile)
+  // const templateFile = useTemplateStore((state) => state.templateFile)
+  // const setTemplateFile = useTemplateStore((state) => state.setTemplateFile)
+  const { templateFile, setTemplateFile } = useTemplateStore()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isOpen) {
+      setTemplateFile(null)
+    }
+  }, [isOpen, setTemplateFile])
 
   const handleClose = useCallback(() => {
     setTemplateFile(null)
@@ -85,7 +92,7 @@ const UploadModal = ({ isOpen, close }: UploadModalProps) => {
           <Button
             disabled={templateFile ? false : true}
             label="อัปโหลด"
-            onClick={() => navigate('/edit-template')}
+            onClick={() => navigate('/create-template')}
           />
         </div>
       }

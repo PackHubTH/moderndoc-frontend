@@ -8,8 +8,10 @@ type Params = {
   exampleFile?: string
   // receiver: string[]
   // receiverGroup: string
+  operatorId: string[]
+  operatorGroup: string
   templateFile: string
-  // element: any
+  element: any
 }
 
 const useCreateTemplate = () => {
