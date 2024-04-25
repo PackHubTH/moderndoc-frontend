@@ -273,7 +273,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
             name="tagIds"
             render={({ field }) => (
               <TagsSelect
-                label="เพิ่ม Tag ของหมวดหมู่และหน่วยงานที่เกี่ยวข้อง"
+                label="กำหนดให้อยู่ในหมวดหมู่เอกสารใด"
                 tagsList={tags?.data ?? []}
                 value={field.value ?? []}
                 onChange={field.onChange}
@@ -295,7 +295,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
                     field.onChange(value)
                   }}
                   value={departmentSearch}
-                  label="หน่วยงานที่สังกัด"
+                  label="กำหนดให้อยู่ในหมวดหมู่ของหน่วยงานใด"
                   options={
                     departments?.data.data.map((department) => ({
                       label: department.name,

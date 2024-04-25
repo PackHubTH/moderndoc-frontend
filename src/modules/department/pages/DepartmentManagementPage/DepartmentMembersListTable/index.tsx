@@ -83,7 +83,9 @@ const DepartmentMembersList: React.FC<PropsType> = ({
       header: 'ที่',
       cell: (info) => (
         <div className="w-8 font-medium text-gray-500">
-          {info.row.index + 1}
+          {info.row.index +
+            1 +
+            paginationState.pageIndex * paginationState.pageSize}
         </div>
       ),
     },
