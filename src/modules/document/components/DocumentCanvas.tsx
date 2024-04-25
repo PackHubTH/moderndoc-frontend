@@ -1,20 +1,15 @@
-import {
-  addField,
-  initCanvas,
-  mouseHandler,
-} from '../utils/documentEditorUtils'
 import { useEffect, useRef } from 'react'
+import { initCanvas, mouseHandler } from '../utils/documentEditorUtils'
 
-import { DnDItem } from '../types/DocumentField'
 import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
-import { useDrop } from 'react-dnd'
 
 interface DocumentCanvasProps {
   id: string
+  element?: any
 }
 
-const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
+const DocumentCanvas = ({ id, element }: DocumentCanvasProps) => {
   const canvasList = useDocumentStore((state) => state.canvasList)
   const canvasSizes = useDocumentStore((state) => state.canvasSizes)
   const setCanvasList = useDocumentStore((state) => state.setCanvasList)
@@ -32,6 +27,7 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
   const setActiveCanvasId = useDocumentToolbarStore(
     (state) => state.setActiveCanvasId
   )
+  const resetCanvasList = useDocumentStore((state) => state.resetCanvasList)
 
   useEffect(() => {
     canvasListRef.current = canvasList
@@ -41,13 +37,19 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
     // pdf should be loaded first before canvas from Fabric.js
     const isHasPage = canvasSizes.findIndex((page) => page.id === id) !== -1
     const isHasCanvas = canvasList.findIndex((page) => page.id === id) !== -1
+    console.log('isHasPage', isHasPage, 'isHasCanvas', isHasCanvas, element)
     if (isHasPage && !isHasCanvas) {
-      initCanvas(id, {}, setCanvasList)
+      initCanvas(id, element ?? {}, setCanvasList)
     }
+
     return () => {
       const cleanup = async () => {
-        const canvas = canvasList.find((page) => page.id === id)?.canvas
-        if (canvas) await canvas.dispose()
+        const canvasEntry = canvasList.find((page) => page.id === id)
+        if (canvasEntry && canvasEntry.canvas) {
+          // await canvasEntry.canvas.dispose()
+          canvasEntry.canvas.clear()
+          resetCanvasList(id)
+        }
       }
       console.log('cleanup')
       cleanup()
@@ -82,38 +84,19 @@ const DocumentCanvas = ({ id }: DocumentCanvasProps) => {
       canvas.on('mouse:down', handler)
       canvas.on('selection:created', handler2)
       canvas.on('selection:cleared', handler3)
+      canvas.on('selection:updated', handler2)
       return () => {
         canvas.off('mouse:down', handler)
         canvas.off('selection:created', handler2)
         canvas.off('selection:cleared', handler3)
+        canvas.off('selection:updated', handler2)
       }
     }
   }, [activeButton, canvasList, id])
 
-  const [, dropRef] = useDrop(() => ({
-    accept: 'box',
-    drop: (item: DnDItem, monitor) => {
-      console.log(item, id)
-      const canvas = canvasListRef.current.find((page) => page.id === id)
-        ?.canvas
-      const m = monitor.getClientOffset()
-      const c = canvasRef.current?.getBoundingClientRect()
-      const posX = m!.x - c!.x
-      const posY = m!.y - c!.y
-      console.log('pos', posX, posY)
-      console.log(monitor.getClientOffset())
-      console.log(canvasRef.current?.getBoundingClientRect())
-      if (canvas) addField(canvas, item.text, posX, posY, setActiveButton)
-    },
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  }))
-
-  console.log('canvas', canvasList)
   console.log('selected obj', activeObject)
   return (
-    <div className="absolute z-10" ref={dropRef}>
+    <div className="absolute z-10">
       <canvas
         id={id}
         ref={canvasRef}

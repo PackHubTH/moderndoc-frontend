@@ -1,14 +1,17 @@
 import * as CustomSelect from '@/components/Select'
 
 import { useEffect, useMemo } from 'react'
-import { Controller, useWatch } from 'react-hook-form'
 
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
 import useUploadFile from '@/hooks/useUploadFile'
+import { useDocumentStore } from '@/modules/document/stores/documentStore'
+import { getJson } from '@/modules/document/utils/documentEditorUtils'
 import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
+import { useTemplateStore } from '@/stores/templateStore'
+import { Controller } from 'react-hook-form'
 import { FaEdit } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import Select from 'react-select'
@@ -21,19 +24,17 @@ import { CreateTemplateForm } from '../hooks/useCreateTemplateForm/validation'
 
 interface TemplateInfoModalProps {
   isOpen: boolean
-  templateFile: File | null
   close: () => void
 }
 
-const TemplateInfoModal = ({
-  isOpen,
-  templateFile,
-  close,
-}: TemplateInfoModalProps) => {
+const TemplateInfoModal = ({ isOpen, close }: TemplateInfoModalProps) => {
   const { methods } = useCreateTemplateForm()
+  const canvasList = useDocumentStore((state) => state.canvasList)
+  const templateFile = useTemplateStore((state) => state.templateFile)
   const { mutate: createTemplate, isSuccess } = useCreateTemplate()
   const { data: rawDepartments } = useGetDepartments()
-  const { data: rawAgencyUsers } = useGetUsersByAllAgency()
+  const { data: rawAgencyUsers, refetch: refetchUsers } =
+    useGetUsersByAllAgency(methods.watch('operatorGroup') ?? '')
   const { mutateAsync: uploadFile } = useUploadFile()
   const navigate = useNavigate()
 
@@ -43,46 +44,60 @@ const TemplateInfoModal = ({
     }
   }, [isOpen])
 
-  const onSubmit = async (data: CreateTemplateForm) => {
-    console.log('submit', data)
-    try {
-      let uploadTemplateRes = null
-      let uploadExampleRes = null
-      if (templateFile)
-        uploadTemplateRes = uploadFile({
-          file: templateFile,
-          folder: 'template',
-        })
-      if (data.exampleFile)
-        uploadExampleRes = uploadFile({
-          file: data.exampleFile,
-          folder: 'template',
-        })
-      const response = await Promise.all([uploadTemplateRes, uploadExampleRes])
+  const operatorGroup = methods.watch('operatorGroup')
+  useEffect(() => {
+    if (operatorGroup !== '-' && operatorGroup) {
+      refetchUsers()
+    }
+  }, [operatorGroup])
 
-      if (response[0]?.data?.fileUrl)
-        createTemplate(
-          {
-            title: data.title,
-            description: data.description,
-            exampleFile: response[1]?.data?.fileUrl ?? undefined,
-            templateFile: response[0]?.data?.fileUrl,
+  const onSubmit = async (data: CreateTemplateForm) => {
+    console.log('submit', data, 'tem', templateFile, data.exampleFile)
+    try {
+      // let uploadTemplateRes = null
+      // let uploadExampleRes = null
+      // if (templateFile)
+      //   uploadTemplateRes = uploadFile({
+      //     file: templateFile,
+      //     folder: 'template',
+      //   })
+      // if (data.exampleFile)
+      //   uploadExampleRes = uploadFile({
+      //     file: data.exampleFile,
+      //     folder: 'template',
+      //   })
+      // const response = await Promise.all([uploadTemplateRes, uploadExampleRes])
+
+      // if (response[0]?.data?.fileUrl)
+      createTemplate(
+        {
+          title: data.title,
+          description: data.description,
+          element: {
+            data: getJson(canvasList),
           },
-          {
-            onSuccess: () => {
-              toast('สร้าง Template สำเร็จ', { type: 'success' })
-              setTimeout(() => navigate('/template-management'), 2000)
-            },
-            onError: (error) => {
-              toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
-                type: 'error',
-              })
-            },
-          }
-        )
-      else {
-        toast('เกิดข้อผิดพลาดในการอัพโหลดไฟล์', { type: 'error' })
-      }
+          operatorId: data.operatorId ?? [],
+          operatorGroup: data.operatorGroup === '-' ? '' : data.operatorGroup,
+          // exampleFile: response[1]?.data?.fileUrl ?? undefined,
+          // templateFile: response[0]?.data?.fileUrl,
+          exampleFile: undefined,
+          templateFile: 'https://www.test.com',
+        },
+        {
+          onSuccess: () => {
+            toast('สร้าง Template สำเร็จ', { type: 'success' })
+            setTimeout(() => navigate('/template-management'), 2000)
+          },
+          onError: (error) => {
+            toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+              type: 'error',
+            })
+          },
+        }
+      )
+      // else {
+      // toast('เกิดข้อผิดพลาดในการอัพโหลดไฟล์', { type: 'error' })
+      // }
     } catch (error) {
       toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
     }
@@ -91,24 +106,14 @@ const TemplateInfoModal = ({
   const departments = useMemo(() => {
     if (rawDepartments) {
       return [
-        { id: '', name: 'เจ้าหน้าที่ประจำภาควิชา' },
+        { id: '-', name: 'เจ้าหน้าที่ประจำภาควิชา' },
         ...rawDepartments?.data,
       ]
     }
   }, [rawDepartments])
 
-  const departmentId = useWatch({
-    control: methods.control,
-    name: 'operatorGroup',
-  })
-  const agencyUsers = useMemo(() => {
-    return (
-      rawAgencyUsers?.data.filter(
-        (user) => user.departmentId === departmentId
-      )[0]?.users ?? []
-    )
-  }, [rawAgencyUsers, departmentId])
-
+  console.log('operatorGroup', methods.watch('operatorGroup'), rawAgencyUsers)
+  console.log('get json', getJson(canvasList))
   return (
     <Modal
       isOpen={isOpen}
@@ -158,28 +163,29 @@ const TemplateInfoModal = ({
               />
             )}
           />
-          {departmentId !== '' && (
-            <Controller
-              control={methods.control}
-              name="operatorId"
-              render={({ field: { value, onChange } }) => (
-                <Select
-                  options={agencyUsers.map((user) => ({
-                    value: user.id,
-                    label: user.nameTh,
-                  }))}
-                  onChange={(selected) => {
-                    onChange(selected.map((item) => item.value))
-                  }}
-                  value={agencyUsers
-                    ?.filter((user) => value?.includes(user.id))
-                    .map((user) => ({ value: user.id, label: user.nameTh }))}
-                  isSearchable
-                  isMulti
-                />
-              )}
-            />
-          )}
+          {methods.watch('operatorGroup') &&
+            methods.watch('operatorGroup') !== '-' && (
+              <Controller
+                control={methods.control}
+                name="operatorId"
+                render={({ field: { value, onChange } }) => (
+                  <Select
+                    options={rawAgencyUsers?.data?.map((user) => ({
+                      value: user.id,
+                      label: user.nameTh,
+                    }))}
+                    onChange={(selected) => {
+                      onChange(selected.map((item) => item.value))
+                    }}
+                    value={rawAgencyUsers?.data
+                      ?.filter((user) => value?.includes(user.id))
+                      .map((user) => ({ value: user.id, label: user.nameTh }))}
+                    isSearchable
+                    isMulti
+                  />
+                )}
+              />
+            )}
           <Controller
             control={methods.control}
             name="description"

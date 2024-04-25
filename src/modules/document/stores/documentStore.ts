@@ -14,6 +14,7 @@ type DocumentStore = {
   setDropField: (id: string, x: number, y: number) => void
   setPageTotal: (pageTotal: number) => void
   setMousePosition: (x: number, y: number) => void
+  resetCanvasList: (id: string) => void
 }
 
 export const useDocumentStore = create<DocumentStore>((set) => ({
@@ -47,4 +48,10 @@ export const useDocumentStore = create<DocumentStore>((set) => ({
   setDropField: (id, x, y) => set({ dropField: { id, x, y } }),
   setPageTotal: (pageTotal) => set({ pageTotal }),
   setMousePosition: (x, y) => set({ mousePosition: { x, y } }),
+  resetCanvasList: (id) => {
+    set((state) => {
+      const newCanvasList = state.canvasList.filter((item) => item.id !== id)
+      return { canvasList: newCanvasList }
+    })
+  },
 }))

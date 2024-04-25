@@ -35,4 +35,6 @@ export interface Operator {
   id: string
   nameTh: string
 }
-interface Element {}
+interface Element {
+  data: any
+}

@@ -1,12 +1,20 @@
+import ToolbarButton from '@/modules/document/components/ToolbarButton'
+import { ActiveToolbarButton as ButtonId } from '@/modules/document/types/ToolbarButton'
 import { FaFileSignature } from 'react-icons/fa6'
-import ToolbarButton from './ToolbarButton'
 
 const ToolBarButtonGroup = () => {
   return (
     <div className="flex h-12 items-center justify-center bg-gray-200 px-4">
       <ToolbarButton
+        icon={<FaFileSignature />}
+        id={ButtonId.AutoFill}
+        label="Create Autofill"
+        onClick={() => console.log('add')}
+      />
+
+      {/* <ToolbarButton
         icon={<FaFileSignature size={24} />}
-        label="Pages"
+        label="Create Autofill"
         onClick={() => console.log('add')}
       />
       <div className="flex px-10">
@@ -52,7 +60,7 @@ const ToolBarButtonGroup = () => {
         icon={<FaFileSignature size={24} />}
         label="Select"
         onClick={() => console.log('add')}
-      />
+      /> */}
     </div>
   )
 }
