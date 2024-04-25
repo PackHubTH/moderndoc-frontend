@@ -27,16 +27,16 @@ const StaffSection = () => {
   const isAgency = departmentType === DepartmentType.AGENCY
 
   const { data: faculties } = useGetAllFaculties()
-  const { data: departments, refetch } = useGetDepartments(
+  const { data: departments, refetch: refetchDepartments } = useGetDepartments(
     isAgency ? undefined : facultyId
   )
 
   const defaultDepartmentId = useMemo(
     () =>
       userData?.data.role === UserRole.STAFF
-        ? userData?.data.staff?.staffDepartments[0].departmentId
-        : userData?.data?.teacher?.teacherDepartments[0].departmentId,
-    []
+        ? userData?.data.staff?.staffDepartments?.[0]?.departmentId ?? ''
+        : userData?.data?.teacher?.teacherDepartments?.[0]?.departmentId ?? '',
+    [userData]
   )
 
   const { data: departmentData } = useGetDepartmentById(defaultDepartmentId!)
@@ -48,12 +48,12 @@ const StaffSection = () => {
     if (departmentData) {
       if (departmentData.data.type === DepartmentType.AGENCY) {
         methods.setValue('departmentId', defaultDepartmentId)
-        refetch()
+        refetchDepartments()
       } else {
         setFacultyId(departmentData.data.facultyId)
         methods.setValue('facultyId', departmentData.data.facultyId)
         methods.setValue('departmentId', defaultDepartmentId)
-        refetch()
+        refetchDepartments()
       }
     }
   }, [departmentData, defaultDepartmentId, departments])
@@ -131,7 +131,10 @@ const StaffSection = () => {
                   <Select
                     className="w-1/2"
                     label="คณะ"
-                    onChange={onChange}
+                    onChange={(val) => {
+                      onChange(val)
+                      setFacultyId(val as string)
+                    }}
                     value={value}
                     options={
                       faculties?.data.map((faculty) => ({

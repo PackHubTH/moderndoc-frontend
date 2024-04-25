@@ -1,5 +1,6 @@
 import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
+import useUploadFile from '@/hooks/useUploadFile'
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -19,6 +20,8 @@ const EditUserInfo = () => {
 
   const { data: userData } = useGetUser()
   const { mutate: updateUser } = useUpdateProfile()
+
+  const { mutate: uploadFile, data: uploadFileData } = useUploadFile()
 
   useEffect(() => {
     if (userData?.data) {
@@ -44,12 +47,29 @@ const EditUserInfo = () => {
     }
   }, [userData])
 
+  useEffect(() => {
+    if (methods.watch('profileImgFile')) {
+      uploadFile(
+        { file: methods.watch('profileImgFile'), folder: 'profile-img' },
+        {
+          onError: (error) => {
+            toast('เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ', { type: 'error' })
+          },
+        }
+      )
+    }
+  }, [methods.watch('profileImgFile')])
+
   const onSubmit = () => {
     const data = methods.getValues()
 
     const dataToSend = {
       role: data.role,
-      user: { ...data, phones: [data.phone] },
+      user: {
+        ...data,
+        phones: [data.phone],
+        profileImg: uploadFileData?.data?.fileUrl ?? undefined,
+      },
       student: data.student,
       staff: {
         ...data.staff,
@@ -117,7 +137,6 @@ const EditUserInfo = () => {
                 disabled={!methods.formState.isValid}
                 onClick={(e) => {
                   e.preventDefault()
-                  console.log(methods.watch())
                   onSubmit()
                 }}
               />

@@ -211,21 +211,21 @@ const CreateFaqModal: React.FC<PropsType> = ({
                       label: 'สามารถส่งได้ทั้ง 2 รูปแบบ',
                       value: SendChannel.BOTH,
                     },
-                    { label: 'อื่นๆ', value: SendChannel.OTHER },
                   ]}
                   {...field}
                 />
-                <Controller
-                  control={methods.control}
-                  name="sendChannelInfo"
-                  render={({ field }) => (
-                    <TextInput
-                      placeholder="กรอกอีเมล/ชื่อ หรือแนวทางการส่งเอกสาร"
-                      {...field}
-                    />
-                  )}
-                />
               </div>
+            )}
+          />
+          <Controller
+            control={methods.control}
+            name="sendChannelInfo"
+            render={({ field }) => (
+              <RichTextInput
+                label="ช่องทางการส่งเอกสาร"
+                placeholder="กรอกช่องทางการส่งเอกสาร"
+                {...field}
+              />
             )}
           />
           <Controller
