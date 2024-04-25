@@ -2,9 +2,11 @@ import {
   getJson,
   setAutoFillType,
 } from '@/modules/document/utils/documentEditorUtils'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Document, Page } from 'react-pdf'
+import { useNavigate, useParams } from 'react-router-dom'
 
+import exampleFile from '@/assets/FO-TO-44.pdf'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
 import MainLogo from '@/components/MainLogo'
@@ -18,10 +20,10 @@ import { useDocumentToolbarStore } from '@/modules/document/stores/documentToolb
 import { ActiveToolbarButton as ButtonId } from '@/modules/document/types/ToolbarButton'
 import { useTemplateStore } from '@/stores/templateStore'
 import { FaFileSignature } from 'react-icons/fa6'
-import { useNavigate } from 'react-router-dom'
 import tw from 'twin.macro'
 import PreviewButton from '../components/PreviewButton'
 import TemplateInfoModal from '../components/TemplateInfoModal'
+import useGetTemplateById from '../hooks/api/useGetTemplateById'
 
 // import file from './example.pdf'
 
@@ -45,12 +47,14 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   const { isOpen, open, close } = useDisclosure()
 
   const navigate = useNavigate()
+  const { templateId = '' } = useParams()
 
   const canvasRef = useRef<HTMLDivElement>(null)
 
   const canvasList = useDocumentStore((state) => state.canvasList)
   const setCanvasSize = useDocumentStore((state) => state.setCanvasSize)
-  const templateFile = useTemplateStore((state) => state.templateFile)
+  const templateFileCreate = useTemplateStore((state) => state.templateFile)
+  const { data: templateFileEdit } = useGetTemplateById(templateId)
   const activeObject = useDocumentToolbarStore((state) => state.activeObject)
   const activeCanvasId = useDocumentToolbarStore(
     (state) => state.activeCanvasId
@@ -60,6 +64,15 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   )
   const [isPreview, setIsPreview] = useState(false)
   const [pageTotal, setPageTotal] = useState(0)
+
+  const templateFile = useMemo(
+    () =>
+      type === 'create'
+        ? templateFileCreate
+        : // : templateFileEdit?.data?.templateFile, // TODO: remove mock
+          exampleFile, // TODO: remove mock
+    [templateFileCreate, type]
+  )
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     console.log('numPages', numPages)
@@ -146,7 +159,11 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
                     <div key={page} className="relative">
                       <DocumentCanvas
                         id={`${page - 1}`}
-                        // element={documentData?.data?.element}
+                        element={
+                          type === 'edit'
+                            ? templateFileEdit?.data?.element?.data[page]
+                            : {}
+                        }
                       />
                       <Page
                         pageNumber={page}

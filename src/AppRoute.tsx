@@ -63,6 +63,10 @@ function App() {
           element={<TemplateEditor type="create" />}
         />
         <Route
+          path="/edit-template/:templateId"
+          element={<TemplateEditor type="edit" />}
+        />
+        <Route
           path="/timeline-management"
           element={<TimelineManagementPage />}
         />

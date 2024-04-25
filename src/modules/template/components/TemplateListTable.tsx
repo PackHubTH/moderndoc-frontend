@@ -1,6 +1,7 @@
 import {
   ColumnDef,
   PaginationState,
+  Row,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
@@ -12,14 +13,27 @@ import Pagination from '@/components/TableDisplay/Pagination'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
 import { FaRegEnvelope } from 'react-icons/fa6'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 import useGetAllTemplate from '../hooks/api/useGetAllTemplate'
 import { Template } from '../types/types'
 
+const StyledTableRow = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: flex-end;
+  padding-right: 20px;
+`
+
 const TemplateListTable = () => {
+  const navigate = useNavigate()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
+  const [hoveredRow, setHoveredRow] = useState<Row<Document> | null>(null)
 
   const { data: template, refetch } = useGetAllTemplate(
     paginationState.pageIndex + 1
@@ -55,21 +69,40 @@ const TemplateListTable = () => {
       id: 'templateLastUpdatedAt',
       header: '',
       cell: (info) => (
-        <div className="relative flex flex-row items-center justify-end pr-5">
-          <span className="text-gray-400">
+        // <div className="relative flex flex-row items-center justify-end pr-5">
+        //   <span className="text-gray-400">
+        //     อัพเดตล่าสุดเมื่อ{' '}
+        //     {format(info.row.original.lastUpdatedAt, 'dd MMM yy', {
+        //       locale: th,
+        //     })}
+        //   </span>
+        //   <div className="absolute top-0">
+        //     <Button
+        //       label="ดู"
+        //       variant="outline-blue"
+        //       onClick={() => console.log('view')}
+        //     />
+        //   </div>
+        // </div>
+        <StyledTableRow>
+          <p className="text-gray-400">
             อัพเดตล่าสุดเมื่อ{' '}
             {format(info.row.original.lastUpdatedAt, 'dd MMM yy', {
               locale: th,
             })}
-          </span>
-          <div className="absolute top-0">
-            <Button
-              label="ดู"
-              variant="outline-blue"
-              onClick={() => console.log('view')}
-            />
-          </div>
-        </div>
+          </p>
+          {hoveredRow && hoveredRow.id === info.row.id && (
+            <div className="absolute right-0">
+              <Button
+                label="ดำเนินการ"
+                variant="outline-blue"
+                onClick={() =>
+                  navigate(`/edit-template/${info.row.original.id}`)
+                }
+              />
+            </div>
+          )}
+        </StyledTableRow>
       ),
     },
   ]
@@ -91,7 +124,7 @@ const TemplateListTable = () => {
 
   return (
     <div className="flex-1 p-2">
-      <TableDisplay table={table} />
+      <TableDisplay table={table} onHoverRow={setHoveredRow} />
       <Pagination
         totalPage={1}
         currentPage={table.getState().pagination.pageIndex + 1}

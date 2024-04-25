@@ -37,7 +37,7 @@ const DocumentCanvas = ({ id, element }: DocumentCanvasProps) => {
     // pdf should be loaded first before canvas from Fabric.js
     const isHasPage = canvasSizes.findIndex((page) => page.id === id) !== -1
     const isHasCanvas = canvasList.findIndex((page) => page.id === id) !== -1
-    console.log('isHasPage', isHasPage, 'isHasCanvas', isHasCanvas, canvasList)
+    console.log('isHasPage', isHasPage, 'isHasCanvas', isHasCanvas, element)
     if (isHasPage && !isHasCanvas) {
       initCanvas(id, element, setCanvasList)
     }

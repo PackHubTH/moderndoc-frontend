@@ -236,6 +236,7 @@ const initCanvas = (
   id: string,
   json: any,
   setCanvasList: (id: string, canvas: Fabric.Canvas) => void,
+  type?: string,
   data?: DataProps
 ) => {
   console.log('initCanvas')
@@ -269,14 +270,14 @@ const initCanvas = (
   //   };
   // })(Fabric.Textbox.fromObject);
   // newCanvas.loadFromJSON(json, newCanvas.renderAll.bind(newCanvas))
-  newCanvas.loadFromJSON({}).then(() => {
+  newCanvas.loadFromJSON(json).then(() => {
     newCanvas.forEachObject((obj: any) => {
       if (!obj.editable) {
         obj.set({ selectable: false })
         obj.set({ evented: false })
       }
       // if elName in json exist in data object then set text to data object
-      if (obj?.elName && _data[obj?.elName]) {
+      if (obj?.elName && _data[obj?.elName] && type === 'document') {
         obj.set({ text: _data[obj?.elName] as string })
       }
       console.log('obj from json', obj)
