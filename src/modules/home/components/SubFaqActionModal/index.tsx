@@ -35,6 +35,11 @@ const SubFaqActionModal: React.FC<PropsType> = ({
   const { mutate: updateSubFaq } = useUpdateSubFaq()
   const { refetch: refetchFaq } = useGetPublicFaqs()
 
+  const resetAllFields = () => {
+    setTitle('')
+    setDescription('')
+  }
+
   const onCreateSubFaq = () => {
     if (!faqId) return console.error('faqId is required')
     createSubFaq(
@@ -42,11 +47,13 @@ const SubFaqActionModal: React.FC<PropsType> = ({
       {
         onSuccess: () => {
           toast.success('สร้างรายการ FAQ สำเร็จ')
+          resetAllFields()
           refetchFaq()
           onClose()
         },
         onError: (error) => {
           toast.error(`สร้างรายการ FAQ ไม่สำเร็จ ${error}`)
+          resetAllFields()
           onClose()
         },
       }

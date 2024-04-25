@@ -27,7 +27,8 @@ options.push({
   value: NOT_NOTIFY,
 })
 
-const DEFAULT_VALUE = [1, 3, 7]
+const DEFAULT_CHECKED_VALUE = [1, 3, 7]
+const DEFAULT_UNCHECKED_VALUE = [0, 0, 0]
 
 const NotificationConfig: React.FC<PropsType> = ({
   isDefault,
@@ -36,7 +37,7 @@ const NotificationConfig: React.FC<PropsType> = ({
 }) => {
   useEffect(() => {
     if (isDefault || !value) {
-      onChange?.(DEFAULT_VALUE, true)
+      onChange?.(DEFAULT_CHECKED_VALUE, true)
     }
   }, [isDefault])
 
@@ -63,8 +64,14 @@ const NotificationConfig: React.FC<PropsType> = ({
         <input
           className="rounded-sm accent-blue-500"
           type="checkbox"
-          checked={compareArray(value, DEFAULT_VALUE)}
-          onChange={(e) => onChange?.(DEFAULT_VALUE, e.target.checked)}
+          checked={compareArray(value, DEFAULT_CHECKED_VALUE)}
+          onChange={(e) => {
+            if (e.target.checked) {
+              onChange?.(DEFAULT_CHECKED_VALUE, e.target.checked)
+            } else {
+              onChange?.(DEFAULT_UNCHECKED_VALUE, e.target.checked)
+            }
+          }}
         />
         <span className="text-sm">กำหนดการเตือนความจำด้วยค่าเริ่มต้น</span>
       </label>

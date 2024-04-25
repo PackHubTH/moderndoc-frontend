@@ -39,7 +39,11 @@ const TimelineListTable = () => {
       size: 20,
       header: 'ที่',
       cell: (info) => (
-        <span className="font-medium text-gray-500">{info.row.index + 1}</span>
+        <span className="font-medium text-gray-500">
+          {info.row.index +
+            1 +
+            paginationState.pageIndex * paginationState.pageSize}
+        </span>
       ),
     },
     {

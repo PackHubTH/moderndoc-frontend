@@ -211,21 +211,21 @@ const CreateFaqModal: React.FC<PropsType> = ({
                       label: 'สามารถส่งได้ทั้ง 2 รูปแบบ',
                       value: SendChannel.BOTH,
                     },
-                    { label: 'อื่นๆ', value: SendChannel.OTHER },
                   ]}
                   {...field}
                 />
-                <Controller
-                  control={methods.control}
-                  name="sendChannelInfo"
-                  render={({ field }) => (
-                    <TextInput
-                      placeholder="กรอกอีเมล/ชื่อ หรือแนวทางการส่งเอกสาร"
-                      {...field}
-                    />
-                  )}
-                />
               </div>
+            )}
+          />
+          <Controller
+            control={methods.control}
+            name="sendChannelInfo"
+            render={({ field }) => (
+              <RichTextInput
+                label="ช่องทางการส่งเอกสาร"
+                placeholder="กรอกช่องทางการส่งเอกสาร"
+                {...field}
+              />
             )}
           />
           <Controller
@@ -264,7 +264,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
                   field.onChange(value)
                   setSearchTemplate('')
                 }}
-                value={field.value ?? ''}
+                value={searchTemplate ?? ''}
               />
             )}
           />
@@ -273,7 +273,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
             name="tagIds"
             render={({ field }) => (
               <TagsSelect
-                label="เพิ่ม Tag ของหมวดหมู่และหน่วยงานที่เกี่ยวข้อง"
+                label="กำหนดให้อยู่ในหมวดหมู่เอกสารใด"
                 tagsList={tags?.data ?? []}
                 value={field.value ?? []}
                 onChange={field.onChange}
@@ -295,7 +295,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
                     field.onChange(value)
                   }}
                   value={departmentSearch}
-                  label="หน่วยงานที่สังกัด"
+                  label="กำหนดให้อยู่ในหมวดหมู่ของหน่วยงานใด"
                   options={
                     departments?.data.data.map((department) => ({
                       label: department.name,

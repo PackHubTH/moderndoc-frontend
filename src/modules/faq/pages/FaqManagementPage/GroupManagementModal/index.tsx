@@ -1,7 +1,6 @@
 import Modal from '@/components/Modal'
 import Tabs from '@/components/Tabs'
 import { MdModeEditOutline } from 'react-icons/md'
-import AgenciesTab from './AgenciesTab'
 import TagsTab from './TagsTab'
 
 type PropsType = {
@@ -34,10 +33,6 @@ const GroupManagementModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
               {
                 title: 'หมวดหมู่',
                 content: <TagsTab />,
-              },
-              {
-                title: 'หน่วยงาน',
-                content: <AgenciesTab />,
               },
             ]}
           />

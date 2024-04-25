@@ -10,11 +10,13 @@ type PropsType = {
   isOpen: boolean
   onClose: () => void
   department: Department | null
+  callback?: () => void
 }
 const DeleteDepartmentModal: React.FC<PropsType> = ({
   isOpen,
   onClose,
   department,
+  callback,
 }) => {
   const { mutate: deletedDepartment } = useDeleteDepartment()
   const { refetch } = useGetDepartmentFaqs(1)
@@ -24,6 +26,9 @@ const DeleteDepartmentModal: React.FC<PropsType> = ({
       onSuccess: () => {
         toast('ลบรายการ FAQ สำเร็จ', { type: 'success' })
         refetch()
+        if (callback) {
+          callback()
+        }
       },
       onError: (error) => {
         toast(`เกิดข้อผิดพลาดในการลบ FAQ ${error}`, {

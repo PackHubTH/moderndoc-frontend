@@ -126,6 +126,7 @@ const UserInviteModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
                     value: department.id,
                   })) ?? []
                 }
+                placeholder="ค้นหาหน่วยงาน"
               />
             )}
           />
