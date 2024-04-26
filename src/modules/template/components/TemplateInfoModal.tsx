@@ -14,20 +14,22 @@ import { useTemplateStore } from '@/stores/templateStore'
 import { Controller } from 'react-hook-form'
 import { FaEdit } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import Select from 'react-select'
 import { toast } from 'react-toastify'
 import colors from 'tailwindcss/colors'
 import useCreateTemplate from '../hooks/api/useCreateTemplate'
 import useGetUsersByAllAgency from '../hooks/api/useGetUsersByAllAgency'
 import useCreateTemplateForm from '../hooks/useCreateTemplateForm'
 import { CreateTemplateForm } from '../hooks/useCreateTemplateForm/validation'
+import UploadFileButton from './UploadFileButton'
+import UserMultiSelect from './UserMultiSelect'
 
 interface TemplateInfoModalProps {
   isOpen: boolean
+  type: 'create' | 'edit'
   close: () => void
 }
 
-const TemplateInfoModal = ({ isOpen, close }: TemplateInfoModalProps) => {
+const TemplateInfoModal = ({ isOpen, type, close }: TemplateInfoModalProps) => {
   const { methods } = useCreateTemplateForm()
   const canvasList = useDocumentStore((state) => state.canvasList)
   const templateFile = useTemplateStore((state) => state.templateFile)
@@ -51,53 +53,50 @@ const TemplateInfoModal = ({ isOpen, close }: TemplateInfoModalProps) => {
     }
   }, [operatorGroup])
 
-  const onSubmit = async (data: CreateTemplateForm) => {
-    console.log('submit', data, 'tem', templateFile, data.exampleFile)
+  const onCreateSubmit = async (data: CreateTemplateForm) => {
     try {
-      // let uploadTemplateRes = null
-      // let uploadExampleRes = null
-      // if (templateFile)
-      //   uploadTemplateRes = uploadFile({
-      //     file: templateFile,
-      //     folder: 'template',
-      //   })
-      // if (data.exampleFile)
-      //   uploadExampleRes = uploadFile({
-      //     file: data.exampleFile,
-      //     folder: 'template',
-      //   })
-      // const response = await Promise.all([uploadTemplateRes, uploadExampleRes])
+      let uploadTemplateRes = null
+      let uploadExampleRes = null
+      if (templateFile)
+        uploadTemplateRes = uploadFile({
+          file: templateFile,
+          folder: 'template',
+        })
+      if (data.exampleFile)
+        uploadExampleRes = uploadFile({
+          file: data.exampleFile,
+          folder: 'template',
+        })
+      const response = await Promise.all([uploadTemplateRes, uploadExampleRes])
 
-      // if (response[0]?.data?.fileUrl)
-      createTemplate(
-        {
-          title: data.title,
-          description: data.description,
-          element: {
-            data: getJson(canvasList),
+      if (response[0]?.data?.fileUrl)
+        createTemplate(
+          {
+            title: data.title,
+            description: data.description,
+            element: {
+              data: getJson(canvasList),
+            },
+            operatorId: data.operatorId ?? [],
+            operatorGroup: data.operatorGroup === '-' ? '' : data.operatorGroup,
+            exampleFile: response[1]?.data?.fileUrl ?? undefined,
+            templateFile: response[0]?.data?.fileUrl,
           },
-          operatorId: data.operatorId ?? [],
-          operatorGroup: data.operatorGroup === '-' ? '' : data.operatorGroup,
-          // exampleFile: response[1]?.data?.fileUrl ?? undefined,
-          // templateFile: response[0]?.data?.fileUrl,
-          exampleFile: undefined,
-          templateFile: 'https://www.test.com',
-        },
-        {
-          onSuccess: () => {
-            toast('สร้าง Template สำเร็จ', { type: 'success' })
-            setTimeout(() => navigate('/template-management'), 2000)
-          },
-          onError: (error) => {
-            toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
-              type: 'error',
-            })
-          },
-        }
-      )
-      // else {
-      // toast('เกิดข้อผิดพลาดในการอัพโหลดไฟล์', { type: 'error' })
-      // }
+          {
+            onSuccess: () => {
+              toast('สร้าง Template สำเร็จ', { type: 'success' })
+              setTimeout(() => navigate('/template-management'), 2000)
+            },
+            onError: (error) => {
+              toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+                type: 'error',
+              })
+            },
+          }
+        )
+      else {
+        toast('เกิดข้อผิดพลาดในการอัพโหลดไฟล์', { type: 'error' })
+      }
     } catch (error) {
       toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
     }
@@ -112,8 +111,6 @@ const TemplateInfoModal = ({ isOpen, close }: TemplateInfoModalProps) => {
     }
   }, [rawDepartments])
 
-  console.log('operatorGroup', methods.watch('operatorGroup'), rawAgencyUsers)
-  console.log('get json', getJson(canvasList))
   return (
     <Modal
       isOpen={isOpen}
@@ -127,7 +124,11 @@ const TemplateInfoModal = ({ isOpen, close }: TemplateInfoModalProps) => {
           <Button
             label="สร้าง Template"
             disabled={!methods.formState.isValid || isSuccess}
-            onClick={() => methods.handleSubmit(onSubmit)()}
+            onClick={() =>
+              type === 'create'
+                ? methods.handleSubmit(onCreateSubmit)()
+                : console.log('edit')
+            }
           />
         </div>
       }
@@ -169,19 +170,12 @@ const TemplateInfoModal = ({ isOpen, close }: TemplateInfoModalProps) => {
                 control={methods.control}
                 name="operatorId"
                 render={({ field: { value, onChange } }) => (
-                  <Select
-                    options={rawAgencyUsers?.data?.map((user) => ({
-                      value: user.id,
-                      label: user.nameTh,
-                    }))}
-                    onChange={(selected) => {
-                      onChange(selected.map((item) => item.value))
-                    }}
-                    value={rawAgencyUsers?.data
-                      ?.filter((user) => value?.includes(user.id))
-                      .map((user) => ({ value: user.id, label: user.nameTh }))}
-                    isSearchable
-                    isMulti
+                  <UserMultiSelect
+                    label="กำหนดรายชื่อผู้รับผิดชอบดำเนินการเอกสาร (ถ้ามี)"
+                    value={value ?? []}
+                    options={rawAgencyUsers?.data ?? []}
+                    onChange={onChange}
+                    placeholder="เลือกรายชื่อ"
                   />
                 )}
               />
@@ -201,7 +195,12 @@ const TemplateInfoModal = ({ isOpen, close }: TemplateInfoModalProps) => {
             control={methods.control}
             name="exampleFile"
             render={({ field: { value, onChange } }) => (
-              <input type="file" accept=".pdf" onChange={onChange} />
+              <UploadFileButton
+                value={value}
+                onChange={(file) => {
+                  onChange(file)
+                }}
+              />
             )}
           />
         </form>

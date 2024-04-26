@@ -287,6 +287,27 @@ const initCanvas = (
   setCanvasList(id, newCanvas)
 }
 
+const previewCanvas = (
+  canvasList: CanvasProps[],
+  setCanvasList: (id: string, canvas: Fabric.Canvas) => void,
+  isPreview: boolean
+) => {
+  console.log('previewCanvas')
+  canvasList.forEach((item, index) => {
+    item.canvas.forEachObject((obj: any) => {
+      console.log('obj preview', obj)
+      item.canvas.discardActiveObject()
+      if (isPreview) {
+        obj.set({ selectable: false, evented: false })
+      } else {
+        obj.set({ selectable: true, evented: true })
+      }
+    })
+    setCanvasList(item.id, item.canvas)
+    item.canvas.renderAll()
+  })
+}
+
 const mouseHandler = (
   canvas: Fabric.Canvas,
   activeButton: ActiveToolbarButton,
@@ -538,6 +559,7 @@ export {
   hexToRgb,
   initCanvas,
   mouseHandler,
+  previewCanvas,
   rgbToHex,
   saveCanvas,
   setAutoFillType,

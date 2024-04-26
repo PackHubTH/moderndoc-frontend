@@ -6,7 +6,7 @@ import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
 
 interface DocumentCanvasProps {
   id: string
-  element?: any
+  element: any
 }
 
 const DocumentCanvas = ({ id, element }: DocumentCanvasProps) => {

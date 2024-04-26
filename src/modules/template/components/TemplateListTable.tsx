@@ -98,7 +98,7 @@ const TemplateListTable = () => {
           {hoveredRow && hoveredRow.id === info.row.id && (
             <div className="absolute right-0">
               <Button
-                label="ดำเนินการ"
+                label="แก้ไข"
                 variant="outline-blue"
                 onClick={() =>
                   navigate(`/edit-template/${info.row.original.id}`)

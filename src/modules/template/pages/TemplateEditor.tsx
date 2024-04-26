@@ -1,5 +1,6 @@
 import {
   getJson,
+  previewCanvas,
   setAutoFillType,
 } from '@/modules/document/utils/documentEditorUtils'
 import { useMemo, useRef, useState } from 'react'
@@ -52,6 +53,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   const canvasRef = useRef<HTMLDivElement>(null)
 
   const canvasList = useDocumentStore((state) => state.canvasList)
+  const setCanvasList = useDocumentStore((state) => state.setCanvasList)
   const setCanvasSize = useDocumentStore((state) => state.setCanvasSize)
   const templateFileCreate = useTemplateStore((state) => state.templateFile)
   const { data: templateFileEdit } = useGetTemplateById(templateId)
@@ -95,7 +97,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
     <div>
       {/* Header */}
       <div className="flex h-20 items-center justify-between border-b-2 p-5">
-        <TemplateInfoModal isOpen={isOpen} close={close} />
+        <TemplateInfoModal isOpen={isOpen} type={type} close={close} />
         <div className="flex items-center gap-8">
           <MainLogo />
           <h1 className="text-xl font-bold text-gray-600">
@@ -103,7 +105,13 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
           </h1>
         </div>
         <div className="flex gap-4">
-          <PreviewButton isPreview={isPreview} setIsPreview={setIsPreview} />
+          <PreviewButton
+            isPreview={isPreview}
+            setIsPreview={() => {
+              setIsPreview(!isPreview)
+              previewCanvas(canvasList, setCanvasList, isPreview)
+            }}
+          />
           <Button
             disabled={templateFile ? false : true}
             label={
@@ -126,7 +134,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
           {/* <div className="flex h-12 items-center justify-center bg-gray-200 px-4"> */}
           <DocumentToolbar>
             <ToolbarButton
-              icon={<FaFileSignature />}
+              icon={<FaFileSignature size={20} />}
               id={ButtonId.AutoFill}
               label="Create Autofill"
             />
@@ -146,38 +154,40 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
             className="flex h-[calc(100vh-128px)] justify-center overflow-auto bg-gray-100"
             ref={canvasRef}
           >
-            <Document
-              // file={templateFile}
-              file={templateFile}
-              // renderMode="svg"
-              onLoadSuccess={onDocumentLoadSuccess}
-            >
-              {Array.apply(null, Array(pageTotal))
-                .map((x, i) => i + 1)
-                .map((page) => {
-                  return (
-                    <div key={page} className="relative">
-                      <DocumentCanvas
-                        id={`${page - 1}`}
-                        element={
-                          type === 'edit'
-                            ? templateFileEdit?.data?.element?.data[page]
-                            : {}
-                        }
-                      />
-                      <Page
-                        pageNumber={page}
-                        renderTextLayer={false}
-                        renderAnnotationLayer={false}
-                        scale={1}
-                        width={800}
-                        className="my-2 border-black"
-                        onLoadSuccess={() => onPageLoadSuccess(page)}
-                      />
-                    </div>
-                  )
-                })}
-            </Document>
+            {templateFile && (
+              <Document
+                // file={templateFile}
+                file={templateFile}
+                onLoadSuccess={onDocumentLoadSuccess}
+              >
+                {Array?.apply(null, Array(pageTotal))
+                  ?.map((x, i) => i + 1)
+                  ?.map((page) => {
+                    return (
+                      <div key={page} className="relative">
+                        <DocumentCanvas
+                          id={`${page - 1}`}
+                          element={
+                            type === 'edit' &&
+                            templateFileEdit?.data?.element?.data[page]
+                              ? templateFileEdit?.data?.element?.data[page]
+                              : undefined
+                          }
+                        />
+                        <Page
+                          pageNumber={page}
+                          renderTextLayer={false}
+                          renderAnnotationLayer={false}
+                          scale={1}
+                          width={800}
+                          className="my-2 border-black"
+                          onLoadSuccess={() => onPageLoadSuccess(page)}
+                        />
+                      </div>
+                    )
+                  })}
+              </Document>
+            )}
           </div>
         </div>
         {/* sidebar */}

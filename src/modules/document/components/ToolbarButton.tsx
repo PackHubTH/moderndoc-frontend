@@ -26,7 +26,7 @@ const ToolbarButton = ({
     <button
       type="button"
       css={[
-        tw`inline-flex items-center gap-x-2 rounded-sm border border-transparent p-2 text-sm font-semibold text-gray-800 hover:bg-gray-300 disabled:pointer-events-none disabled:opacity-50 dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600`,
+        tw`inline-flex flex-col items-center gap-x-2 rounded-sm border border-transparent p-1 text-sm font-semibold text-gray-800 hover:bg-gray-300 disabled:pointer-events-none disabled:opacity-50 dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600`,
         activeButton === id || selected ? tw`bg-gray-300` : tw`bg-transparent`,
       ]}
       onClick={() => {
