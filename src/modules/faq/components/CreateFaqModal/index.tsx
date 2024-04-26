@@ -115,6 +115,12 @@ const CreateFaqModal: React.FC<PropsType> = ({
     }
   }, [departmentData])
 
+  useEffect(() => {
+    if (faq?.template?.title) {
+      setSearchTemplate(faq.template.title)
+    }
+  }, [faq?.template?.title])
+
   return (
     <Modal
       width="800px"
