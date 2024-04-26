@@ -1,13 +1,14 @@
 import Button from '@/components/Button'
 import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import CreateFaqModal from '@/modules/faq/components/CreateFaqModal'
 import { Faq, SubFaq } from '@/modules/faq/types'
 import { Disclosure } from '@headlessui/react'
-import { useState } from 'react'
-import { FaChevronDown, FaChevronRight } from 'react-icons/fa6'
+import { ReactNode, useState } from 'react'
+import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa6'
 import { HiTrash } from 'react-icons/hi'
 import { MdModeEditOutline } from 'react-icons/md'
-import { blue, white } from 'tailwindcss/colors'
+import { blue, white, yellow } from 'tailwindcss/colors'
 import tw from 'twin.macro'
 import DeleteSubFaqModal from '../DeleteSubFaqModal'
 import SubFaqActionModal from '../SubFaqActionModal'
@@ -20,6 +21,7 @@ import {
 type PropsType = {
   faq: Faq
   isEditable?: boolean
+  refetch?: () => void
 }
 
 const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
@@ -32,6 +34,11 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
     isOpen: deleteSubFaqIsOpen,
     open: deleteSubFaqOpen,
     close: deleteSubFaqClose,
+  } = useDisclosure()
+  const {
+    isOpen: editFaqIsOpen,
+    open: editFaqOpen,
+    close: editFaqClose,
   } = useDisclosure()
 
   const [actionFaqId, setActionFaqId] = useState<string | null>(null)
@@ -59,6 +66,12 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
 
   return (
     <>
+      <CreateFaqModal
+        isOpen={editFaqIsOpen}
+        onClose={editFaqClose}
+        faq={faq}
+        mode="edit"
+      />
       <div className="break-words p-5 shadow">
         <Disclosure>
           {({ open }) => (
@@ -78,16 +91,50 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
                     <span className="font- text-[#170f49]">{faq.titleEn}</span>
                   </h3>
                 </div>
-                <FaChevronRight
-                  size={50}
-                  className="rounded-full bg-white p-4 shadow"
-                  style={{
-                    transform: open ? 'rotate(90deg)' : 'rotate(0deg)',
-                    transition: 'all 0.3s ease',
-                    color: !open ? blue[500] : white,
-                    backgroundColor: !open ? white : blue[500],
-                  }}
-                />
+                <div className="flex items-center gap-3">
+                  {isEditable && (
+                    <Button
+                      label="แก้ไขข้อมูล FAQ"
+                      onClick={() => {
+                        editFaqOpen()
+                      }}
+                      variant="yellow"
+                      backgroundColor="white"
+                      color={yellow[500]}
+                      borderColor={yellow[500]}
+                      leftIcon={
+                        <MdModeEditOutline
+                          size={24}
+                          className="rounded-full p-1 text-yellow-500"
+                        />
+                      }
+                    />
+                  )}
+                  {faq.templateId && (
+                    <Button
+                      label="สร้างเอกสาร"
+                      variant="green"
+                      // todo: add onClick to create document
+                      // onClick={}
+                      leftIcon={
+                        <FaPlus
+                          size={24}
+                          className="rounded-full p-1 text-white"
+                        />
+                      }
+                    />
+                  )}
+                  <FaChevronRight
+                    size={50}
+                    className="rounded-full bg-white p-4 shadow"
+                    style={{
+                      transform: open ? 'rotate(90deg)' : 'rotate(0deg)',
+                      transition: 'all 0.3s ease',
+                      color: !open ? blue[500] : white,
+                      backgroundColor: !open ? white : blue[500],
+                    }}
+                  />
+                </div>
               </Disclosure.Button>
               <Disclosure.Panel className="mt-4 space-y-4 text-gray-500">
                 <div className="h-[1px] bg-gray-200" />
@@ -120,7 +167,7 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
                           <span className="font-medium text-gray-600">
                             {key}
                           </span>{' '}
-                          : {value}
+                          : {value as ReactNode}
                         </li>
                       ))}
                     </ul>
