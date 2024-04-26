@@ -129,6 +129,7 @@ const temp = {
 }
 
 const addAutoFill = (
+  canvasList: CanvasProps[],
   canvas: Fabric.Canvas,
   text: string,
   x: number,
@@ -146,6 +147,10 @@ const addAutoFill = (
     minWidth: 20,
     backgroundColor: '#DBEAFE',
     textAlign: 'center',
+  })
+  canvasList.forEach((item) => {
+    item.canvas.discardActiveObject()
+    item.canvas.renderAll()
   })
   canvas.add(fabricText)
   canvas.setActiveObject(fabricText)
@@ -309,6 +314,7 @@ const previewCanvas = (
 }
 
 const mouseHandler = (
+  canvasList: CanvasProps[],
   canvas: Fabric.Canvas,
   activeButton: ActiveToolbarButton,
   setActiveButton: (button: ActiveToolbarButton) => void,
@@ -334,7 +340,14 @@ const mouseHandler = (
   switch (activeButton) {
     case ActiveToolbarButton.AutoFill:
       console.log('autofill')
-      addAutoFill(canvas, option.text, option.x, option.y, setActiveButton)
+      addAutoFill(
+        canvasList,
+        canvas,
+        option.text,
+        option.x,
+        option.y,
+        setActiveButton
+      )
       break
     case ActiveToolbarButton.Text:
       console.log('text')

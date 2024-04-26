@@ -61,7 +61,7 @@ const DocumentCanvas = ({ id, element }: DocumentCanvasProps) => {
     const handler = (option: any) => {
       console.log('mouse down', option?.absolutePointer, activeButton)
       if (canvas)
-        mouseHandler(canvas, activeButton, setActiveButton, {
+        mouseHandler(canvasList, canvas, activeButton, setActiveButton, {
           text: '',
           x: option.absolutePointer.x,
           y: option.absolutePointer.y,

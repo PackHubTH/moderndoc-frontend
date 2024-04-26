@@ -3,11 +3,10 @@ import {
   previewCanvas,
   setAutoFillType,
 } from '@/modules/document/utils/documentEditorUtils'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Document, Page } from 'react-pdf'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import exampleFile from '@/assets/FO-TO-44.pdf'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
 import MainLogo from '@/components/MainLogo'
@@ -22,6 +21,7 @@ import { ActiveToolbarButton as ButtonId } from '@/modules/document/types/Toolba
 import { useTemplateStore } from '@/stores/templateStore'
 import { FaFileSignature } from 'react-icons/fa6'
 import tw from 'twin.macro'
+import useGetFile from '../../../hooks/useGetFile'
 import PreviewButton from '../components/PreviewButton'
 import TemplateInfoModal from '../components/TemplateInfoModal'
 import useGetTemplateById from '../hooks/api/useGetTemplateById'
@@ -56,7 +56,9 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   const setCanvasList = useDocumentStore((state) => state.setCanvasList)
   const setCanvasSize = useDocumentStore((state) => state.setCanvasSize)
   const templateFileCreate = useTemplateStore((state) => state.templateFile)
-  const { data: templateFileEdit } = useGetTemplateById(templateId)
+  const { data: templateEdit } = useGetTemplateById(templateId)
+  const { data: templateFileEdit, refetch: refetchTemplateEditFile } =
+    useGetFile(templateEdit?.data?.templateFile ?? '')
   const activeObject = useDocumentToolbarStore((state) => state.activeObject)
   const activeCanvasId = useDocumentToolbarStore(
     (state) => state.activeCanvasId
@@ -67,13 +69,19 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   const [isPreview, setIsPreview] = useState(false)
   const [pageTotal, setPageTotal] = useState(0)
 
+  useEffect(() => {
+    if (templateId) {
+      refetchTemplateEditFile()
+    }
+  }, [templateId])
+
   const templateFile = useMemo(
     () =>
       type === 'create'
         ? templateFileCreate
         : // : templateFileEdit?.data?.templateFile, // TODO: remove mock
-          exampleFile, // TODO: remove mock
-    [templateFileCreate, type]
+          templateFileEdit, // TODO: remove mock
+    [templateFileCreate, type, templateFileEdit]
   )
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
@@ -169,8 +177,8 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
                           id={`${page - 1}`}
                           element={
                             type === 'edit' &&
-                            templateFileEdit?.data?.element?.data[page]
-                              ? templateFileEdit?.data?.element?.data[page]
+                            templateEdit?.data?.element?.data[page - 1]
+                              ? templateEdit?.data?.element?.data[page - 1]
                               : undefined
                           }
                         />
