@@ -17,7 +17,7 @@ import { HiTrash } from 'react-icons/hi'
 import { IoIosSend } from 'react-icons/io'
 import { MdModeEditOutline } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
-import { gray, red, sky } from 'tailwindcss/colors'
+import { blue, gray, red } from 'tailwindcss/colors'
 import CreateDepartmentModal from '../../components/CreateDepartmentModal'
 import UserInviteModal from '../../components/UserInviteModal'
 import { GetAllDepartmentsResponse } from '../../hooks/api/types'
@@ -63,7 +63,6 @@ const AllDepartmentsList = () => {
   const columns: ColumnDef<GetAllDepartmentsResponse>[] = [
     {
       id: 'index',
-      size: 30,
       header: 'ที่',
       cell: (info) => (
         <span className="font-medium text-gray-500">
@@ -74,7 +73,6 @@ const AllDepartmentsList = () => {
       ),
     },
     {
-      size: 30,
       header: 'หน่วยงาน/คณะ',
       cell: (info) => (
         <span className="font-medium text-gray-500">
@@ -83,7 +81,6 @@ const AllDepartmentsList = () => {
       ),
     },
     {
-      size: 30,
       header: 'สาขาวิชา',
       cell: (info) => (
         <span className="font-medium text-gray-500">
@@ -94,7 +91,6 @@ const AllDepartmentsList = () => {
       ),
     },
     {
-      size: 30,
       header: 'จำนวนบุคลากร (คน)',
       cell: (info) => (
         <span className="font-medium text-gray-500">
@@ -103,7 +99,6 @@ const AllDepartmentsList = () => {
       ),
     },
     {
-      size: 30,
       header: 'รอการตอบรับ (คน)',
       cell: (info) => (
         <span className="font-medium text-gray-500">
@@ -115,26 +110,26 @@ const AllDepartmentsList = () => {
       header: `ดูข้อมูล`,
       cell: (info) => (
         <div
-          className="cursor-pointer "
+          className="cursor-pointer"
           onClick={() => {
             navigate(`/department-management/${info.row.original.id}`)
           }}
         >
-          <FaEye />
+          <FaEye className="text-blue-500" />
         </div>
       ),
     },
     {
-      header: `แก้ไข`,
+      header: `เพิ่มเติม`,
       cell: (info) => (
         <div className="flex gap-3">
           <MdModeEditOutline
             size={24}
-            className="cursor-pointer rounded-full text-sky-500"
+            className="cursor-pointer rounded-full"
             style={{
               color:
                 info.row.original.type === DepartmentType.AGENCY
-                  ? sky[500]
+                  ? blue[500]
                   : gray[300],
               cursor:
                 info.row.original.type === DepartmentType.AGENCY
