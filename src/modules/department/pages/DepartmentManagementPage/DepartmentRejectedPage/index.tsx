@@ -48,7 +48,7 @@ const DepartmentRejectedPage: React.FC<PropsType> = ({ departmentName }) => {
   return (
     <PageContainer className="flex h-[100vh] w-full flex-col items-center justify-center">
       <div className="text-center">
-        <img className="mx-auto w-32" src={Swap} alt="Swap Department" />
+        <img className="mx-auto w-44" src={Swap} alt="Swap Department" />
         <h4 className="mt-6 text-xl font-semibold text-gray-600">
           ดูเหมือนคุณจะ<span className="text-red-600">ไม่ได้รับการตอบรับ</span>
           เข้าสู่หน่วยงาน {departmentName}
