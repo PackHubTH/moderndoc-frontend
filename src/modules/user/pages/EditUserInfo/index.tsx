@@ -73,21 +73,15 @@ const EditUserInfo = () => {
       student: data.student,
       staff: {
         ...data.staff,
-        staffDepartments: [
-          {
-            departmentId: data.departmentId,
-            staffNumber: data.staff?.staffNumber,
-          },
-        ],
+        ...(data.departmentId && {
+          staffDepartments: [{ departmentId: data.departmentId }],
+        }),
       },
       teacher: {
         ...data.teacher,
-        teacherDepartments: [
-          {
-            departmentId: data.departmentId,
-            staffNumber: data.teacher?.staffNumber,
-          },
-        ],
+        ...(data.departmentId && {
+          teacherDepartments: [{ departmentId: data.departmentId }],
+        }),
       },
     }
 
