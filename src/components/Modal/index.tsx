@@ -2,8 +2,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import React, { Fragment } from 'react'
 
 import { IoClose } from 'react-icons/io5'
-import { VariantType } from './types'
 import tw from 'twin.macro'
+import { VariantType } from './types'
 
 type PropsType = {
   content: React.ReactNode | string
@@ -11,6 +11,7 @@ type PropsType = {
   title: React.ReactNode | string
   onClose: () => void
   actions?: React.ReactNode
+  className?: string
   leftIcon?: React.ReactNode
   variant?: VariantType
   width?: string
@@ -22,6 +23,7 @@ const Modal: React.FC<PropsType> = ({
   title,
   onClose,
   actions,
+  className,
   leftIcon,
   width,
   variant = 'default',
@@ -73,7 +75,10 @@ const Modal: React.FC<PropsType> = ({
                   {leftIcon && leftIcon}
                   {title}
                 </Dialog.Title>
-                <Dialog.Description as="div" className="border-b p-4">
+                <Dialog.Description
+                  as="div"
+                  className={className ? className : 'border-b p-4'}
+                >
                   {typeof content === 'string' ? (
                     <p className="text-sm text-gray-500">{content}</p>
                   ) : (

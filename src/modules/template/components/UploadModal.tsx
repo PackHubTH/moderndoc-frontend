@@ -96,29 +96,28 @@ const UploadModal = ({ isOpen, close }: UploadModalProps) => {
           />
         </div>
       }
+      className="h-[254px] border-b bg-slate-50 px-28 py-9"
       content={
-        <div className="h-[254px] bg-slate-50 px-24 py-5">
-          <div
-            ref={drop}
-            className="flex h-full flex-col items-center justify-center border-2 border-dashed bg-white"
-          >
-            <FaFileSignature size={60} color="blue" />
-            <p className="mt-2 font-medium">
-              Drop your files here or{' '}
-              <label className="cursor-pointer text-blue-500 hover:underline hover:underline-offset-2">
-                browse
-                <input
-                  type="file"
-                  accept=".pdf"
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-              </label>
-            </p>
-            <p className="text-sm text-gray-400">Maximum size: 50MB</p>
-            {isActive ? 'Release to drop' : 'Drag file here'}
-            <ul>{fileList}</ul>
-          </div>
+        <div
+          ref={drop}
+          className="flex h-full flex-col items-center justify-center border-2 border-dashed bg-white"
+        >
+          <FaFileSignature size={60} color="blue" />
+          <p className="mt-2 font-medium">
+            Drop your files here or{' '}
+            <label className="cursor-pointer text-blue-500 hover:underline hover:underline-offset-2">
+              browse
+              <input
+                type="file"
+                accept=".pdf"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </label>
+          </p>
+          <p className="text-sm text-gray-400">Maximum size: 50MB</p>
+          {isActive ? 'Release to drop' : 'Drag file here'}
+          <ul>{fileList}</ul>
         </div>
       }
       onClose={handleClose}

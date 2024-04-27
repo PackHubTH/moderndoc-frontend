@@ -10,4 +10,11 @@ export type Template = {
   lastUpdatedAt: Date
   createdCount: number
   element: any
+  userCreated: UserCreated
+}
+
+interface UserCreated {
+  id: string
+  nameTh: string
+  profileImg: string
 }

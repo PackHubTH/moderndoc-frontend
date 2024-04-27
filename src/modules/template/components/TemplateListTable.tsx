@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import Button from '@/components/Button'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
+import { useDisclosure } from '@/hooks/useDisclosure'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
 import { FaRegEnvelope } from 'react-icons/fa6'
@@ -17,6 +18,8 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import useGetAllTemplate from '../hooks/api/useGetAllTemplate'
 import { Template } from '../types/types'
+import TemplateCopyModal from './TemplateCopyModal'
+import TemplateDeleteModal from './TemplateDeleteModal'
 
 const StyledTableRow = styled.div`
   position: relative;
@@ -28,6 +31,16 @@ const StyledTableRow = styled.div`
 `
 
 const TemplateListTable = () => {
+  const {
+    isOpen: isCopyModalOpen,
+    close: closeCopyModal,
+    open: openCopyModal,
+  } = useDisclosure()
+  const {
+    isOpen: isDeleteModalOpen,
+    close: closeDeleteModal,
+    open: openDeleteModal,
+  } = useDisclosure()
   const navigate = useNavigate()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -38,7 +51,6 @@ const TemplateListTable = () => {
   const { data: template, refetch } = useGetAllTemplate(
     paginationState.pageIndex + 1
   )
-  console.log('data', template?.data?.data)
   const columns: ColumnDef<Template>[] = [
     {
       id: 'index',
@@ -55,7 +67,6 @@ const TemplateListTable = () => {
     {
       id: 'templateTitle',
       size: 20,
-      // header: 'ทั้งหมด 2 ฉบับ',
       header: (info) => (
         <div className="flex items-center gap-2 font-semibold">
           <FaRegEnvelope />
@@ -64,30 +75,26 @@ const TemplateListTable = () => {
         </div>
       ),
       cell: (info) => (
-        <span className="font-semibold text-blue-500">
-          {info.row.original.title}
-        </span>
+        <div>
+          <h1 className="font-semibold text-blue-500">
+            {info.row.original.title}
+          </h1>
+          <p className="flex items-center gap-2 text-sm">
+            สร้างโดย
+            <img
+              src={info.row.original.userCreated.profileImg}
+              alt="create-by-img"
+              className="h-5 w-5 rounded-full"
+            />
+            {info.row.original.userCreated.nameTh}
+          </p>
+        </div>
       ),
     },
     {
       id: 'templateLastUpdatedAt',
       header: '',
       cell: (info) => (
-        // <div className="relative flex flex-row items-center justify-end pr-5">
-        //   <span className="text-gray-400">
-        //     อัพเดตล่าสุดเมื่อ{' '}
-        //     {format(info.row.original.lastUpdatedAt, 'dd MMM yy', {
-        //       locale: th,
-        //     })}
-        //   </span>
-        //   <div className="absolute top-0">
-        //     <Button
-        //       label="ดู"
-        //       variant="outline-blue"
-        //       onClick={() => console.log('view')}
-        //     />
-        //   </div>
-        // </div>
         <StyledTableRow>
           <p className="text-gray-400">
             อัพเดตล่าสุดเมื่อ{' '}
@@ -96,13 +103,33 @@ const TemplateListTable = () => {
             })}
           </p>
           {hoveredRow && hoveredRow.id === info.row.id && (
-            <div className="absolute right-0">
+            <div className="absolute right-0 space-x-2">
               <Button
                 label="แก้ไข"
-                variant="outline-blue"
                 onClick={() =>
                   navigate(`/edit-template/${info.row.original.id}`)
                 }
+              />
+              <Button
+                label="คัดลอก"
+                variant="outline-blue"
+                onClick={openCopyModal}
+              />
+              <TemplateCopyModal
+                isOpen={isCopyModalOpen}
+                templateId={info.row.original.id}
+                templateTitle={info.row.original.title}
+                close={closeCopyModal}
+              />
+              <Button
+                label="ลบ"
+                variant="outline-blue"
+                onClick={openDeleteModal}
+              />
+              <TemplateDeleteModal
+                isOpen={isDeleteModalOpen}
+                templateId={info.row.original.id}
+                close={closeDeleteModal}
               />
             </div>
           )}
