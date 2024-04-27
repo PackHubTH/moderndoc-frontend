@@ -30,6 +30,7 @@ export interface GetTemplateById {
   createdCount: number
   element: Element
   operators: Operator[]
+  operatorGroup: string
 }
 export interface Operator {
   id: string

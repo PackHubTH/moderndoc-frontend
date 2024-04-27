@@ -46,12 +46,9 @@ interface TemplateEditorProps {
 
 const TemplateEditor = ({ type }: TemplateEditorProps) => {
   const { isOpen, open, close } = useDisclosure()
-
   const navigate = useNavigate()
   const { templateId = '' } = useParams()
-
   const canvasRef = useRef<HTMLDivElement>(null)
-
   const canvasList = useDocumentStore((state) => state.canvasList)
   const setCanvasList = useDocumentStore((state) => state.setCanvasList)
   const setCanvasSize = useDocumentStore((state) => state.setCanvasSize)
@@ -70,22 +67,18 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   const [pageTotal, setPageTotal] = useState(0)
 
   useEffect(() => {
-    if (templateId) {
+    if (templateEdit && type === 'edit') {
       refetchTemplateEditFile()
     }
-  }, [templateId])
+  }, [templateEdit, type, refetchTemplateEditFile])
 
   const templateFile = useMemo(
     () =>
-      type === 'create'
-        ? templateFileCreate
-        : // : templateFileEdit?.data?.templateFile, // TODO: remove mock
-          templateFileEdit, // TODO: remove mock
+      type === 'create' ? templateFileCreate : templateFileEdit?.data ?? '',
     [templateFileCreate, type, templateFileEdit]
   )
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    console.log('numPages', numPages)
     setPageTotal(numPages)
   }
 
@@ -105,7 +98,12 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
     <div>
       {/* Header */}
       <div className="flex h-20 items-center justify-between border-b-2 p-5">
-        <TemplateInfoModal isOpen={isOpen} type={type} close={close} />
+        <TemplateInfoModal
+          templateData={templateEdit?.data}
+          isOpen={isOpen}
+          type={type}
+          close={close}
+        />
         <div className="flex items-center gap-8">
           <MainLogo />
           <h1 className="text-xl font-bold text-gray-600">

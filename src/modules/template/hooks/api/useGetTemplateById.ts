@@ -5,12 +5,18 @@ import { GetTemplateById } from '../../types/response'
 
 const useGetTemplateById = (id: string) => {
   if (!id) return { data: null }
-  const context = useQuery(['get-template', id], async () => {
-    const response = await moderndocApi.get<ApiResponse<GetTemplateById>>(
-      `/template/${id}`
-    )
-    return response.data
-  })
+  const context = useQuery(
+    ['get-template', id],
+    async () => {
+      const response = await moderndocApi.get<ApiResponse<GetTemplateById>>(
+        `/template/${id}`
+      )
+      return response.data
+    },
+    {
+      staleTime: Infinity,
+    }
+  )
 
   return context
 }
