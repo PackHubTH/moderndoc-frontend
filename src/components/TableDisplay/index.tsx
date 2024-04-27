@@ -56,7 +56,10 @@ const TableDisplay: React.FC<PropsType> = ({
             <>
               <tr
                 key={row.id}
-                css={[tw`relative`, hoveredRow === row.id && tw`bg-gray-100`]}
+                css={[
+                  tw`relative cursor-pointer`,
+                  hoveredRow === row.id && tw`bg-gray-100`,
+                ]}
                 onClick={() => onClick && onClick(row)}
                 onMouseEnter={() => {
                   onHoverRow?.(row)

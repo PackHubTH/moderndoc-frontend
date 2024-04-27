@@ -17,4 +17,6 @@ interface UserCreated {
   id: string
   nameTh: string
   profileImg: string
+  emails: string[]
+  defaultEmailIndex: number
 }

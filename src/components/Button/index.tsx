@@ -1,7 +1,8 @@
+import { ButtonStyle, VariantType } from './types'
+
 import { ReactNode } from 'react'
 import colors from 'tailwindcss/colors'
 import tw from 'twin.macro'
-import { ButtonStyle, VariantType } from './types'
 
 type PropsType = {
   label: string
@@ -39,6 +40,13 @@ const Button: React.FC<PropsType> = ({
       hoverColor: colors.white,
       hoverBgColor: colors.blue[600],
       borderColor: colors.blue[500],
+    },
+    'outline-gray': {
+      color: colors.gray[500],
+      bgColor: colors.white,
+      hoverColor: colors.white,
+      hoverBgColor: colors.gray[600],
+      borderColor: colors.gray[500],
     },
     yellow: {
       color: colors.white,

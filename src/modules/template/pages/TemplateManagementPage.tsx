@@ -3,7 +3,6 @@ import PageContainer from '@/components/PageContainer'
 import TextInput from '@/components/TextInput'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import { FaPlus } from 'react-icons/fa6'
-import TemplateInfoBox from '../components/TemplateInfoBox'
 import TemplateListTable from '../components/TemplateListTable'
 import UploadModal from '../components/UploadModal'
 
@@ -22,10 +21,7 @@ const TemplateManagementPage: React.FC = () => {
         />
         <TextInput className="w-[240px]" placeholder="ค้นหา..." />
       </div>
-      <div className="flex">
-        <TemplateListTable />
-        <TemplateInfoBox />
-      </div>
+      <TemplateListTable />
       <UploadModal isOpen={isOpen} close={close} />
     </PageContainer>
   )

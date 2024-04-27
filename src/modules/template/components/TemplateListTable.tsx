@@ -13,22 +13,12 @@ import Pagination from '@/components/TableDisplay/Pagination'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
-import { FaRegEnvelope } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
-import styled from 'styled-components'
 import useGetAllTemplate from '../hooks/api/useGetAllTemplate'
 import { Template } from '../types/types'
 import TemplateCopyModal from './TemplateCopyModal'
 import TemplateDeleteModal from './TemplateDeleteModal'
-
-const StyledTableRow = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
-  align-items: flex-end;
-  padding-right: 20px;
-`
+import TemplateInfoBox from './TemplateInfoBox'
 
 const TemplateListTable = () => {
   const {
@@ -41,6 +31,7 @@ const TemplateListTable = () => {
     close: closeDeleteModal,
     open: openDeleteModal,
   } = useDisclosure()
+  const { isOpen: isInfoBoxOpen, open: openInfoBox } = useDisclosure()
   const navigate = useNavigate()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -67,12 +58,11 @@ const TemplateListTable = () => {
     {
       id: 'templateTitle',
       size: 20,
-      header: (info) => (
-        <div className="flex items-center gap-2 font-semibold">
-          <FaRegEnvelope />
-          ทั้งหมด{' '}
-          <span className="text-blue-500">{info.table.getRowCount()}</span> ฉบับ
-        </div>
+      header: () => (
+        <span>
+          ทั้งหมด <span className="text-blue-500">{template?.data.count}</span>{' '}
+          ฉบับ
+        </span>
       ),
       cell: (info) => (
         <div>
@@ -95,7 +85,7 @@ const TemplateListTable = () => {
       id: 'templateLastUpdatedAt',
       header: '',
       cell: (info) => (
-        <StyledTableRow>
+        <div className="flex justify-end">
           <p className="text-gray-400">
             อัพเดตล่าสุดเมื่อ{' '}
             {format(info.row.original.lastUpdatedAt, 'dd MMM yy', {
@@ -103,7 +93,7 @@ const TemplateListTable = () => {
             })}
           </p>
           {hoveredRow && hoveredRow.id === info.row.id && (
-            <div className="absolute right-0 space-x-2">
+            <div className="absolute right-4 top-3 space-x-2">
               <Button
                 label="แก้ไข"
                 onClick={() =>
@@ -133,7 +123,7 @@ const TemplateListTable = () => {
               />
             </div>
           )}
-        </StyledTableRow>
+        </div>
       ),
     },
   ]
@@ -153,15 +143,32 @@ const TemplateListTable = () => {
     })
   }, [table.getState().pagination.pageIndex])
 
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
+    null
+  )
+  const onRowClick = (row: any) => {
+    openInfoBox()
+    setSelectedTemplate(row.original)
+  }
+
   return (
-    <div className="flex-1 p-2">
-      <TableDisplay table={table} onHoverRow={setHoveredRow} />
-      <Pagination
-        totalPage={1}
-        currentPage={table.getState().pagination.pageIndex + 1}
-        nextPage={table.nextPage}
-        prevPage={table.previousPage}
-      />
+    <div className="flex">
+      <div className="flex-1 p-2">
+        <TableDisplay
+          table={table}
+          onHoverRow={setHoveredRow}
+          onClick={onRowClick}
+        />
+        <Pagination
+          totalPage={template?.data.totalPages ?? 1}
+          currentPage={table.getState().pagination.pageIndex + 1}
+          nextPage={table.nextPage}
+          prevPage={table.previousPage}
+        />
+      </div>
+      {isInfoBoxOpen && selectedTemplate && (
+        <TemplateInfoBox data={selectedTemplate} />
+      )}
     </div>
   )
 }
