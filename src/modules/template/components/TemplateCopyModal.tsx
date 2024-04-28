@@ -27,6 +27,7 @@ const TemplateCopyModal = ({
             label="คัดลอก"
             onClick={() => {
               copyTemplate(templateId)
+              window.location.reload()
               close()
             }}
             disabled={isSuccess}

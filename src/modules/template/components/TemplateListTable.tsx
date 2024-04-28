@@ -103,7 +103,10 @@ const TemplateListTable = () => {
               <Button
                 label="คัดลอก"
                 variant="outline-blue"
-                onClick={openCopyModal}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  openCopyModal()
+                }}
               />
               <TemplateCopyModal
                 isOpen={isCopyModalOpen}
@@ -114,7 +117,10 @@ const TemplateListTable = () => {
               <Button
                 label="ลบ"
                 variant="outline-blue"
-                onClick={openDeleteModal}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  openDeleteModal()
+                }}
               />
               <TemplateDeleteModal
                 isOpen={isDeleteModalOpen}

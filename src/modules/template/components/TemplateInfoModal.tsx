@@ -70,15 +70,16 @@ const TemplateInfoModal = ({
       const file = await fetchFile(exampleFileUrl)
       if (file) {
         methods.setValue('exampleFile', file)
+        methods.trigger()
       }
     }
   }
 
   useEffect(() => {
-    if (type === 'edit' && isOpen && templateData) {
+    if (type === 'edit' && templateData) {
       refetchExampleFileEdit()
     }
-  }, [isOpen, type, templateData])
+  }, [type, templateData])
 
   useEffect(() => {
     if (!isOpen) {

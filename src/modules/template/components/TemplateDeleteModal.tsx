@@ -27,6 +27,7 @@ const TemplateDeleteModal = ({
             onClick={() => {
               deleteTemplate(templateId)
               close()
+              window.location.reload()
             }}
             disabled={isSuccess}
           />

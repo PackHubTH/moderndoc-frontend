@@ -107,7 +107,9 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
         <div className="flex items-center gap-8">
           <MainLogo />
           <h1 className="text-xl font-bold text-gray-600">
-            การสร้างเอกสารต้นฉบับ (Template)
+            {type === 'create'
+              ? 'การสร้างเอกสารต้นฉบับ (Template)'
+              : templateEdit?.data?.title}
           </h1>
         </div>
         <div className="flex gap-4">
