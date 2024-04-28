@@ -21,7 +21,7 @@ const EditUserInfo = () => {
   const { data: userData } = useGetUser()
   const { mutate: updateUser } = useUpdateProfile()
 
-  const { mutate: uploadFile, data: uploadFileData } = useUploadFile()
+  const { mutateAsync: uploadFile, data: uploadFileData } = useUploadFile()
 
   useEffect(() => {
     if (userData?.data) {
@@ -47,28 +47,46 @@ const EditUserInfo = () => {
     }
   }, [userData])
 
-  useEffect(() => {
-    if (methods.watch('profileImgFile')) {
-      uploadFile(
-        { file: methods.watch('profileImgFile'), folder: 'profile-img' },
-        {
-          onError: (error) => {
-            toast('เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ', { type: 'error' })
-          },
-        }
-      )
-    }
-  }, [methods.watch('profileImgFile')])
+  // useEffect(() => {
+  //   if (methods.watch('profileImgFile')) {
+  //     uploadFile(
+  //       {
+  //         file: methods.watch('profileImgFile'),
+  //         folder: 'profile-img',
+  //         isPublic: true,
+  //       },
+  //       {
+  //         onError: (error) => {
+  //           toast('เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ', { type: 'error' })
+  //         },
+  //       }
+  //     )
+  //   }
+  // }, [methods.watch('profileImgFile')])
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const data = methods.getValues()
+
+    let uploadFileResult: any = {}
+    if (methods.watch('profileImgFile')) {
+      uploadFileResult = await uploadFile({
+        file: methods.watch('profileImgFile'),
+        folder: 'profile-img',
+        isPublic: true,
+      })
+
+      if (uploadFileResult.error) {
+        toast('เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ', { type: 'error' })
+        return
+      }
+    }
 
     const dataToSend = {
       role: data.role,
       user: {
         ...data,
         phones: [data.phone],
-        profileImg: uploadFileData?.data?.fileUrl ?? undefined,
+        profileImg: uploadFileResult?.data?.fileUrl ?? undefined,
       },
       student: data.student,
       staff: {
