@@ -8,8 +8,9 @@ const useGetDepartmentFaqs = (
   search: string = '',
   isAdmin: boolean = false
 ) => {
-  const context = useQuery(['department-faqs', page, search], async () => {
-    const path = isAdmin ? '/faq/department' : '/faq'
+  const path = isAdmin ? '/faq' : '/faq/department'
+  const queryKey = isAdmin ? 'admin-faqs' : 'department-faqs'
+  const context = useQuery([queryKey, page, search], async () => {
     const response = await moderndocApi.get<ApiResponse<GetFaqsListResponse>>(
       path,
       {
