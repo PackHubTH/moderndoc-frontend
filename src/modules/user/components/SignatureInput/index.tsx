@@ -1,4 +1,9 @@
-import { useRef } from 'react'
+import useUploadFile from '@/hooks/useUploadFile'
+import {
+  getPrivateImageUrl,
+  onErrorImage,
+} from '@/modules/document/utils/imageUtils'
+import { useEffect, useRef, useState } from 'react'
 import { FaPlus } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 
@@ -13,26 +18,55 @@ const SignatureInput: React.FC<propsType> = ({
   value,
   onChange,
 }) => {
+  const [signedImageUrls, setSignedImageUrls] = useState<string[]>([])
+
   const uploadButtonRef = useRef<HTMLInputElement>(null)
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { mutateAsync: uploadFile } = useUploadFile()
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
 
     if (file) {
+      const result = await uploadFile({
+        file: file,
+        folder: 'signature',
+      })
+
       const tempValue = value
-      tempValue.push(URL.createObjectURL(file!))
+      if (result.data) {
+        tempValue.push(result.data?.fileUrl)
+      }
 
       onChange(tempValue)
     }
   }
 
+  useEffect(() => {
+    const getAllSignedImages = async () => {
+      const images = await Promise.all(
+        value.map(async (signature) => await getPrivateImageUrl(signature))
+      )
+      setSignedImageUrls(images)
+    }
+
+    getAllSignedImages()
+  }, [value])
+
   const onClickUpload = () => {
     uploadButtonRef.current?.click()
   }
 
-  const addSignature = (signature: string) => {
+  const addSignature = async (signature: string) => {
     if (value.length < maxSignatures) {
-      onChange([...value, signature])
+      const result = await uploadFile({
+        file: signature,
+        folder: 'signature',
+      })
+
+      if (result.data) {
+        onChange([...value, result.data.fileUrl])
+      }
     }
   }
 
@@ -59,7 +93,8 @@ const SignatureInput: React.FC<propsType> = ({
               onClick={() => deleteSignature(index)}
             />
             <img
-              src={signature}
+              src={signedImageUrls?.[index]}
+              onError={onErrorImage}
               alt="signature"
               className="h-full w-full rounded-lg object-cover "
             />

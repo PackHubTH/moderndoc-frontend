@@ -6,6 +6,7 @@ import { uploadFileFolder } from './types'
 type PropsType = {
   file: any
   folder: uploadFileFolder
+  isPublic?: boolean
 }
 
 type ResponseType = {
@@ -19,6 +20,7 @@ const useUploadFile = () => {
 
     bodyFormData.append('file', params.file)
     bodyFormData.append('folder', params.folder)
+    bodyFormData.append('isPublic', params.isPublic ? 'true' : 'false')
 
     const response = await moderndocApi.post<ApiResponse<ResponseType | null>>(
       '/upload-file',
