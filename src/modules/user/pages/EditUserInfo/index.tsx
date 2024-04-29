@@ -21,7 +21,7 @@ const EditUserInfo = () => {
   const { data: userData } = useGetUser()
   const { mutate: updateUser } = useUpdateProfile()
 
-  const { mutateAsync: uploadFile, data: uploadFileData } = useUploadFile()
+  const { mutateAsync: uploadFile } = useUploadFile()
 
   useEffect(() => {
     if (userData?.data) {
@@ -46,23 +46,6 @@ const EditUserInfo = () => {
       })
     }
   }, [userData])
-
-  // useEffect(() => {
-  //   if (methods.watch('profileImgFile')) {
-  //     uploadFile(
-  //       {
-  //         file: methods.watch('profileImgFile'),
-  //         folder: 'profile-img',
-  //         isPublic: true,
-  //       },
-  //       {
-  //         onError: (error) => {
-  //           toast('เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ', { type: 'error' })
-  //         },
-  //       }
-  //     )
-  //   }
-  // }, [methods.watch('profileImgFile')])
 
   const onSubmit = async () => {
     const data = methods.getValues()

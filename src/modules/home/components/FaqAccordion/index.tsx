@@ -1,6 +1,7 @@
 import Button from '@/components/Button'
 import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import useGetFileMutate from '@/hooks/useGetFileMutate'
 import CreateFaqModal from '@/modules/faq/components/CreateFaqModal'
 import { Faq, SubFaq } from '@/modules/faq/types'
 import { Disclosure } from '@headlessui/react'
@@ -40,6 +41,8 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
     open: editFaqOpen,
     close: editFaqClose,
   } = useDisclosure()
+
+  const { mutateAsync: getFile } = useGetFileMutate()
 
   const [actionFaqId, setActionFaqId] = useState<string | null>(null)
   const [actionSubFaq, setActionSubFaq] = useState<SubFaq | null>(null)
@@ -168,6 +171,28 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
                             {key}
                           </span>{' '}
                           : {value as ReactNode}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {faq.files.length > 0 && (
+                  <div className="space-y-2.5">
+                    <h3 className="font-semibold text-blue-500">ไฟล์แนบ</h3>
+                    <ul className="space-y-4 pt-1">
+                      {faq.files.map((file) => (
+                        <li key={file}>
+                          <a
+                            rel="noreferrer"
+                            className="cursor-pointer rounded-md border border-blue-300 bg-blue-100 p-1 text-blue-500
+                     hover:underline"
+                            onClick={async () => {
+                              const result = await getFile(file)
+                              window.open(result.data, '_blank')
+                            }}
+                          >
+                            {file}
+                          </a>
                         </li>
                       ))}
                     </ul>

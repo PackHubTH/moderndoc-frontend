@@ -7,6 +7,7 @@ const useCreateFaqForm = () => {
     resolver: zodResolver(CreateFaqFormValidation),
     defaultValues: {
       tagIds: [],
+      files: [],
       templateId: null,
       extraContact: {
         ['วันเวลาทำการ']: 'วันจันทร์ - วันศุกร์ เวลา 08.30 น. - 16.30 น.',

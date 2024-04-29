@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { DropTargetMonitor, useDrop } from 'react-dnd'
 
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import { useTemplateStore } from '@/stores/templateStore'
 import { NativeTypes } from 'react-dnd-html5-backend'
-import { FaFileSignature } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
+import tw from 'twin.macro'
+import UploadFileImg from '../assets/upload-file.png'
 
 interface UploadModalProps {
   isOpen: boolean
@@ -14,8 +15,7 @@ interface UploadModalProps {
 }
 
 const UploadModal = ({ isOpen, close }: UploadModalProps) => {
-  // const templateFile = useTemplateStore((state) => state.templateFile)
-  // const setTemplateFile = useTemplateStore((state) => state.setTemplateFile)
+  const inputRef = useRef<HTMLInputElement>(null)
   const { templateFile, setTemplateFile } = useTemplateStore()
   const navigate = useNavigate()
 
@@ -56,9 +56,6 @@ const UploadModal = ({ isOpen, close }: UploadModalProps) => {
       },
       collect: (monitor: DropTargetMonitor) => {
         const item = monitor.getItem() as any
-        if (item) {
-          console.log('collect', item.files, item.items)
-        }
 
         return {
           isOver: monitor.isOver(),
@@ -74,13 +71,31 @@ const UploadModal = ({ isOpen, close }: UploadModalProps) => {
       `'${file.name}' of size '${file.size}' and type '${file.type}'`
     return files.map((file) => <li key={file.name}>{label(file)}</li>)
   }
+
+  const openFileTempUrl = (file: File) => {
+    const url = URL.createObjectURL(file)
+    window.open(url, '_blank')
+  }
+
+  const onDeleteFile = (index: number) => {
+    if (fileList) {
+      const temp = [...fileList]
+      temp.splice(index, 1)
+      setTemplateFile(null)
+    }
+  }
+
   const fileList = useMemo(
     () => templateFile && list([templateFile]),
     [templateFile]
   )
 
-  console.log('file', templateFile)
+  const onClickUploadBox = () => {
+    inputRef.current?.click()
+  }
+
   const isActive = canDrop && isOver
+
   return (
     <Modal
       isOpen={isOpen}
@@ -96,29 +111,60 @@ const UploadModal = ({ isOpen, close }: UploadModalProps) => {
           />
         </div>
       }
-      className="h-[254px] border-b bg-slate-50 px-28 py-9"
+      className="min-h-[254px] border-b bg-slate-50 px-28 py-4"
       content={
-        <div
-          ref={drop}
-          className="flex h-full flex-col items-center justify-center border-2 border-dashed bg-white"
-        >
-          <FaFileSignature size={60} color="blue" />
-          <p className="mt-2 font-medium">
-            Drop your files here or{' '}
-            <label className="cursor-pointer text-blue-500 hover:underline hover:underline-offset-2">
-              browse
-              <input
-                type="file"
-                accept=".pdf"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-            </label>
-          </p>
-          <p className="text-sm text-gray-400">Maximum size: 50MB</p>
-          {isActive ? 'Release to drop' : 'Drag file here'}
-          <ul>{fileList}</ul>
-        </div>
+        <>
+          <div
+            ref={drop}
+            css={[
+              tw`flex h-[213px] cursor-pointer flex-col items-center justify-center border-2 border-dashed bg-white transition-all ease-in-out hover:border-blue-500`,
+              isActive && tw`border-blue-500`,
+            ]}
+            onClick={onClickUploadBox}
+          >
+            {fileList ? (
+              <>
+                <h5 className="font-bold text-gray-700">Selected File</h5>
+                <ul className="pl-3">
+                  {fileList?.map((file) => (
+                    <li className="my-2">
+                      <span
+                        className="cursor-pointer rounded-md border border-blue-300 bg-blue-100 px-4 py-1 text-blue-500 hover:underline"
+                        onClick={() => openFileTempUrl(templateFile as File)}
+                      >
+                        {file.key}
+                      </span>
+                      <span
+                        className="ml-2 cursor-pointer font-black text-red-500"
+                        onClick={() => {
+                          // onDeleteFile(index)
+                        }}
+                      >
+                        X
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <img src={UploadFileImg} alt="upload" />
+            )}
+            <p className="mt-2 font-medium">
+              Drop your files here or{' '}
+              <label className="cursor-pointer text-blue-500 hover:underline hover:underline-offset-2">
+                browse
+                <input
+                  type="file"
+                  accept=".pdf"
+                  className="hidden"
+                  ref={inputRef}
+                  onChange={handleFileChange}
+                />
+              </label>
+            </p>
+            <p className="mt-1 text-sm text-gray-400">Maximum size: 50MB</p>
+          </div>
+        </>
       }
       onClose={handleClose}
     />

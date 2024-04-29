@@ -6,6 +6,7 @@ import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
 import useGetAllDepartments from '@/modules/department/hooks/api/useGetAllDepartments'
+import UploadFileInput from '@/modules/document/components/UploadFileInput'
 import TagsSelect from '@/modules/faq/components/TagsSelect'
 import useCreateFaq from '@/modules/faq/hooks/api/useCreateFaq'
 import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
@@ -83,7 +84,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
     if (mode === 'edit' && faq) {
       methods.reset({
         ...faq,
-        fileUrl: faq.files ?? [],
+        files: faq.files ?? [],
         tagIds: faq.faqTags.map((tag) => tag.tagId),
         templateId: faq.template?.title ?? null,
       })
@@ -255,10 +256,24 @@ const CreateFaqModal: React.FC<PropsType> = ({
           />
           <Controller
             control={methods.control}
+            name="files"
+            render={({ field }) => (
+              <UploadFileInput
+                label="ตัวอย่างเอกสาร หรือแนบไฟล์อื่นๆ"
+                value={field.value ?? []}
+                onChange={(value) => {
+                  field.onChange(value)
+                }}
+                uploadFolder="faq"
+              />
+            )}
+          />
+          <Controller
+            control={methods.control}
             name="templateId"
             render={({ field }) => (
               <AutocompleteInput
-                label="เลือก Template"
+                label="เลือกรายการ Template สำหรับสร้างเอกสาร"
                 options={
                   templates?.data.data.map((template) => ({
                     label: template.title,
