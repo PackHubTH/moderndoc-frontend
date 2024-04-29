@@ -11,7 +11,6 @@ export const editProfileFormSchema = z.object({
   level: z.nativeEnum(Level).optional(),
   nameTh: z.string(),
   nameEn: z.string(),
-
   emails: z
     .string()
     .email()
@@ -32,7 +31,6 @@ export const editProfileFormSchema = z.object({
   staff: z.custom<Staff>().optional(),
   teacher: z.custom<Teacher>().optional(),
   signatures: z.string().array().max(3).optional(),
-  signaturesFile: z.any().optional(),
   advisorId: z.string().uuid().optional(),
   facultyId: z.string().uuid().optional(),
   departmentId: z.string().uuid().optional(),

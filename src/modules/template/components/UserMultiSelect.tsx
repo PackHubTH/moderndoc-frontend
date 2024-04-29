@@ -25,6 +25,7 @@ const UserMultiSelect = ({
           control: (provided) => ({
             ...provided,
             borderRadius: '20px',
+            borderColor: 'rgb(229,231,235)',
             height: '44px',
           }),
           valueContainer: (provided) => ({

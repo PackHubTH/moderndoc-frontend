@@ -12,6 +12,7 @@ import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
 import useCreateFaqForm from '@/modules/faq/hooks/useCreateFaqForm'
 import { CreateFaqForm } from '@/modules/faq/hooks/useCreateFaqForm/validation'
 import { Faq, SendChannel } from '@/modules/faq/types'
+import UploadFileButton from '@/modules/template/components/UploadFileButton'
 import useGetAllTemplate from '@/modules/template/hooks/api/useGetAllTemplate'
 import useGetDepartmentById from '@/modules/user/hooks/api/useGetDepartmentById'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
@@ -83,7 +84,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
     if (mode === 'edit' && faq) {
       methods.reset({
         ...faq,
-        fileUrl: faq.files ?? [],
+        files: faq.files ?? [],
         tagIds: faq.faqTags.map((tag) => tag.tagId),
         templateId: faq.template?.title ?? null,
       })
@@ -255,10 +256,22 @@ const CreateFaqModal: React.FC<PropsType> = ({
           />
           <Controller
             control={methods.control}
+            name="files"
+            render={({ field }) => (
+              <UploadFileButton
+                value={undefined}
+                onChange={(value) => {
+                  field.onChange(value)
+                }}
+              />
+            )}
+          />
+          <Controller
+            control={methods.control}
             name="templateId"
             render={({ field }) => (
               <AutocompleteInput
-                label="เลือก Template"
+                label="เลือกรายการ Template สำหรับสร้างเอกสาร"
                 options={
                   templates?.data.data.map((template) => ({
                     label: template.title,

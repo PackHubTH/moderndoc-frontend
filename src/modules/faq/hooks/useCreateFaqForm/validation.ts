@@ -11,7 +11,7 @@ export const CreateFaqFormValidation = z.object({
   sendChannelInfo: z.string().optional(),
   extraContact: z.any().optional(),
   isInternal: z.boolean(),
-  fileUrl: z.array(z.string()).optional(),
+  files: z.array(z.string()).optional(),
   templateId: z.string().nullable(),
   tagIds: z.array(z.string().uuid()).optional(),
   departmentId: z.string().uuid().optional(),

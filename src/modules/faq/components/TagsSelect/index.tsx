@@ -23,6 +23,22 @@ const TagsSelect: React.FC<PropsType> = ({
         {label}
       </label>
       <Select
+        styles={{
+          control: (provided) => ({
+            ...provided,
+            borderRadius: '9999px',
+            borderColor: 'rgb(229,231,235)',
+            height: '44px',
+          }),
+          valueContainer: (provided) => ({
+            ...provided,
+            padding: '0px 16px',
+          }),
+          placeholder: (provided) => ({
+            ...provided,
+            fontSize: '14px',
+          }),
+        }}
         options={tagsList.map((tag) => ({ value: tag.id, label: tag.name }))}
         onChange={(selected) => {
           onChange(selected.map((item) => item.value))
