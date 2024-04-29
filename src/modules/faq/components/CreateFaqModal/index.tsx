@@ -6,13 +6,13 @@ import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
 import useGetAllDepartments from '@/modules/department/hooks/api/useGetAllDepartments'
+import UploadFileInput from '@/modules/document/components/UploadFileInput'
 import TagsSelect from '@/modules/faq/components/TagsSelect'
 import useCreateFaq from '@/modules/faq/hooks/api/useCreateFaq'
 import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
 import useCreateFaqForm from '@/modules/faq/hooks/useCreateFaqForm'
 import { CreateFaqForm } from '@/modules/faq/hooks/useCreateFaqForm/validation'
 import { Faq, SendChannel } from '@/modules/faq/types'
-import UploadFileButton from '@/modules/template/components/UploadFileButton'
 import useGetAllTemplate from '@/modules/template/hooks/api/useGetAllTemplate'
 import useGetDepartmentById from '@/modules/user/hooks/api/useGetDepartmentById'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
@@ -258,11 +258,13 @@ const CreateFaqModal: React.FC<PropsType> = ({
             control={methods.control}
             name="files"
             render={({ field }) => (
-              <UploadFileButton
-                value={undefined}
+              <UploadFileInput
+                label="ตัวอย่างเอกสาร หรือแนบไฟล์อื่นๆ"
+                value={field.value ?? []}
                 onChange={(value) => {
                   field.onChange(value)
                 }}
+                uploadFolder="faq"
               />
             )}
           />
