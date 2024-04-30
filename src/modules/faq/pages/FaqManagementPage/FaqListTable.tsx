@@ -5,16 +5,18 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-import { MdModeEditOutline } from 'react-icons/md'
+import { MdModeEditOutline, MdRemoveRedEye } from 'react-icons/md'
 
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import useFaqStore from '@/modules/faq/stores/useFaqStore'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
 import { HiTrash } from 'react-icons/hi'
+import { useNavigate } from 'react-router-dom'
 import { UserRole } from 'types/user'
 import CreateFaqModal from '../../components/CreateFaqModal'
 import DeleteFaqModal from '../../components/DeleteFaqModal'
@@ -22,6 +24,9 @@ import useGetDepartmentFaqs from '../../hooks/api/useGetDepartmentFaqs'
 import { Faq } from '../../types'
 
 const FaqListTable = () => {
+  const navigate = useNavigate()
+  const { setFaq } = useFaqStore()
+
   const {
     isOpen: isOpenCreateFaqModal,
     close: closeCreateFaqModal,
@@ -109,11 +114,14 @@ const FaqListTable = () => {
                 openCreateFaqModal()
               }}
             />
-            {/* // TODO: seperate page for each faq */}
-            {/* <MdRemoveRedEye
+            <MdRemoveRedEye
               size={18}
               className="cursor-pointer rounded-full text-blue-500"
-            /> */}
+              onClick={() => {
+                setFaq(info.row.original)
+                navigate('/faq')
+              }}
+            />
             <HiTrash
               size={18}
               className="cursor-pointer rounded-full text-red-500"
