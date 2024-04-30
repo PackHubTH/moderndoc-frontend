@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import { pdfjs } from 'react-pdf'
+import FaqDetailPage from 'src/modules/faq/pages/FaqDetailPage'
 import DepartmentManagementPage from './modules/department/pages/DepartmentManagementPage'
 import DocumentEditor from './modules/document/pages/DocumentEditor'
 import DocumentManagementPage from './modules/document/pages/DocumentManagementPage'
@@ -54,6 +55,7 @@ function App() {
           element={<DepartmentManagementPage />}
         />
         <Route path="/faq-management" element={<FaqManagementPage />} />
+        <Route path="/faq" element={<FaqDetailPage />} />
         <Route
           path="/template-management"
           element={<TemplateManagementPage />}

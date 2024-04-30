@@ -22,10 +22,15 @@ import {
 type PropsType = {
   faq: Faq
   isEditable?: boolean
+  defaultOpen?: boolean
   refetch?: () => void
 }
 
-const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
+const FaqAccordion: React.FC<PropsType> = ({
+  faq,
+  isEditable,
+  defaultOpen = false,
+}) => {
   const {
     isOpen: createSubFaqIsOpen,
     open: createSubFaqOpen,
@@ -76,7 +81,7 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
         mode="edit"
       />
       <div className="break-words p-5 shadow">
-        <Disclosure>
+        <Disclosure defaultOpen={defaultOpen}>
           {({ open }) => (
             <>
               <Disclosure.Button className="flex w-full items-center justify-between rounded-lg text-left">
@@ -217,7 +222,7 @@ const FaqAccordion: React.FC<PropsType> = ({ faq, isEditable }) => {
                       ]}
                     >
                       {faq.subFaqs.map((subFaq) => (
-                        <Disclosure>
+                        <Disclosure defaultOpen={defaultOpen}>
                           {({ open }) => (
                             <>
                               <Disclosure.Button className="flex w-full items-center justify-between p-4">
