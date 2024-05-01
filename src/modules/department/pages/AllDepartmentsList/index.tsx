@@ -2,6 +2,7 @@ import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
+import Tabs from '@/components/Tabs'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import DeleteDepartmentModal from '@/modules/faq/components/DeleteDepartmentModal'
 import { Department, DepartmentType } from '@/modules/user/hooks/types'
@@ -22,6 +23,7 @@ import CreateDepartmentModal from '../../components/CreateDepartmentModal'
 import UserInviteModal from '../../components/UserInviteModal'
 import { GetAllDepartmentsResponse } from '../../hooks/api/types'
 import useGetAllDepartments from '../../hooks/api/useGetAllDepartments'
+import DepartmentMembersList from '../DepartmentManagementPage/DepartmentMembersListTable'
 
 const AllDepartmentsList = () => {
   const navigate = useNavigate()
@@ -199,12 +201,27 @@ const AllDepartmentsList = () => {
         </h1>
 
         <div className="p-2">
-          <TableDisplay table={table} />
-          <Pagination
-            totalPage={departments?.data.totalPages ?? 0}
-            currentPage={table.getState().pagination.pageIndex + 1}
-            nextPage={table.nextPage}
-            prevPage={table.previousPage}
+          <Tabs
+            tabs={[
+              {
+                title: 'สังกัด/หน่วยงานของทั้งหมด',
+                content: (
+                  <>
+                    <TableDisplay table={table} />
+                    <Pagination
+                      totalPage={departments?.data.totalPages ?? 0}
+                      currentPage={table.getState().pagination.pageIndex + 1}
+                      nextPage={table.nextPage}
+                      prevPage={table.previousPage}
+                    />
+                  </>
+                ),
+              },
+              {
+                title: 'รอการตอบรับ',
+                content: <DepartmentMembersList isApproved={false} />,
+              },
+            ]}
           />
         </div>
       </PageContainer>

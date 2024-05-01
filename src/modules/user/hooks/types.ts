@@ -19,6 +19,7 @@ export type Department = {
   name: string
   type: DepartmentType
   facultyId: string
+  faculty?: Faculty
 }
 
 export enum DepartmentType {
@@ -68,6 +69,7 @@ export type StaffDepartment = {
   staffId: string
   departmentId: string
   isApproved: ApprovalStatus
+  department?: Department
 }
 
 export type TeacherDepartment = {
@@ -75,6 +77,7 @@ export type TeacherDepartment = {
   teacherId: string
   departmentId: string
   isApproved: ApprovalStatus
+  department?: Department
 }
 
 export enum ApprovalStatus {

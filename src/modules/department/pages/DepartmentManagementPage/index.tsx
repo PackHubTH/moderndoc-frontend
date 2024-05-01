@@ -97,28 +97,13 @@ const DepartmentManagementPage = () => {
           tabs={[
             {
               content: (
-                <DepartmentMembersList
-                  isApproved
-                  facultyName={
-                    departmentData.data.faculty?.name ??
-                    departmentData.data.name
-                  }
-                  departmentName={departmentData.data.name}
-                  departmentId={departmentId}
-                />
+                <DepartmentMembersList departmentId={departmentId} isApproved />
               ),
               title: 'สังกัด/หน่วยงานของฉัน',
             },
             {
               content: (
-                <DepartmentMembersList
-                  facultyName={
-                    departmentData.data.faculty?.name ??
-                    departmentData.data.name
-                  }
-                  departmentName={departmentData.data.name}
-                  departmentId={defaultDepartmentId}
-                />
+                <DepartmentMembersList departmentId={defaultDepartmentId} />
               ),
               title: 'รอการตอบรับ',
             },

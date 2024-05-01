@@ -7,8 +7,8 @@ import { GetDepartmentMemberResponse } from '../../hooks/api/types'
 type PropsType = {
   isOpen: boolean
   onClose: () => void
-  userData: GetDepartmentMemberResponse | null
-  departmentName: string
+  userData?: GetDepartmentMemberResponse | null
+  departmentName?: string
 }
 
 const UserInfoModal: React.FC<PropsType> = ({
