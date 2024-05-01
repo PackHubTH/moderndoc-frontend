@@ -13,6 +13,7 @@ type PropsType = {
   userId?: string
   page?: number
   departmentId?: string
+  callback?: () => void
 }
 
 const ApproveMemberModal: React.FC<PropsType> = ({
@@ -22,6 +23,7 @@ const ApproveMemberModal: React.FC<PropsType> = ({
   userId,
   page,
   departmentId,
+  callback,
 }) => {
   const { refetch: refetchMember } = useGetDepartmentMembers(
     page,
@@ -39,10 +41,12 @@ const ApproveMemberModal: React.FC<PropsType> = ({
             type: 'success',
           })
           refetchMember()
+          callback && callback()
           onClose()
         },
         onError: () => {
           toast('เกิดข้อผิดพลาดในการตอบรับ', { type: 'error' })
+          callback && callback()
           onClose()
         },
       }

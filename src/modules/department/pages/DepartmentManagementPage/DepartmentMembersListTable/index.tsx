@@ -8,6 +8,7 @@ import UserInfoModal from '@/modules/department/components/UserInfoModal'
 import { GetDepartmentMemberResponse } from '@/modules/department/hooks/api/types'
 import useGetDepartmentMembers from '@/modules/department/hooks/api/useGetDepartmentMembers'
 import { RoleMapper } from '@/modules/department/mappers'
+import { DepartmentType } from '@/modules/user/hooks/types'
 import { formatPhoneNumber } from '@/utils/formatUtils'
 import {
   ColumnDef,
@@ -25,15 +26,11 @@ import { green, red, white } from 'tailwindcss/colors'
 import { UserRole } from 'types/user'
 
 type PropsType = {
-  facultyName: string
-  departmentName?: string
   isApproved?: boolean
   departmentId?: string
 }
 
 const DepartmentMembersList: React.FC<PropsType> = ({
-  facultyName,
-  departmentName,
   isApproved = false,
   departmentId,
 }) => {
@@ -45,11 +42,14 @@ const DepartmentMembersList: React.FC<PropsType> = ({
   const [approveMemberModalData, setApproveMemberModalData] = useState<{
     userId: string
     isApproved: boolean
+    departmentId: string
+    page: number
   } | null>(null)
 
   const [swapMemberModalData, setSwapMemberModalData] = useState<{
     userId: string
     departmentId: string
+    departmentName?: string
   } | null>(null)
 
   const { data: members, refetch } = useGetDepartmentMembers(
@@ -74,9 +74,51 @@ const DepartmentMembersList: React.FC<PropsType> = ({
     open: openSwapMember,
   } = useDisclosure()
 
-  const [userData, setUserData] = useState<GetDepartmentMemberResponse | null>(
-    null
-  )
+  const [userData, setUserData] = useState<{
+    data: GetDepartmentMemberResponse
+    departmentName: string
+  }>()
+
+  const getUserDepartment = (
+    user: GetDepartmentMemberResponse,
+    agencyDash?: boolean
+  ) => {
+    if (user.role === UserRole.STAFF) {
+      if (
+        agencyDash &&
+        user.staff?.staffDepartments[0]?.department?.type ===
+          DepartmentType.AGENCY
+      ) {
+        return undefined
+      }
+      return user.staff?.staffDepartments[0]?.department ?? undefined
+    }
+    if (user.role === UserRole.TEACHER) {
+      if (
+        agencyDash &&
+        user.staff?.staffDepartments[0]?.department?.type ===
+          DepartmentType.AGENCY
+      ) {
+        return undefined
+      }
+      return user.teacher?.TeacherDepartment[0]?.department ?? undefined
+    }
+  }
+
+  const getUserFaculty = (user: GetDepartmentMemberResponse) => {
+    if (user.role === UserRole.STAFF) {
+      return (
+        user.staff?.staffDepartments[0]?.department?.faculty ??
+        getUserDepartment(user)
+      )
+    }
+    if (user.role === UserRole.TEACHER) {
+      return (
+        user.teacher?.TeacherDepartment[0]?.department?.faculty ??
+        getUserDepartment(user)
+      )
+    }
+  }
 
   const columns: ColumnDef<GetDepartmentMemberResponse>[] = [
     {
@@ -139,17 +181,23 @@ const DepartmentMembersList: React.FC<PropsType> = ({
     },
     {
       header: `หน่วยงาน`,
-      cell: (info) => (
-        <div className="w-28 space-y-1">
-          {departmentName ? facultyName : departmentName}
-        </div>
-      ),
+      cell: (info) => {
+        return (
+          <div className="w-28 space-y-1">
+            {getUserFaculty(info.row.original)?.name ?? '-'}
+          </div>
+        )
+      },
     },
     {
       id: 'department',
       size: 1,
       header: `ภาควิชา`,
-      cell: (info) => <div className="w-28 space-y-1">{departmentName}</div>,
+      cell: (info) => (
+        <div className="w-28 space-y-1">
+          {getUserDepartment(info.row.original, true)?.name ?? '-'}
+        </div>
+      ),
     },
     {
       header: `ลงทะเบียน`,
@@ -167,7 +215,10 @@ const DepartmentMembersList: React.FC<PropsType> = ({
         <div
           className="w-14 cursor-pointer "
           onClick={() => {
-            setUserData(info.row.original)
+            setUserData({
+              data: info.row.original,
+              departmentName: getUserDepartment(info.row.original)!.name,
+            })
             openUserInfo()
           }}
         >
@@ -189,6 +240,8 @@ const DepartmentMembersList: React.FC<PropsType> = ({
               setApproveMemberModalData({
                 userId: info.row.original.id,
                 isApproved: true,
+                departmentId: getUserDepartment(info.row.original)!.id,
+                page: paginationState.pageIndex + 1,
               })
               openApproveMember()
             }}
@@ -201,6 +254,8 @@ const DepartmentMembersList: React.FC<PropsType> = ({
               setApproveMemberModalData({
                 userId: info.row.original.id,
                 isApproved: false,
+                departmentId: getUserDepartment(info.row.original)!.id,
+                page: paginationState.pageIndex + 1,
               })
               openApproveMember()
             }}
@@ -222,6 +277,7 @@ const DepartmentMembersList: React.FC<PropsType> = ({
               setSwapMemberModalData({
                 userId: info.row.original.id,
                 departmentId: departmentId!,
+                departmentName: getUserDepartment(info.row.original)!.name,
               })
               openSwapMember()
             }}
@@ -239,7 +295,6 @@ const DepartmentMembersList: React.FC<PropsType> = ({
     pageCount: members?.data.totalPages ?? -1,
     state: {
       columnVisibility: {
-        department: !!departmentName,
         approve: !isApproved,
         transfer: isApproved,
       },
@@ -271,21 +326,22 @@ const DepartmentMembersList: React.FC<PropsType> = ({
       <UserInfoModal
         isOpen={isOpenUserInfo}
         onClose={closeUserInfo}
-        userData={userData}
-        departmentName={facultyName}
+        userData={userData?.data}
+        departmentName={userData?.departmentName ?? ''}
       />
       <ApproveMemberModal
         isOpen={isOpenApproveMember}
         onClose={closeApproveMember}
         userId={approveMemberModalData?.userId}
         isApproved={approveMemberModalData?.isApproved}
-        page={paginationState.pageIndex + 1}
-        departmentId={departmentId}
+        page={approveMemberModalData?.page}
+        departmentId={approveMemberModalData?.departmentId}
+        callback={refetch}
       />
       <SwapMemberModal
         isOpen={isOpenSwapMember}
         onClose={closeSwapMember}
-        oldDepartmentName={departmentName}
+        oldDepartmentName={swapMemberModalData?.departmentName}
         memberUserId={swapMemberModalData?.userId}
       />
     </>
