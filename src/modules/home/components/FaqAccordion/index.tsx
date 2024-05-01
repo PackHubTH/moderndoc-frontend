@@ -1,23 +1,24 @@
-import Button from '@/components/Button'
-import Tag from '@/components/Tag'
-import { useDisclosure } from '@/hooks/useDisclosure'
-import useGetFileMutate from '@/hooks/useGetFileMutate'
-import CreateFaqModal from '@/modules/faq/components/CreateFaqModal'
 import { Faq, SubFaq } from '@/modules/faq/types'
-import { Disclosure } from '@headlessui/react'
 import { ReactNode, useState } from 'react'
 import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa6'
-import { HiTrash } from 'react-icons/hi'
-import { MdModeEditOutline } from 'react-icons/md'
 import { blue, white, yellow } from 'tailwindcss/colors'
-import tw from 'twin.macro'
-import DeleteSubFaqModal from '../DeleteSubFaqModal'
-import SubFaqActionModal from '../SubFaqActionModal'
 import {
   SendChannelBgColorMapper,
   SendChannelTextColorMapper,
   SendChannelTextMapper,
 } from './mapper'
+
+import Button from '@/components/Button'
+import Tag from '@/components/Tag'
+import { useDisclosure } from '@/hooks/useDisclosure'
+import useGetFileMutate from '@/hooks/useGetFileMutate'
+import CreateFaqModal from '@/modules/faq/components/CreateFaqModal'
+import { Disclosure } from '@headlessui/react'
+import { HiTrash } from 'react-icons/hi'
+import { MdModeEditOutline } from 'react-icons/md'
+import tw from 'twin.macro'
+import DeleteSubFaqModal from '../DeleteSubFaqModal'
+import SubFaqActionModal from '../SubFaqActionModal'
 
 type PropsType = {
   faq: Faq

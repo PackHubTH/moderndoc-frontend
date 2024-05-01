@@ -128,6 +128,30 @@ const temp = {
   ],
 }
 
+// add delete icon controls
+const deleteIcon = new Fabric.Control({
+  x: 0.5,
+  y: -0.5,
+  offsetY: 16,
+  offsetX: 16,
+  cursorStyle: 'pointer',
+  mouseUpHandler: (eventData, transform: any) => {
+    const target = transform.target
+    const canvas = target.canvas
+    canvas.remove(target)
+    canvas.renderAll()
+  },
+  render: (ctx, left, top, styleOverride, fabricObject) => {
+    ctx.save()
+    ctx.translate(left, top)
+    ctx.rotate(fabricObject.angle)
+    ctx.font = '20px Arial'
+    ctx.fillStyle = 'red'
+    ctx.fillText('✖', 0, 0)
+    ctx.restore()
+  },
+})
+
 const addAutoFill = (
   canvasList: CanvasProps[],
   canvas: Fabric.Canvas,
@@ -169,6 +193,7 @@ const addCheck = (canvas: Fabric.Canvas, x: number, y: number) => {
       fontSize: 40,
       fill: 'green',
       minWidth: 20,
+
       // is_locked: false,
     })
   )
@@ -188,10 +213,14 @@ const addField = (
     top: y,
     left: x,
     fontSize: 20,
-    fill: 'rgb(255, 0, 0)',
+    fill: 'rgb(0, 0, 0)',
     width: 200,
     minWidth: 20,
+    backgroundColor: '#DBEAFE',
+    textAlign: 'center',
   })
+
+  fabricText.controls.deleteIcon = deleteIcon
 
   canvas.add(fabricText)
   canvas.setActiveObject(fabricText)
@@ -213,6 +242,27 @@ const addField = (
   setActiveButton(ActiveToolbarButton.Default)
 }
 
+const addImg = (canvas: Fabric.Canvas, url: string, x: number, y: number) => {
+  console.log('addImg')
+  console.log('canvas', canvas)
+  // add correct check
+  if (canvas) {
+    const img = new Image()
+    img.onload = function () {
+      const fabricImg = new Fabric.Image(img, {
+        top: y,
+        left: x,
+        width: 100,
+        height: 100,
+      })
+      fabricImg.controls.deleteIcon = deleteIcon
+      canvas.add(fabricImg)
+    }
+    img.src = url
+    canvas.renderAll()
+  }
+}
+
 const deleteField = (
   canvas: Fabric.Canvas,
   setActiveButton: (button: ActiveToolbarButton) => void
@@ -232,6 +282,7 @@ interface DataProps {
 
 const _data: DataProps = {
   nameTh: 'test name',
+  major: 'test major',
 }
 
 const _jsonStr =
@@ -241,18 +292,11 @@ const initCanvas = (
   id: string,
   json: any,
   setCanvasList: (id: string, canvas: Fabric.Canvas) => void,
-  type?: string,
-  data?: DataProps
+  type: string,
+  user?: DataProps
 ) => {
   console.log('initCanvas')
-  // check if canvas already exist then re-render
-  // if (document.getElementById(id)) {
-  //   console.log('canvas exist')
-  //   return
-  // }
   const newCanvas = new Fabric.Canvas(id)
-  //extend textbox to add custom field
-  // Extend the Textbox class to include elName as a custom attribute
 
   const originalToObject = newCanvas.toObject.bind(newCanvas)
 
@@ -260,32 +304,20 @@ const initCanvas = (
     ...originalToObject(
       ['elName'] // Add the custom property to the list of properties to include
     ),
-    // elName: 'test', // Adding custom property
   })
 
-  // Fabric.Textbox.fromObject = (function (originalFn) {
-  //   return function (object, callback) {
-  //     return originalFn.call(Fabric.Textbox, object, (result, error) => {
-  //       // Attach new properties or methods here
-  //       if (object.elName) {
-  //         result.elName = object.elName;
-  //       }
-  //       callback(result, error);
-  //     });
-  //   };
-  // })(Fabric.Textbox.fromObject);
   // newCanvas.loadFromJSON(json, newCanvas.renderAll.bind(newCanvas))
   newCanvas.loadFromJSON(json).then(() => {
     newCanvas.forEachObject((obj: any) => {
-      if (!obj.editable) {
-        obj.set({ selectable: false })
-        obj.set({ evented: false })
+      if (type === 'document-create') {
+        if (obj?.elName && user && user[obj?.elName]) {
+          obj.set({ text: user[obj?.elName] as string })
+        }
       }
-      // if elName in json exist in data object then set text to data object
-      if (obj?.elName && _data[obj?.elName] && type === 'document') {
-        obj.set({ text: _data[obj?.elName] as string })
-      }
-      console.log('obj from json', obj)
+      // hide controls visible on y axis
+      obj.setControlsVisibility({ mt: false, mb: false })
+      // set delete icon
+      obj.controls.deleteIcon = deleteIcon
     })
     newCanvas.renderAll()
   })
@@ -323,18 +355,14 @@ const mouseHandler = (
   console.log('mouseHandler')
   if (activeButton !== ActiveToolbarButton.Default) {
     canvas.forEachObject((obj: any) => {
-      // console.log('obj', obj, obj.is_locked)
       obj.set({ selectable: false })
       obj.set({ evented: false })
     })
     canvas.discardActiveObject()
   } else {
     canvas.forEachObject((obj: any) => {
-      // console.log('obj', obj, obj.is_locked)
-      if (obj.editable) {
-        obj.set({ selectable: true })
-        obj.set({ evented: true })
-      }
+      obj.set({ selectable: true })
+      obj.set({ evented: true })
     })
   }
   switch (activeButton) {
@@ -355,6 +383,7 @@ const mouseHandler = (
       break
     case ActiveToolbarButton.Pen:
       console.log('pen')
+      addImg(canvas, 'https://via.placeholder.com/150', option.x, option.y)
       break
     case ActiveToolbarButton.Delete:
       console.log('delete')
@@ -445,19 +474,14 @@ const saveCanvas = async (canvasList: CanvasProps[], file: any) => {
   link.click()
 }
 
-const setTextAlign = (
-  canvasList: CanvasProps[],
-  id: string,
-  align: string,
-  setActiveObject: (obj: Fabric.Object) => void
-) => {
+const setTextAlign = (canvasList: CanvasProps[], id: string, align: string) => {
   const canvas = canvasList.find((page) => page.id === id)?.canvas
   const activeObject = canvas?.getActiveObject()
-
   if (activeObject && canvas) {
-    const updatedObject = activeObject.set({ textAlign: align })
+    const updatedObject = activeObject.set({
+      textAlign: align,
+    })
     console.log('Updated Object', updatedObject)
-    setActiveObject(updatedObject) // Updating state with the new object
     canvas.renderAll()
   }
 }
@@ -475,7 +499,7 @@ const setTextBold = (
       fontWeight: activeObject.get('fontWeight') === 'bold' ? 'normal' : 'bold',
     })
     console.log('Updated Object', updatedObject)
-    setActiveObject(updatedObject) // Updating state with the new object
+    // setActiveObject(updatedObject) // Updating state with the new object
     canvas.renderAll()
   }
 }
@@ -490,12 +514,13 @@ const setTextItalic = (
 
   if (activeObject && canvas) {
     const updatedObject = activeObject.set({
+      ...activeObject,
       fontStyle:
         activeObject.get('fontStyle') === 'italic' ? 'normal' : 'italic',
     })
     console.log('Updated Object', updatedObject)
-    canvas.renderAll()
     setActiveObject(updatedObject) // Updating state with the new object
+    canvas.renderAll()
   }
 }
 
@@ -511,6 +536,51 @@ const setAutoFillType = (
   if (activeObject && canvas) {
     const updatedObject = activeObject.set({ elName, text })
     console.log('Updated Object', updatedObject)
+    canvas.renderAll()
+  }
+}
+
+const setFontSize = (
+  canvasList: CanvasProps[],
+  id: string,
+  fontSize: number
+) => {
+  const canvas = canvasList.find((page) => page.id === id)?.canvas
+  const activeObject = canvas?.getActiveObject()
+
+  console.log('createNewObject', canvas, activeObject)
+
+  if (activeObject && canvas) {
+    // const updatedObject = activeObject.set({ fontSize })
+    // console.log('Updated Object', updatedObject)
+    const newObject = new Fabric.Textbox(activeObject.get('text') as string, {
+      ...activeObject,
+      fontSize,
+    })
+    console.log('createNewObject', newObject)
+    canvas.remove(activeObject)
+    canvas.add(newObject)
+    canvas.renderAll()
+  }
+}
+
+const setFontFamily = (
+  canvasList: CanvasProps[],
+  id: string,
+  fontFamily: string
+) => {
+  const canvas = canvasList.find((page) => page.id === id)?.canvas
+  const activeObject = canvas?.getActiveObject()
+
+  if (activeObject && canvas) {
+    // const updatedObject = activeObject.set({ fontSize })
+    // console.log('Updated Object', updatedObject)
+    const newObject = new Fabric.Textbox(activeObject.get('text') as string, {
+      ...activeObject,
+      fontFamily,
+    })
+    canvas.remove(activeObject)
+    canvas.add(newObject)
     canvas.renderAll()
   }
 }
@@ -568,6 +638,7 @@ export {
   addAutoFill,
   addCheck,
   addField,
+  addImg,
   getJson,
   hexToRgb,
   initCanvas,
@@ -576,6 +647,7 @@ export {
   rgbToHex,
   saveCanvas,
   setAutoFillType,
+  setFontSize,
   setTextAlign,
   setTextBold,
   setTextItalic,

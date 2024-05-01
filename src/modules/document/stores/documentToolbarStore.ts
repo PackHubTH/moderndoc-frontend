@@ -1,5 +1,5 @@
-import { ActiveToolbarButton } from '../types/ToolbarButton'
 import { create } from 'zustand'
+import { ActiveToolbarButton } from '../types/ToolbarButton'
 
 type DocumentToolbarStore = {
   activeButton: ActiveToolbarButton
@@ -16,5 +16,8 @@ export const useDocumentToolbarStore = create<DocumentToolbarStore>((set) => ({
   activeObject: null,
   setActiveButton: (button) => set({ activeButton: button }),
   setActiveCanvasId: (id) => set({ activeCanvasId: id }),
-  setActiveObject: (object) => set({ activeObject: object }),
+  setActiveObject: (object) => {
+    console.log('set active object', object)
+    set({ activeObject: object })
+  },
 }))

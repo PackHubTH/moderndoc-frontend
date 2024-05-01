@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import {
   FaAlignJustify,
   FaAlignLeft,
@@ -16,6 +17,7 @@ import {
   hexToRgb,
   rgbToHex,
   saveCanvas,
+  setFontSize,
   setTextAlign,
   setTextBold,
   setTextItalic,
@@ -27,10 +29,10 @@ import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
 import MainLogo from '@/components/MainLogo'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import useGetFile from '@/hooks/useGetFile'
 import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
 import { useUserStore } from '@/stores/userStore'
 import { PDFDocument } from 'pdf-lib'
-import { useRef } from 'react'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
 import tw from 'twin.macro'
@@ -42,6 +44,7 @@ import DocumentToolbar from '../components/DocumentToolbar'
 import GuidelineModal from '../components/GuidelineModal'
 import ProfileBox from '../components/ProfileBox'
 import ToolbarButton from '../components/ToolbarButton'
+import ToolbarTextButton from '../components/ToolbarTextButton'
 import useGetDocumentById from '../hooks/api/useGetDocumentById'
 import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
@@ -52,7 +55,6 @@ type PropsType = {
 }
 
 const DocumentEditor = ({ type }: PropsType) => {
-  const navigate = useNavigate()
   const {
     isOpen: isGuidelineModalOpen,
     open: openGuidelineModal,
@@ -63,7 +65,6 @@ const DocumentEditor = ({ type }: PropsType) => {
     open: openProcessModal,
     close: closeProcessModal,
   } = useDisclosure()
-  const canvasRef = useRef<HTMLDivElement>(null)
   const pageTotal = useDocumentStore((state) => state.pageTotal)
   const canvasList = useDocumentStore((state) => state.canvasList)
   const setCanvasSize = useDocumentStore((state) => state.setCanvasSize)
@@ -75,19 +76,24 @@ const DocumentEditor = ({ type }: PropsType) => {
   const setActiveObject = useDocumentToolbarStore(
     (state) => state.setActiveObject
   )
+  const navigate = useNavigate()
+  const user = useUserStore((state) => state.user)
+  const canvasRef = useRef<HTMLDivElement>(null)
 
   const { documentId = '', templateId = '' } = useParams()
-  // TODO: useGetTemplateById
   const { data: documentData } = useGetDocumentById(documentId)
   const { data: templateData } = useGetTemplateById(templateId)
-  const user = useUserStore((state) => state.user)
-  console.log('data', templateId, documentId, documentData)
+  const { data: file, refetch: refetchFile } = useGetFile(
+    (documentData?.data?.templateFile || templateData?.data?.templateFile) ?? ''
+  )
+
+  useEffect(() => {
+    if (!file) refetchFile()
+  }, [documentData, templateData])
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    console.log('numPages', numPages)
     setPageTotal(numPages)
   }
-
   const onPageLoadSuccess = (pageNumber: number) => {
     const pages = canvasRef.current?.children[0]
     if (pages)
@@ -136,10 +142,7 @@ const DocumentEditor = ({ type }: PropsType) => {
     link.download = 'modified_document.pdf'
     link.click()
   }
-  console.log(
-    'file',
-    documentData?.data?.templateFile || templateData?.data?.templateFile
-  )
+
   return (
     <div>
       {/* Header */}
@@ -222,12 +225,21 @@ const DocumentEditor = ({ type }: PropsType) => {
               icon={<FaA />}
               id={ButtonId.Text}
               label="Text"
-              onClick={() => console.log(getJson(canvasList))}
+              // onClick={() => console.log(getJson(canvasList))}
             />
             <ToolbarButton
               icon={<FaPenFancy />}
               id={ButtonId.Pen}
               label="Sign"
+              // onClick={() =>
+              //   addImg(
+              //     canvasList,
+              //     activeCanvasId,
+              //     'https://placehold.co/600x400',
+              //     0,
+              //     0
+              //   )
+              // }
             />
             <ToolbarButton
               icon={<FaCheck />}
@@ -240,32 +252,17 @@ const DocumentEditor = ({ type }: PropsType) => {
               id={ButtonId.Default}
               label="Select"
             />
-            {activeObject ? (
+            {activeObject && activeObject.text ? (
               <>
                 <Dropdown
-                  label={activeObject?.fontSize.toString() ?? '16'}
+                  label={activeObject?.fontSize?.toString() ?? '16'}
                   dropdownSection={[
                     {
-                      lists: [
-                        {
-                          displayText: '14',
-                          onClick: () => {
-                            activeObject?.set('fontSize', 14)
-                            canvasList
-                              .find((page) => page.id === activeCanvasId)
-                              ?.canvas?.renderAll()
-                          },
-                        },
-                        {
-                          displayText: '16',
-                          onClick: () => {
-                            activeObject?.set('fontSize', 16)
-                            canvasList
-                              .find((page) => page.id === activeCanvasId)
-                              ?.canvas?.renderAll()
-                          },
-                        },
-                      ],
+                      lists: [8, 12, 16, 20, 24, 48, 72].map((size) => ({
+                        displayText: size,
+                        onClick: () =>
+                          setFontSize(canvasList, activeCanvasId, size),
+                      })),
                     },
                   ]}
                 />
@@ -273,66 +270,51 @@ const DocumentEditor = ({ type }: PropsType) => {
                   label={activeObject?.fontFamily ?? 'Arial'}
                   dropdownSection={[
                     {
-                      lists: [
-                        { displayText: '14' },
-                        {
-                          displayText: '16',
-                        },
-                      ],
+                      lists: ['Arial', 'Kanit', 'Sarabun', 'Prompt'].map(
+                        (font) => ({
+                          displayText: font,
+                          onClick: () => activeObject?.set('fontFamily', font),
+                        })
+                      ),
                     },
                   ]}
                 />
-                <ToolbarButton
+                <ToolbarTextButton
                   icon={<FaAlignLeft />}
-                  id={ButtonId.TextAlignLeft}
-                  selected={activeObject?.textAlign === 'left'}
+                  name="textAlign"
+                  value="left"
                   onClick={() =>
-                    setTextAlign(
-                      canvasList,
-                      activeCanvasId,
-                      'left',
-                      setActiveObject
-                    )
+                    setTextAlign(canvasList, activeCanvasId, 'left')
                   }
                 />
-                <ToolbarButton
+                <ToolbarTextButton
                   icon={<FaAlignJustify />}
-                  id={ButtonId.TextAlignCenter}
-                  selected={activeObject?.textAlign === 'center'}
-                  onClick={() => {
-                    setTextAlign(
-                      canvasList,
-                      activeCanvasId,
-                      'center',
-                      setActiveObject
-                    )
-                  }}
-                />
-                <ToolbarButton
-                  icon={<FaAlignRight />}
-                  id={ButtonId.TextAlignRight}
-                  selected={activeObject?.textAlign === 'right'}
+                  name="textAlign"
+                  value="center"
                   onClick={() =>
-                    setTextAlign(
-                      canvasList,
-                      activeCanvasId,
-                      'right',
-                      setActiveObject
-                    )
+                    setTextAlign(canvasList, activeCanvasId, 'center')
                   }
                 />
-                <ToolbarButton
+                <ToolbarTextButton
+                  icon={<FaAlignRight />}
+                  name="textAlign"
+                  value="right"
+                  onClick={() =>
+                    setTextAlign(canvasList, activeCanvasId, 'right')
+                  }
+                />
+                <ToolbarTextButton
                   icon={<FaBold />}
-                  id={ButtonId.Bold}
-                  selected={activeObject?.fontWeight === 'bold'}
+                  name="fontWeight"
+                  value="bold"
                   onClick={() =>
                     setTextBold(canvasList, activeCanvasId, setActiveObject)
                   }
                 />
-                <ToolbarButton
+                <ToolbarTextButton
                   icon={<FaItalic />}
-                  id={ButtonId.Italic}
-                  selected={activeObject?.fontStyle === 'italic'}
+                  name="fontStyle"
+                  value="italic"
                   onClick={() =>
                     setTextItalic(canvasList, activeCanvasId, setActiveObject)
                   }
@@ -356,14 +338,7 @@ const DocumentEditor = ({ type }: PropsType) => {
             className="flex h-[calc(100vh-122px)] justify-center overflow-auto bg-[#f1f2f5]"
             ref={canvasRef}
           >
-            <Document
-              file={
-                exampleFile
-                // documentData?.data?.templateFile ||
-                // templateData?.data?.templateFile
-              }
-              onLoadSuccess={onDocumentLoadSuccess}
-            >
+            <Document file={file?.data} onLoadSuccess={onDocumentLoadSuccess}>
               {Array.apply(null, Array(pageTotal))
                 .map((x, i) => i + 1)
                 .map((page) => {
@@ -371,14 +346,20 @@ const DocumentEditor = ({ type }: PropsType) => {
                     <div key={page} className="relative">
                       <DocumentCanvas
                         id={`${page - 1}`}
-                        element={documentData?.data?.element}
+                        element={
+                          documentData?.data?.element?.data[page - 1] ||
+                          templateData?.data?.element?.data[page - 1]
+                        }
+                        type={
+                          type === 'edit' ? 'document-edit' : 'document-create'
+                        }
                       />
                       <Page
                         pageNumber={page}
                         renderTextLayer={false}
                         renderAnnotationLayer={false}
-                        scale={2}
-                        width={400}
+                        scale={1}
+                        width={800}
                         className="mt-2 border-black"
                         onLoadSuccess={() => onPageLoadSuccess(page)}
                       />

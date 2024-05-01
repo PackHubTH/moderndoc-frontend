@@ -150,4 +150,6 @@ interface UserCreated {
 interface Teacher {
   staffNumber: string
 }
-interface Element {}
+interface Element {
+  data: any
+}

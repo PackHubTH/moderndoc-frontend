@@ -1,15 +1,18 @@
 import { useEffect, useRef } from 'react'
 import { initCanvas, mouseHandler } from '../utils/documentEditorUtils'
 
+import { useUserStore } from '@/stores/userStore'
+import { parseUserDatatoAutofill } from '@/utils/parserUtils'
 import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
 
 interface DocumentCanvasProps {
   id: string
   element: any
+  type: 'document-create' | 'document-edit' | 'template'
 }
 
-const DocumentCanvas = ({ id, element }: DocumentCanvasProps) => {
+const DocumentCanvas = ({ id, element, type }: DocumentCanvasProps) => {
   const canvasList = useDocumentStore((state) => state.canvasList)
   const canvasSizes = useDocumentStore((state) => state.canvasSizes)
   const setCanvasList = useDocumentStore((state) => state.setCanvasList)
@@ -29,6 +32,8 @@ const DocumentCanvas = ({ id, element }: DocumentCanvasProps) => {
   )
   const resetCanvasList = useDocumentStore((state) => state.resetCanvasList)
 
+  const user = useUserStore((state) => state.user)
+
   useEffect(() => {
     canvasListRef.current = canvasList
   }, [canvasList])
@@ -39,7 +44,13 @@ const DocumentCanvas = ({ id, element }: DocumentCanvasProps) => {
     const isHasCanvas = canvasList.findIndex((page) => page.id === id) !== -1
     console.log('isHasPage', isHasPage, 'isHasCanvas', isHasCanvas, element)
     if (isHasPage && !isHasCanvas) {
-      initCanvas(id, element ?? {}, setCanvasList)
+      initCanvas(
+        id,
+        element ?? {},
+        setCanvasList,
+        type,
+        parseUserDatatoAutofill(user)
+      )
     }
 
     return () => {
@@ -80,16 +91,24 @@ const DocumentCanvas = ({ id, element }: DocumentCanvasProps) => {
       setActiveObject(null)
     }
 
+    const handler4 = (option: any) => {
+      console.log('object:modified', option)
+      const obj = option.target
+      setActiveObject(obj)
+    }
+
     if (canvas) {
       canvas.on('mouse:down', handler)
       canvas.on('selection:created', handler2)
       canvas.on('selection:cleared', handler3)
       canvas.on('selection:updated', handler2)
+      canvas.on('object:modified', handler4)
       return () => {
         canvas.off('mouse:down', handler)
         canvas.off('selection:created', handler2)
         canvas.off('selection:cleared', handler3)
         canvas.off('selection:updated', handler2)
+        canvas.off('object:modified', handler4)
       }
     }
   }, [activeButton, canvasList, id])

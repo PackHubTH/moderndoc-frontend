@@ -21,7 +21,7 @@ const DocumentManagementPage: React.FC = () => {
           variant="green"
           leftIcon={<FaPlus size={18} />}
           onClick={() => {
-            navigate('/create-document/eec42725-fdd6-4201-80ae-e2b8e788b97b')
+            navigate('/create-document/f5fb00e4-7d45-43a8-9781-dbb72833c4a4')
           }}
         />
         <TextInput className="w-[240px]" placeholder="ค้นหา..." />

@@ -29,15 +29,15 @@ import useGetTemplateById from '../hooks/api/useGetTemplateById'
 // import file from './example.pdf'
 
 const autoFillData = [
-  { label: 'ชื่อ-นามสกุล', value: 'nameTh' },
+  { label: 'ชื่อ-นามสกุล', value: 'name' },
   { label: 'ระดับการศึกษา', value: 'educationLevel' },
   { label: 'คณะ', value: 'faculty' },
   { label: 'ภาค/สาขาวิชา', value: 'major' },
-  { label: 'หลักสูตร', value: 'university' },
-  { label: 'รหัสนักศึกษา', value: 'academicYear' },
-  { label: 'เบอร์โทรศัพท์', value: 'date' },
-  { label: 'E-mail', value: 'time' },
-  { label: 'อาจารย์ที่ปรึกษา', value: 'location' },
+  { label: 'หลักสูตร', value: 'course' },
+  { label: 'รหัสนักศึกษา', value: 'studentNumber' },
+  { label: 'เบอร์โทรศัพท์', value: 'phone' },
+  { label: 'E-mail', value: 'email' },
+  { label: 'อาจารย์ที่ปรึกษา', value: 'teacher' },
 ]
 
 interface TemplateEditorProps {
@@ -181,6 +181,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
                               ? templateEdit?.data?.element?.data[page - 1]
                               : undefined
                           }
+                          type="template"
                         />
                         <Page
                           pageNumber={page}
@@ -223,13 +224,13 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
                           onClick: () => {
                             setActiveObject({
                               ...activeObject,
-                              elName: 'nameTh',
+                              elName: 'name',
                               text: 'ชื่อ-นามสกุล',
                             })
                             setAutoFillType(
                               canvasList,
                               activeCanvasId,
-                              'nameTh',
+                              'name',
                               'ชื่อ-นามสกุล'
                             )
                           },
