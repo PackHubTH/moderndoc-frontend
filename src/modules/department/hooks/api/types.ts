@@ -1,5 +1,10 @@
-import { DepartmentType, Faculty } from '@/modules/user/hooks/types'
+import {
+  DepartmentType,
+  Faculty,
+  StaffDepartment,
+} from '@/modules/user/hooks/types'
 import { UserRole } from 'types/user'
+import { TeacherDepartment } from './../../../user/hooks/types'
 
 export type GetDepartmentMemberResponse = {
   id: string
@@ -19,9 +24,11 @@ export type GetDepartmentMemberResponse = {
   }
   staff?: {
     staffNumber: string
+    staffDepartments: StaffDepartment[]
   }
   teacher?: {
     staffNumber: string
+    TeacherDepartment: TeacherDepartment[]
   }
 }
 
