@@ -86,35 +86,35 @@ const DepartmentMembersList: React.FC<PropsType> = ({
     if (user.role === UserRole.STAFF) {
       if (
         agencyDash &&
-        user.staff?.staffDepartments[0]?.department?.type ===
+        user.staff?.staffDepartments?.[0]?.department?.type ===
           DepartmentType.AGENCY
       ) {
         return undefined
       }
-      return user.staff?.staffDepartments[0]?.department ?? undefined
+      return user.staff?.staffDepartments?.[0]?.department ?? undefined
     }
     if (user.role === UserRole.TEACHER) {
       if (
         agencyDash &&
-        user.staff?.staffDepartments[0]?.department?.type ===
+        user.staff?.staffDepartments?.[0]?.department?.type ===
           DepartmentType.AGENCY
       ) {
         return undefined
       }
-      return user.teacher?.TeacherDepartment[0]?.department ?? undefined
+      return user.teacher?.TeacherDepartment?.[0]?.department ?? undefined
     }
   }
 
   const getUserFaculty = (user: GetDepartmentMemberResponse) => {
     if (user.role === UserRole.STAFF) {
       return (
-        user.staff?.staffDepartments[0]?.department?.faculty ??
+        user.staff?.staffDepartments?.[0]?.department?.faculty ??
         getUserDepartment(user)
       )
     }
     if (user.role === UserRole.TEACHER) {
       return (
-        user.teacher?.TeacherDepartment[0]?.department?.faculty ??
+        user.teacher?.TeacherDepartment?.[0]?.department?.faculty ??
         getUserDepartment(user)
       )
     }
@@ -311,6 +311,17 @@ const DepartmentMembersList: React.FC<PropsType> = ({
   useEffect(() => {
     refetch()
   }, [departmentId])
+
+  useEffect(() => {
+    setPaginationState({
+      pageIndex: 0,
+      pageSize: 10,
+    })
+    table.setPagination({
+      pageIndex: 0,
+      pageSize: 10,
+    })
+  }, [isApproved])
 
   return (
     <>

@@ -7,7 +7,7 @@ import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { useUserStore } from '@/stores/userStore'
 import { useEffect, useState } from 'react'
-import { VscMortarBoard } from 'react-icons/vsc'
+import { IoDocumentTextOutline } from 'react-icons/io5'
 import { useInView } from 'react-intersection-observer'
 import { UserRole } from 'types/user'
 import FaqAccordion from '../components/FaqAccordion'
@@ -50,7 +50,7 @@ const Home = () => {
   return (
     <PageContainer className="p-4 ">
       <div className="space-y-2 text-center">
-        <img src={FaqImage} alt="faq" className="mx-auto" />
+        <img src={FaqImage} alt="faq" className="mx-auto w-[356px]" />
         <div className="flex items-center justify-center gap-4">
           <TextInput
             className="w-[600px]"
@@ -94,7 +94,7 @@ const Home = () => {
             <div key={faq.id} className="rounded-lg ">
               {shouldShowDepartment && (
                 <div className="mb-5 mt-8 flex items-center gap-4">
-                  <VscMortarBoard
+                  <IoDocumentTextOutline
                     size={50}
                     className="rounded-lg bg-yellow-100 p-2 text-yellow-500"
                   />

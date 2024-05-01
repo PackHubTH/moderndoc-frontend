@@ -4,13 +4,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { MdModeEditOutline, MdRemoveRedEye } from 'react-icons/md'
 
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
+import Tabs from '@/components/Tabs'
 import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import useGetPublicFaqsPagination from '@/modules/faq/hooks/api/useGetPublicFaqsPagination'
 import useFaqStore from '@/modules/faq/stores/useFaqStore'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { format } from 'date-fns'
@@ -26,6 +28,8 @@ import { Faq } from '../../types'
 const FaqListTable = () => {
   const navigate = useNavigate()
   const { setFaq } = useFaqStore()
+
+  const [faqType, setFaqType] = useState<'department' | 'all'>('department')
 
   const {
     isOpen: isOpenCreateFaqModal,
@@ -48,11 +52,23 @@ const FaqListTable = () => {
 
   const { data: userData } = useGetUser()
 
-  const { data: faqs, refetch } = useGetDepartmentFaqs(
+  const { data: departmentFaqs } = useGetDepartmentFaqs(
     paginationState.pageIndex + 1,
     '',
     userData?.data?.role === UserRole.ADMIN
   )
+
+  const { data: publicFaqs } = useGetPublicFaqsPagination(
+    paginationState.pageIndex + 1
+  )
+
+  const faqsData = useMemo(() => {
+    if (faqType === 'department') {
+      return departmentFaqs
+    } else {
+      return publicFaqs
+    }
+  }, [departmentFaqs, publicFaqs, faqType])
 
   const columns: ColumnDef<Faq>[] = [
     {
@@ -70,7 +86,7 @@ const FaqListTable = () => {
     {
       id: 'tags',
       size: 60,
-      header: `ทั้งหมด ${faqs?.data.total} ข้อมูล`,
+      header: `ทั้งหมด ${faqsData?.data.total} ข้อมูล`,
       cell: (info) => (
         <div className="space-y-1">
           {info.row.original.faqTags.map((tag) => (
@@ -106,14 +122,16 @@ const FaqListTable = () => {
             </span>
           </div>
           <div className="flex gap-3">
-            <MdModeEditOutline
-              size={18}
-              className="cursor-pointer rounded-full text-blue-500"
-              onClick={() => {
-                setEditFaq(info.row.original)
-                openCreateFaqModal()
-              }}
-            />
+            {faqType === 'department' && (
+              <MdModeEditOutline
+                size={18}
+                className="cursor-pointer rounded-full text-blue-500"
+                onClick={() => {
+                  setEditFaq(info.row.original)
+                  openCreateFaqModal()
+                }}
+              />
+            )}
             <MdRemoveRedEye
               size={18}
               className="cursor-pointer rounded-full text-blue-500"
@@ -122,14 +140,16 @@ const FaqListTable = () => {
                 navigate('/faq')
               }}
             />
-            <HiTrash
-              size={18}
-              className="cursor-pointer rounded-full text-red-500"
-              onClick={() => {
-                setEditFaq(info.row.original)
-                openDeleteFaqModal()
-              }}
-            />
+            {faqType === 'department' && (
+              <HiTrash
+                size={18}
+                className="cursor-pointer rounded-full text-red-500"
+                onClick={() => {
+                  setEditFaq(info.row.original)
+                  openDeleteFaqModal()
+                }}
+              />
+            )}
           </div>
         </div>
       ),
@@ -138,10 +158,10 @@ const FaqListTable = () => {
 
   const table = useReactTable({
     columns,
-    data: faqs?.data.data ?? [],
+    data: faqsData?.data.data ?? [],
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    pageCount: faqs?.data.totalPages ?? -1,
+    pageCount: faqsData?.data.totalPages ?? -1,
   })
 
   useEffect(() => {
@@ -153,10 +173,40 @@ const FaqListTable = () => {
 
   return (
     <>
-      <div className="p-2">
-        <TableDisplay table={table} />
+      <div className="px-2">
+        <Tabs
+          tabs={[
+            {
+              title: 'รายการของฉัน',
+              content: (
+                <div className="mt-4">
+                  <TableDisplay table={table} />
+                </div>
+              ),
+            },
+            {
+              title: 'รายการทั้งหมด',
+              content: (
+                <div className="mt-4">
+                  <TableDisplay table={table} />
+                </div>
+              ),
+            },
+          ]}
+          onChangeTab={(index) => {
+            setFaqType(index === 0 ? 'department' : 'all')
+            setPaginationState({
+              pageIndex: 0,
+              pageSize: 10,
+            })
+            table.setPagination({
+              pageIndex: 0,
+              pageSize: 10,
+            })
+          }}
+        />
         <Pagination
-          totalPage={faqs?.data.totalPages ?? 0}
+          totalPage={faqsData?.data.totalPages ?? 0}
           currentPage={table.getState().pagination.pageIndex + 1}
           nextPage={table.nextPage}
           prevPage={table.previousPage}
