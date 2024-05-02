@@ -29,12 +29,14 @@ type PropsType = {
   onClose: () => void
   mode?: 'create' | 'edit'
   faq?: Faq
+  callback?: () => void
 }
 const CreateFaqModal: React.FC<PropsType> = ({
   isOpen,
   onClose,
   mode = 'create',
   faq,
+  callback,
 }) => {
   const { methods } = useCreateFaqForm()
   const [departmentSearch, setDepartmentSearch] = useState('')
@@ -67,6 +69,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
           })
           onClose()
           refetch()
+          callback?.()
         },
         onError: (error) => {
           toast(
@@ -87,6 +90,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
         files: faq.files ?? [],
         tagIds: faq.faqTags.map((tag) => tag.tagId),
         templateId: faq.template?.title ?? null,
+        departmentId: faq.departmentId,
       })
       methods.trigger()
     }
@@ -105,7 +109,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
   }, [methods.watch('departmentId')])
 
   useEffect(() => {
-    if (userData?.data.role === UserRole.ADMIN) {
+    if (userData?.data.role === UserRole.ADMIN && mode === 'create') {
       methods.setValue('departmentId', '')
     }
   }, [userData])
