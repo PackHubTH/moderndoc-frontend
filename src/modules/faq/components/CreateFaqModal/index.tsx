@@ -204,7 +204,7 @@ const CreateFaqModal: React.FC<PropsType> = ({
             render={({ field }) => (
               <div>
                 <RadioGroup
-                  label="แนวทางการส่งเอกสาร"
+                  label="ช่องทางการส่งเอกสาร"
                   options={[
                     {
                       label: 'สามารถส่งเอกสารภายในระบบได้ (Online)',
@@ -218,6 +218,10 @@ const CreateFaqModal: React.FC<PropsType> = ({
                       label: 'สามารถส่งได้ทั้ง 2 รูปแบบ',
                       value: SendChannel.BOTH,
                     },
+                    {
+                      label: 'ไม่มีการส่งเอกสาร',
+                      value: SendChannel.NO_SEND,
+                    },
                   ]}
                   {...field}
                 />
@@ -229,8 +233,8 @@ const CreateFaqModal: React.FC<PropsType> = ({
             name="sendChannelInfo"
             render={({ field }) => (
               <RichTextInput
-                label="ช่องทางการส่งเอกสาร"
-                placeholder="กรอกช่องทางการส่งเอกสาร"
+                label="แนวทางการส่งเอกสาร"
+                placeholder="กรอกแนวทางการส่งเอกสาร"
                 {...field}
               />
             )}
@@ -301,6 +305,29 @@ const CreateFaqModal: React.FC<PropsType> = ({
               />
             )}
           />
+          <Controller
+            control={methods.control}
+            name="isInternal"
+            render={({ field }) => (
+              <RadioGroup
+                label="ระดับการแชร์"
+                options={[
+                  {
+                    label: 'สาธารณะ',
+                    value: false,
+                  },
+                  {
+                    label: 'เฉพาะภายในสังกัด/หน่วยงานของตนเอง',
+                    value: true,
+                  },
+                ]}
+                onChange={(value: boolean) => {
+                  field.onChange(value)
+                }}
+                value={field.value}
+              />
+            )}
+          />
           {userData?.data.role === UserRole.ADMIN && (
             <Controller
               control={methods.control}
@@ -327,29 +354,6 @@ const CreateFaqModal: React.FC<PropsType> = ({
               )}
             />
           )}
-          <Controller
-            control={methods.control}
-            name="isInternal"
-            render={({ field }) => (
-              <RadioGroup
-                label="ระดับการแชร์"
-                options={[
-                  {
-                    label: 'สาธารณะ',
-                    value: false,
-                  },
-                  {
-                    label: 'เฉพาะภายในสังกัด/หน่วยงานของตนเอง',
-                    value: true,
-                  },
-                ]}
-                onChange={(value: boolean) => {
-                  field.onChange(value)
-                }}
-                value={field.value}
-              />
-            )}
-          />
         </form>
       }
       actions={
