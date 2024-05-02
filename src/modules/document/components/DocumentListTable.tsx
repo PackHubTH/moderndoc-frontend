@@ -122,7 +122,7 @@ const DocumentListTable = ({ type }: PropsType) => {
             <div className="absolute right-2 top-4 space-x-2">
               {shouldShowAction(
                 info.row.original.status,
-                info.row.original.documentSents.find(
+                info.row.original.documentSents?.find(
                   (sent) => sent.receiverId === user.id
                 )?.status ?? ''
               ) && (
