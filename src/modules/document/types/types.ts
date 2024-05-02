@@ -14,6 +14,15 @@ export enum DocumentStatus {
   CANCELED = 'CANCELED',
 }
 
+export enum DocumentSentStatus {
+  SENT = 'SENT',
+  PROCESSING = 'PROCESSING',
+  RETURNING = 'RETURNING',
+  WAITING = 'WAITING',
+  COMPLETED = 'COMPLETED',
+  CANCELED = 'CANCELED',
+}
+
 export type Document = {
   id: string
   title: string
@@ -39,6 +48,7 @@ type DocumentSent = {
   status: string
   id: string
 }
+
 type UserCreated = {
   nameTh: string
   nameEn: string

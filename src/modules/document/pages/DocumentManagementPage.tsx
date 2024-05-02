@@ -1,5 +1,6 @@
 import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
+import Tabs from '@/components/Tabs'
 import TextInput from '@/components/TextInput'
 import { FaPlus } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
@@ -26,12 +27,22 @@ const DocumentManagementPage: React.FC = () => {
         />
         <TextInput className="w-[240px]" placeholder="ค้นหา..." />
       </div>
-      <div className="flex">
-        {/* <TemplateListTable />
-        <TemplateInfoBox /> */}
-        <DocumentListTable />
-      </div>
-      {/* <UploadModal isOpen={isOpen} close={close} /> */}
+      <Tabs
+        tabs={[
+          {
+            content: <DocumentListTable type="ALL" />,
+            title: 'เอกสารทั้งหมด',
+          },
+          {
+            content: <DocumentListTable type="SENT" />,
+            title: 'เอกสารของฉัน',
+          },
+          {
+            content: <DocumentListTable type="RECEIVED" />,
+            title: 'เอกสารที่ได้รับ',
+          },
+        ]}
+      />
     </PageContainer>
   )
 }

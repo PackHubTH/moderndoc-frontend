@@ -14,12 +14,16 @@ import { UserRole } from 'types/user'
 import useActionDocument from '../hooks/api/useActionDocument'
 import useActionDocumentForm from '../hooks/useActionDocumentForm'
 import { ActionDocumentForm } from '../hooks/useActionDocumentForm/validation'
+import { useDocumentStore } from '../stores/documentStore'
 import { DocumentAction } from '../types/types'
+import { getJson } from '../utils/documentEditorUtils'
 
 type PropsType = {
   createdById: string
   createdByName: string
   documentId: string
+  operatorId: string
+  operatorName: string
   isOpen: boolean
   close: () => void
 }
@@ -29,13 +33,17 @@ const ActionDocumentModal: React.FC<PropsType> = ({
   createdByName,
   documentId,
   isOpen,
+  operatorId,
+  operatorName,
   close,
 }: PropsType) => {
   const { methods } = useActionDocumentForm()
   const { mutate: actionDocument } = useActionDocument()
+  const canvasList = useDocumentStore((state) => state.canvasList)
   const userRole = useUserStore((state) => state.user?.role)
+  // TODO: แก้ไขเอกสาร flow
   const [documentAction, setDocumentAction] = useState(
-    userRole === UserRole.TEACHER
+    userRole === UserRole.TEACHER || userRole === UserRole.STUDENT
       ? DocumentAction.SEND_TO_OPERATOR
       : DocumentAction.SEND_TO_REVIEW
   )
@@ -52,9 +60,13 @@ const ActionDocumentModal: React.FC<PropsType> = ({
     methods.reset({ receiverId: '', message: '' })
     if (
       documentAction === DocumentAction.SEND_BACK_TO_OWNER ||
-      documentAction === DocumentAction.SEND_TO_OPERATOR
+      documentAction === DocumentAction.COMPLETE ||
+      documentAction === DocumentAction.REJECT
     ) {
       methods.reset({ receiverId: createdById, message: '' })
+    }
+    if (documentAction === DocumentAction.SEND_TO_OPERATOR) {
+      methods.reset({ receiverId: operatorId, message: '' })
     }
     methods.trigger()
   }, [documentAction])
@@ -64,7 +76,7 @@ const ActionDocumentModal: React.FC<PropsType> = ({
       actionDocument(
         {
           documentId,
-          element: {},
+          element: { data: getJson(canvasList) },
           action: documentAction,
           message: data.message ?? '',
           receiverId: data.receiverId ?? '',
@@ -86,6 +98,7 @@ const ActionDocumentModal: React.FC<PropsType> = ({
     }
   }
 
+  console.log('ActionDocumentModal', documentAction)
   const renderActionDocumentForm = () => {
     if (
       documentAction === DocumentAction.COMPLETE ||
@@ -132,7 +145,11 @@ const ActionDocumentModal: React.FC<PropsType> = ({
             render={() => (
               <TextInput
                 label="เลือกผู้รับเอกสาร"
-                placeholder={createdByName}
+                placeholder={
+                  documentAction === DocumentAction.SEND_BACK_TO_OWNER
+                    ? createdByName
+                    : operatorName
+                }
                 disabled
               />
             )}

@@ -67,7 +67,9 @@ const CreateDocumentModal: React.FC<PropsType> = ({
       createDocument(
         {
           templateId,
-          element: getJson(canvasList),
+          element: {
+            data: getJson(canvasList),
+          },
           documentStatus,
         },
         {
@@ -108,7 +110,7 @@ const CreateDocumentModal: React.FC<PropsType> = ({
       createDocument(
         {
           templateId,
-          element: getJson(canvasList),
+          element: { data: getJson(canvasList) },
           documentStatus,
         },
         {
