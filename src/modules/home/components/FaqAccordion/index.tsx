@@ -13,6 +13,7 @@ import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetFileMutate from '@/hooks/useGetFileMutate'
 import CreateFaqModal from '@/modules/faq/components/CreateFaqModal'
+import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
 import { Disclosure } from '@headlessui/react'
 import { HiTrash } from 'react-icons/hi'
 import { MdModeEditOutline } from 'react-icons/md'
@@ -56,6 +57,8 @@ const FaqAccordion: React.FC<PropsType> = ({
     'CREATE'
   )
 
+  const { refetch: refetchPublicFaqs } = useGetPublicFaqs()
+
   const handleClickCreateSubFaq = (faqId: string) => {
     setSubFaqModalType('CREATE')
     setActionFaqId(faqId)
@@ -80,6 +83,7 @@ const FaqAccordion: React.FC<PropsType> = ({
         onClose={editFaqClose}
         faq={faq}
         mode="edit"
+        callback={refetchPublicFaqs}
       />
       <div className="break-words p-5 shadow">
         <Disclosure defaultOpen={defaultOpen}>
@@ -154,7 +158,7 @@ const FaqAccordion: React.FC<PropsType> = ({
                 <div className="space-y-2.5">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-blue-500">
-                      แนวทางการส่งเอกสาร
+                      ช่องทางการส่งเอกสาร
                     </h3>
                     <Tag
                       name={SendChannelTextMapper[faq.sendChannel]}

@@ -5,6 +5,7 @@ export enum SendChannel {
   ONLINE = 'ONLINE',
   BOTH = 'BOTH',
   OTHER = 'OTHER',
+  NO_SEND = 'NO_SEND',
 }
 
 export type Tag = {

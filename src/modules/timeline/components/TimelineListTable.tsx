@@ -50,14 +50,12 @@ const TimelineListTable = () => {
       id: 'status',
       size: 20,
       header: (info) => (
-        // <div className="relative">
         <div className=" flex items-center gap-2 font-semibold">
           <FaRegEnvelope />
           ทั้งหมด{' '}
           <span className="text-blue-500">{info.table.getRowCount()}</span> ฉบับ
           รอดำเนินการ test ฉบับ
         </div>
-        // </div>
       ),
       cell: (info) => <TimelineStatusBox status={info.row.original.status} />,
     },
@@ -69,10 +67,12 @@ const TimelineListTable = () => {
         <TableInfoBox
           title={info.row.original.document.title}
           createdAt={new Date(info.row.original.createdAt).toLocaleDateString()}
-          createdBy={info.row.original.document.userCreated.nameTh}
-          createdByImg={info.row.original.document.userCreated.profileImg}
-          updatedBy={info.row.original.document.operator.nameTh}
-          updatedByImg={info.row.original.document.operator.profileImg}
+          createdBy={info.row.original.document?.userCreated?.nameTh ?? ''}
+          createdByImg={
+            info.row.original.document?.userCreated?.profileImg ?? ''
+          }
+          updatedBy={info.row.original.document?.operator?.nameTh ?? ''}
+          updatedByImg={info.row.original.document?.operator?.profileImg ?? ''}
         />
       ),
     },

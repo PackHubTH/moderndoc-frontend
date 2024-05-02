@@ -2,11 +2,11 @@ import { SendChannel } from '@/modules/faq/types'
 import { z } from 'zod'
 
 export const CreateFaqFormValidation = z.object({
-  titleTh: z.string().min(3),
-  titleEn: z.string().min(3),
-  documentCodeTh: z.string(),
-  documentCodeEn: z.string(),
-  description: z.string().min(3),
+  titleTh: z.string().optional(),
+  titleEn: z.string().optional(),
+  documentCodeTh: z.string().optional(),
+  documentCodeEn: z.string().optional(),
+  description: z.string().optional(),
   sendChannel: z.nativeEnum(SendChannel),
   sendChannelInfo: z.string().optional(),
   extraContact: z.any().optional(),

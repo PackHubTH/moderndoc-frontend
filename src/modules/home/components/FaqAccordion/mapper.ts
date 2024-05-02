@@ -5,6 +5,7 @@ export const SendChannelTextMapper = {
   [SendChannel.ONLINE]: 'ส่งภายในระบบ (Online)',
   [SendChannel.BOTH]: 'ส่งได้ทั้งในระบบ Online และ Onsite',
   [SendChannel.OTHER]: 'อื่นๆ (Other)',
+  [SendChannel.NO_SEND]: 'ไม่มีการส่งเอกสาร',
 }
 
 export const SendChannelBgColorMapper = {
@@ -12,6 +13,7 @@ export const SendChannelBgColorMapper = {
   [SendChannel.ONLINE]: sky[100],
   [SendChannel.BOTH]: lime[100],
   [SendChannel.OTHER]: gray[500],
+  [SendChannel.NO_SEND]: gray[500],
 }
 
 export const SendChannelTextColorMapper = {
@@ -19,4 +21,5 @@ export const SendChannelTextColorMapper = {
   [SendChannel.ONLINE]: sky[500],
   [SendChannel.BOTH]: lime[500],
   [SendChannel.OTHER]: white,
+  [SendChannel.NO_SEND]: white,
 }

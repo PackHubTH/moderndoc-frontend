@@ -52,21 +52,29 @@ const FaqListTable = () => {
 
   const { data: userData } = useGetUser()
 
-  const { data: departmentFaqs } = useGetDepartmentFaqs(
-    paginationState.pageIndex + 1,
-    '',
-    userData?.data?.role === UserRole.ADMIN
-  )
+  const { data: departmentFaqs, refetch: refetchDepartmentFaqs } =
+    useGetDepartmentFaqs(
+      paginationState.pageIndex + 1,
+      '',
+      userData?.data?.role === UserRole.ADMIN
+    )
 
-  const { data: publicFaqs } = useGetPublicFaqsPagination(
-    paginationState.pageIndex + 1
-  )
+  const { data: publicFaqs, refetch: reftechPublicFaqs } =
+    useGetPublicFaqsPagination(paginationState.pageIndex + 1)
 
   const faqsData = useMemo(() => {
     if (faqType === 'department') {
       return departmentFaqs
     } else {
       return publicFaqs
+    }
+  }, [departmentFaqs, publicFaqs, faqType])
+
+  const refetch = useMemo(() => {
+    if (faqType === 'department') {
+      return refetchDepartmentFaqs
+    } else {
+      return reftechPublicFaqs
     }
   }, [departmentFaqs, publicFaqs, faqType])
 
@@ -84,11 +92,20 @@ const FaqListTable = () => {
       ),
     },
     {
+      id: 'department',
+      header: 'หน่วยงาน',
+      cell: (info) => (
+        <div className="w-42 font-semibold text-blue-500">
+          {info.row.original.department.name}
+        </div>
+      ),
+    },
+    {
       id: 'tags',
       size: 60,
       header: `ทั้งหมด ${faqsData?.data.total} ข้อมูล`,
       cell: (info) => (
-        <div className="space-y-1">
+        <div className="space-y-1 w-48">
           {info.row.original.faqTags.map((tag) => (
             <Tag name={tag.tag.name} />
           ))}
@@ -217,6 +234,7 @@ const FaqListTable = () => {
         onClose={closeCreateFaqModal}
         mode="edit"
         faq={editFaq!}
+        callback={refetch}
       />
       <DeleteFaqModal
         isOpen={isOpenDeleteFaqModal}
