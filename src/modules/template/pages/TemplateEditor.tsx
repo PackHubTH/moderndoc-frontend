@@ -94,6 +94,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
 
   console.log('editor active object', activeObject?.elName)
   console.log('templateFile', templateFile)
+  console.log('templateedit data', templateEdit?.data)
   return (
     <div>
       {/* Header */}
@@ -123,7 +124,9 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
           <Button
             disabled={templateFile ? false : true}
             label={
-              type === 'create' ? 'ตั้งค่า Template' : 'ตั้งค่ารายละเอียดเอกสารต้นฉบับ'
+              type === 'create'
+                ? 'ตั้งค่า Template'
+                : 'ตั้งค่ารายละเอียดเอกสารต้นฉบับ'
             }
             variant="green"
             onClick={open}

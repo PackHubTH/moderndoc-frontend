@@ -1,3 +1,6 @@
+import { User } from '@/modules/user/hooks/types'
+import { UserRole } from 'types/user'
+
 const autoFillData = [
   { label: 'ชื่อ-นามสกุล', value: 'name' },
   { label: 'ระดับการศึกษา', value: 'educationLevel' },
@@ -10,28 +13,23 @@ const autoFillData = [
   { label: 'อาจารย์ที่ปรึกษา', value: 'teacher' },
 ]
 
-export const parseUserDatatoAutofill = (user: any, role?: any): any => {
+export const parseUserDatatoAutofill = (user: User, role?: any): any => {
   console.log('before parseuser', user)
   // if user is empty object return empty object
   if (!user) return {}
 
-  const {
-    nameTh,
-    emails,
-    phones,
-    profileImg,
-    defaultEmailIndex,
-    defaultPhoneIndex,
-  } = user
-  return {
-    name: nameTh,
-    educationLevel: 'test',
-    faculty: 'test',
-    major: 'test',
-    course: 'test',
-    studentNumber: 'test',
-    email: emails[defaultEmailIndex],
-    phone: phones[defaultPhoneIndex],
-    teacher: 'test',
+  if (user.role === UserRole.STUDENT) {
+    return {
+      name: user.nameTh,
+      educationLevel: 'test',
+      faculty: 'test',
+      major: 'test',
+      course: 'test',
+      studentNumber: user.student.studentNumber,
+      email: user.emails[user.defaultEmailIndex],
+      phone: user.phones[user.defaultPhoneIndex],
+      teacher: user?.teacher?.id ?? '',
+    }
   }
+  return {}
 }

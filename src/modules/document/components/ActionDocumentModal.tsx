@@ -1,22 +1,23 @@
 import { useEffect, useState } from 'react'
 
+import { ActionDocumentForm } from '../hooks/useActionDocumentForm/validation'
 import AutocompleteInput from '@/components/AutocompleteInput'
 import Button from '@/components/Button'
+import { Controller } from 'react-hook-form'
+import { DocumentAction } from '../types/types'
 import Modal from '@/components/Modal'
 import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
-import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
-import { useUserStore } from '@/stores/userStore'
-import { Controller } from 'react-hook-form'
-import { toast } from 'react-toastify'
 import { UserRole } from 'types/user'
+import { getJson } from '../utils/documentEditorUtils'
+import { toast } from 'react-toastify'
 import useActionDocument from '../hooks/api/useActionDocument'
 import useActionDocumentForm from '../hooks/useActionDocumentForm'
-import { ActionDocumentForm } from '../hooks/useActionDocumentForm/validation'
 import { useDocumentStore } from '../stores/documentStore'
-import { DocumentAction } from '../types/types'
-import { getJson } from '../utils/documentEditorUtils'
+import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
+import { useNavigate } from 'react-router-dom'
+import { useUserStore } from '@/stores/userStore'
 
 type PropsType = {
   createdById: string
@@ -40,6 +41,7 @@ const ActionDocumentModal: React.FC<PropsType> = ({
   const { methods } = useActionDocumentForm()
   const { mutate: actionDocument } = useActionDocument()
   const canvasList = useDocumentStore((state) => state.canvasList)
+  const navigate = useNavigate()
   const userRole = useUserStore((state) => state.user?.role)
   // TODO: แก้ไขเอกสาร flow
   const [documentAction, setDocumentAction] = useState(
@@ -84,7 +86,7 @@ const ActionDocumentModal: React.FC<PropsType> = ({
         {
           onSuccess: () => {
             toast('ดำเนินการเอกสารสำเร็จ', { type: 'success' })
-            close()
+            setTimeout(() => navigate('/document-management'), 2000)
           },
           onError: (error) => {
             toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, {

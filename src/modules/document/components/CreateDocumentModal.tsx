@@ -2,20 +2,21 @@ import { useEffect, useMemo, useState } from 'react'
 
 import AutocompleteInput from '@/components/AutocompleteInput'
 import Button from '@/components/Button'
+import { Controller } from 'react-hook-form'
+import { CreateDocumentForm } from '../hooks/useCreateDocumentForm/validation'
+import { DocumentStatus } from '../types/types'
 import Modal from '@/components/Modal'
+import { Operator } from '@/modules/template/types/response'
 import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
-import { Operator } from '@/modules/template/types/response'
-import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
-import { Controller } from 'react-hook-form'
+import { getJson } from '../utils/documentEditorUtils'
 import { toast } from 'react-toastify'
 import useAssignOperator from '../hooks/api/useAssignOperator'
 import useCreateDocument from '../hooks/api/useCreateDocument'
 import useCreateDocumentForm from '../hooks/useCreateDocumentForm'
-import { CreateDocumentForm } from '../hooks/useCreateDocumentForm/validation'
 import { useDocumentStore } from '../stores/documentStore'
-import { DocumentStatus } from '../types/types'
-import { getJson } from '../utils/documentEditorUtils'
+import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
+import { useNavigate } from 'react-router-dom'
 
 type PropsType = {
   departmentId: string
@@ -36,6 +37,7 @@ const CreateDocumentModal: React.FC<PropsType> = ({
   const { mutate: createDocument } = useCreateDocument()
   const { methods } = useCreateDocumentForm()
   const canvasList = useDocumentStore((state) => state.canvasList)
+  const navigate = useNavigate()
   const [documentStatus, setDocumentStatus] = useState(
     DocumentStatus.PROCESSING
   )
@@ -84,6 +86,7 @@ const CreateDocumentModal: React.FC<PropsType> = ({
               {
                 onSuccess: () => {
                   toast('สร้างเอกสารสำเร็จ', { type: 'success' })
+                  setTimeout(() => navigate('/document-management'), 2000)
                 },
                 onError: (error) => {
                   toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
@@ -116,7 +119,7 @@ const CreateDocumentModal: React.FC<PropsType> = ({
         {
           onSuccess: () => {
             toast('สร้างเอกสารสำเร็จ', { type: 'success' })
-            close()
+            setTimeout(() => navigate('/document-management'), 2000)
           },
           onError: (error) => {
             toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
