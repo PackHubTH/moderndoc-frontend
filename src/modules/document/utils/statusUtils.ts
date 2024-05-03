@@ -1,15 +1,17 @@
 import { DocumentSentStatus, DocumentStatus } from '../types/types'
 
-import { VariantType } from '@/components/Badge/types'
 import { UserRole } from 'types/user'
+import { VariantType } from '@/components/Badge/types'
 
 export const getStatusBadgeProps = (
   status: DocumentStatus,
   documentSentStatusReceive: DocumentSentStatus,
   documentSentStatusSend: DocumentSentStatus,
   isOwner: boolean,
-  role: UserRole
+  role: UserRole,
+  isSentToOperator: boolean
 ) => {
+  console.log('is Sent to operator', isSentToOperator)
   if (
     status === DocumentStatus.PROCESSING &&
     documentSentStatusReceive === DocumentSentStatus.PROCESSING &&
@@ -46,6 +48,12 @@ export const getStatusBadgeProps = (
   // ) {
   //     return { variant: 'action' as VariantType, label: 'แก้ไขเอกสาร' }
   // }
+  if (status === DocumentStatus.PROCESSING && isSentToOperator) {
+    return {
+      variant: 'waiting' as VariantType,
+      label: 'อยู่ระหว่างตรวจสอบเอกสาร',
+    }
+  }
   if (
     status === DocumentStatus.PROCESSING &&
     documentSentStatusSend === DocumentSentStatus.PROCESSING

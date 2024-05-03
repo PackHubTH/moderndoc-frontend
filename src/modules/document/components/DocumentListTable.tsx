@@ -5,21 +5,21 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useEffect, useState } from 'react'
 import { Document, DocumentSentStatus, DocumentStatus } from '../types/types'
 import { getStatusBadgeProps, shouldShowAction } from '../utils/statusUtils'
+import { useEffect, useState } from 'react'
 
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
-import TableDisplay from '@/components/TableDisplay'
+import { FaRegEnvelope } from 'react-icons/fa6'
 import Pagination from '@/components/TableDisplay/Pagination'
-import { useUserStore } from '@/stores/userStore'
+import TableDisplay from '@/components/TableDisplay'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
-import { FaRegEnvelope } from 'react-icons/fa6'
-import { useNavigate } from 'react-router-dom'
 import useGetAllDocument from '../hooks/api/useGetAllDocument'
+import { useNavigate } from 'react-router-dom'
+import { useUserStore } from '@/stores/userStore'
 
 interface PropsType {
   type: 'ALL' | 'SENT' | 'RECEIVED'
@@ -109,7 +109,11 @@ const DocumentListTable = ({ type }: PropsType) => {
                 (sent) => sent.senderId === user.id
               )?.status as DocumentSentStatus) ?? '',
               info.row.original.createdBy === user.id,
-              user.role
+              user.role,
+              info.row.original.operatorId ===
+                (info.row.original.documentSents?.find(
+                  (sent) => sent.senderId === user.id
+                )?.receiverId as DocumentSentStatus)
             )}
           />
           <p className="text-gray-400">
