@@ -1,8 +1,8 @@
 import * as Fabric from 'fabric'
 
-import { PDFDocument } from 'pdf-lib'
-import { CanvasProps } from '../types/DocumentField'
 import { ActiveToolbarButton } from '../types/ToolbarButton'
+import { CanvasProps } from '../types/DocumentField'
+import { PDFDocument } from 'pdf-lib'
 
 const _json = {
   version: '6.0.0-beta9',
@@ -176,6 +176,7 @@ const addAutoFill = (
     item.canvas.discardActiveObject()
     item.canvas.renderAll()
   })
+  fabricText.controls.deleteIcon = deleteIcon
   canvas.add(fabricText)
   canvas.setActiveObject(fabricText)
   canvas.renderAll()
