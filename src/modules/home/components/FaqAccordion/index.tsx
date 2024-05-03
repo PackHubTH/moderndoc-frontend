@@ -17,6 +17,7 @@ import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
 import { Disclosure } from '@headlessui/react'
 import { HiTrash } from 'react-icons/hi'
 import { MdModeEditOutline } from 'react-icons/md'
+import { useNavigate } from 'react-router-dom'
 import tw from 'twin.macro'
 import DeleteSubFaqModal from '../DeleteSubFaqModal'
 import SubFaqActionModal from '../SubFaqActionModal'
@@ -50,6 +51,8 @@ const FaqAccordion: React.FC<PropsType> = ({
   } = useDisclosure()
 
   const { mutateAsync: getFile } = useGetFileMutate()
+
+  const navigate = useNavigate()
 
   const [actionFaqId, setActionFaqId] = useState<string | null>(null)
   const [actionSubFaq, setActionSubFaq] = useState<SubFaq | null>(null)
@@ -127,8 +130,11 @@ const FaqAccordion: React.FC<PropsType> = ({
                     <Button
                       label="สร้างเอกสาร"
                       variant="green"
-                      // todo: add onClick to create document
-                      // onClick={}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        console.log('create document', faq.templateId)
+                        navigate(`/create-document/${faq.templateId}`)
+                      }}
                       leftIcon={
                         <FaPlus
                           size={24}

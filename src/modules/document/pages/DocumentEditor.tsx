@@ -49,6 +49,7 @@ import useGetDocumentById from '../hooks/api/useGetDocumentById'
 import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
+import { DocumentStatus } from '../types/types'
 
 type PropsType = {
   type: 'create' | 'edit'
@@ -191,7 +192,8 @@ const DocumentEditor = ({ type }: PropsType) => {
             variant="green"
             onClick={openProcessModal}
           />
-          {type === 'create' ? (
+          {type === 'create' ||
+          documentData?.data?.status === DocumentStatus.DRAFT ? (
             <CreateDocumentModal
               departmentId={templateData?.data?.departmentId ?? ''}
               isOpen={isProcessModalOpen}
@@ -205,7 +207,9 @@ const DocumentEditor = ({ type }: PropsType) => {
               createdById={documentData?.data?.createdBy ?? ''}
               createdByName={documentData?.data?.userCreated.nameTh ?? ''}
               documentId={documentId}
-              // departmentId={documentData?.data?.departmentId ?? ''}
+              operatorId={documentData?.data?.operatorId ?? ''}
+              // operatorName={documentData?.data?.operator.nameTh ?? ''}
+              operatorName={'mock operatorName'}
               close={closeProcessModal}
             />
           )}
