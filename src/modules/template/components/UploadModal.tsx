@@ -4,7 +4,9 @@ import { DropTargetMonitor, useDrop } from 'react-dnd'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import { useTemplateStore } from '@/stores/templateStore'
+import { getFileExtensionIcon, getFilename } from '@/utils/fileUtils'
 import { NativeTypes } from 'react-dnd-html5-backend'
+import { HiTrash } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
 import tw from 'twin.macro'
 import UploadFileImg from '../assets/upload-file.png'
@@ -111,59 +113,61 @@ const UploadModal = ({ isOpen, close }: UploadModalProps) => {
           />
         </div>
       }
-      className="min-h-[254px] border-b bg-slate-50 px-28 py-4"
+      className=" border-b bg-slate-50"
       content={
         <>
-          <div
-            ref={drop}
-            css={[
-              tw`flex h-[213px] cursor-pointer flex-col items-center justify-center border-2 border-dashed bg-white transition-all ease-in-out hover:border-blue-500`,
-              isActive && tw`border-blue-500`,
-            ]}
-            onClick={onClickUploadBox}
-          >
-            {fileList ? (
-              <>
-                <h5 className="font-bold text-gray-700">Selected File</h5>
-                <ul className="pl-3">
-                  {fileList?.map((file) => (
-                    <li className="my-2">
-                      <span
-                        className="cursor-pointer rounded-md border border-blue-300 bg-blue-100 px-4 py-1 text-blue-500 hover:underline"
-                        onClick={() => openFileTempUrl(templateFile as File)}
-                      >
-                        {file.key}
-                      </span>
-                      <span
-                        className="ml-2 cursor-pointer font-black text-red-500"
-                        onClick={() => {
-                          // onDeleteFile(index)
-                        }}
-                      >
-                        X
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            ) : (
-              <img src={UploadFileImg} alt="upload" />
-            )}
-            <p className="mt-2 font-medium">
-              Drop your files here or{' '}
-              <label className="cursor-pointer text-blue-500 hover:underline hover:underline-offset-2">
-                browse
-                <input
-                  type="file"
-                  accept=".pdf"
-                  className="hidden"
-                  ref={inputRef}
-                  onChange={handleFileChange}
+          {templateFile ? (
+            <li className="mx-4 my-2 flex items-center text-center">
+              <p className="flex w-full cursor-pointer items-center justify-between rounded-md border border-[#E5E7EB] bg-[#F0F7FF] px-3 py-1.5 text-[#6B7280] hover:underline">
+                <div className="flex items-center gap-4">
+                  <img
+                    className="h-6 w-6"
+                    src={getFileExtensionIcon(templateFile.name)}
+                    alt="file"
+                  />
+                  <div className="span flex flex-col items-start">
+                    <span>{getFilename(templateFile.name)}</span>
+                    <span className="text-gray-400">
+                      {(templateFile.size / (1024 * 1024)).toFixed(2)} MB
+                    </span>
+                  </div>
+                </div>
+                <HiTrash
+                  size={18}
+                  className="cursor-pointer rounded-full text-gray-500"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setTemplateFile(null)
+                  }}
                 />
-              </label>
-            </p>
-            <p className="mt-1 text-sm text-gray-400">Maximum size: 50MB</p>
-          </div>
+              </p>
+            </li>
+          ) : (
+            <div
+              ref={drop}
+              css={[
+                tw`mx-28 my-4 flex h-[213px] cursor-pointer flex-col items-center justify-center border-2 border-dashed bg-white transition-all ease-in-out hover:border-blue-500`,
+                isActive && tw`border-blue-500`,
+              ]}
+              onClick={onClickUploadBox}
+            >
+              <img src={UploadFileImg} alt="upload" />
+              <p className="mt-2 font-medium">
+                Drop your files here or{' '}
+                <label className="cursor-pointer text-blue-500 hover:underline hover:underline-offset-2">
+                  browse
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    className="hidden"
+                    ref={inputRef}
+                    onChange={handleFileChange}
+                  />
+                </label>
+              </p>
+              <p className="mt-1 text-sm text-gray-400">Maximum size: 50MB</p>
+            </div>
+          )}
         </>
       }
       onClose={handleClose}
