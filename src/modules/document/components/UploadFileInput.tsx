@@ -2,9 +2,11 @@ import { uploadFileFolder } from '@/hooks/types'
 import useGetFileMutate from '@/hooks/useGetFileMutate'
 import useUploadFile from '@/hooks/useUploadFile'
 import UploadFileImg from '@/modules/template/assets/upload-file.png'
+import { getFileExtensionIcon, getFilename } from '@/utils/fileUtils'
 import { useCallback, useRef } from 'react'
 import { DropTargetMonitor, useDrop } from 'react-dnd'
 import { NativeTypes } from 'react-dnd-html5-backend'
+import { HiTrash } from 'react-icons/hi'
 import tw from 'twin.macro'
 
 type PropsType = {
@@ -124,45 +126,14 @@ const UploadFileInput: React.FC<PropsType> = ({
         ]}
         onClick={onClickUploadBox}
       >
-        {value.length > 0 ? (
-          <>
-            <h5 className="font-bold text-gray-700">Selected File</h5>
-            <ul className="max-w-lg pl-3">
-              {value?.map((file, index) => (
-                <li className="my-2 flex items-center text-center">
-                  <p
-                    className="cursor-pointer rounded-md border border-blue-300 bg-blue-100 px-1 py-1 text-blue-500
-                     hover:underline"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      openFileTempUrl(index)
-                    }}
-                  >
-                    {file}
-                  </p>
-                  <span
-                    className="ml-2 cursor-pointer font-black text-red-500"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onDeleteFile(index)
-                    }}
-                  >
-                    X
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : (
-          <img src={UploadFileImg} alt="upload" />
-        )}
+        <img src={UploadFileImg} alt="upload" />
         <p className="mt-2 font-medium">
           Drop your files here or{' '}
           <label className="cursor-pointer text-blue-500 hover:underline hover:underline-offset-2">
             browse
             <input
               type="file"
-              accept=".pdf"
+              accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
               className="hidden"
               ref={inputRef}
               onChange={handleFileChange}
@@ -171,6 +142,35 @@ const UploadFileInput: React.FC<PropsType> = ({
         </p>
         <p className="mt-1 text-sm text-gray-400">Maximum size: 50MB</p>
       </div>
+      {value.length > 0 &&
+        value.map((file, index) => (
+          <li className="my-2 flex items-center text-center">
+            <p
+              className="flex w-full cursor-pointer items-center justify-between rounded-md border border-[#E5E7EB] bg-[#F0F7FF] px-3 py-1.5 text-[#6B7280] hover:underline"
+              onClick={(e) => {
+                e.stopPropagation()
+                openFileTempUrl(index)
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <img
+                  className="h-6 w-6"
+                  src={getFileExtensionIcon(file)}
+                  alt="file"
+                />
+                <span>{getFilename(file)}</span>
+              </div>
+              <HiTrash
+                size={18}
+                className="cursor-pointer rounded-full text-gray-500"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onDeleteFile(index)
+                }}
+              />
+            </p>
+          </li>
+        ))}
     </div>
   )
 }

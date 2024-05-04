@@ -12,6 +12,7 @@ type PropsType = {
   onClose: () => void
   actions?: React.ReactNode
   className?: string
+  css?: CssProps
   leftIcon?: React.ReactNode
   variant?: VariantType
   width?: string

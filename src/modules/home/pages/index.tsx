@@ -60,7 +60,7 @@ const Home = () => {
           />
           <Select
             className="w-48"
-            placeholder="No tags filter"
+            placeholder="ค้นหาตามหมวดหมู่"
             options={
               tags?.data.map((tag) => ({
                 label: tag.name,

@@ -1,5 +1,5 @@
 import { Faq, SubFaq } from '@/modules/faq/types'
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa6'
 import { blue, white, yellow } from 'tailwindcss/colors'
 import {
@@ -14,6 +14,7 @@ import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetFileMutate from '@/hooks/useGetFileMutate'
 import CreateFaqModal from '@/modules/faq/components/CreateFaqModal'
 import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
+import { isUrl } from '@/utils/stringUtils'
 import { Disclosure } from '@headlessui/react'
 import { HiTrash } from 'react-icons/hi'
 import { MdModeEditOutline } from 'react-icons/md'
@@ -95,15 +96,19 @@ const FaqAccordion: React.FC<PropsType> = ({
               <Disclosure.Button className="flex w-full items-center justify-between rounded-lg text-left">
                 <div className="space-y-1 font-semibold ">
                   <h3 className="space-x-1">
-                    <span className="text-blue-500">
-                      {faq.documentCodeTh} :
-                    </span>
+                    {faq.documentCodeTh !== '' && (
+                      <span className="text-blue-500">
+                        {faq.documentCodeTh} :
+                      </span>
+                    )}
                     <span className="font- text-[#170f49]">{faq.titleTh}</span>
                   </h3>
                   <h3 className="space-x-1">
-                    <span className="text-blue-500">
-                      {faq.documentCodeEn} :
-                    </span>
+                    {faq.documentCodeEn !== '' && (
+                      <span className="text-blue-500">
+                        {faq.documentCodeEn} :
+                      </span>
+                    )}
                     <span className="font- text-[#170f49]">{faq.titleEn}</span>
                   </h3>
                 </div>
@@ -186,7 +191,18 @@ const FaqAccordion: React.FC<PropsType> = ({
                           <span className="font-medium text-gray-600">
                             {key}
                           </span>{' '}
-                          : {value as ReactNode}
+                          :{' '}
+                          {isUrl(value as string) ? (
+                            <a
+                              href={value as string}
+                              target="_blank"
+                              className="text-blue-500 hover:underline"
+                            >
+                              {value as string}
+                            </a>
+                          ) : (
+                            <span>{value as string}</span>
+                          )}
                         </li>
                       ))}
                     </ul>
