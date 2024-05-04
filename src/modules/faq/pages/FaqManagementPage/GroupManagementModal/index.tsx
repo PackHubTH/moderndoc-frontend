@@ -1,5 +1,4 @@
 import Modal from '@/components/Modal'
-import Tabs from '@/components/Tabs'
 import { MdModeEditOutline } from 'react-icons/md'
 import TagsTab from './TagsTab'
 
@@ -28,14 +27,7 @@ const GroupManagementModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
       }
       content={
         <div className="px-8 py-2">
-          <Tabs
-            tabs={[
-              {
-                title: 'หมวดหมู่',
-                content: <TagsTab />,
-              },
-            ]}
-          />
+          <TagsTab />
         </div>
       }
       onClose={onClose}
