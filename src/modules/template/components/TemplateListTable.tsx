@@ -8,17 +8,17 @@ import {
 import { useEffect, useState } from 'react'
 
 import Button from '@/components/Button'
-import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
-import { useDisclosure } from '@/hooks/useDisclosure'
-import { format } from 'date-fns'
-import { th } from 'date-fns/locale'
-import { useNavigate } from 'react-router-dom'
-import useGetAllTemplate from '../hooks/api/useGetAllTemplate'
+import TableDisplay from '@/components/TableDisplay'
 import { Template } from '../types/types'
 import TemplateCopyModal from './TemplateCopyModal'
 import TemplateDeleteModal from './TemplateDeleteModal'
 import TemplateInfoBox from './TemplateInfoBox'
+import { format } from 'date-fns'
+import { th } from 'date-fns/locale'
+import { useDisclosure } from '@/hooks/useDisclosure'
+import useGetAllTemplate from '../hooks/api/useGetAllTemplate'
+import { useNavigate } from 'react-router-dom'
 
 const TemplateListTable = () => {
   const {
@@ -88,7 +88,7 @@ const TemplateListTable = () => {
         <div className="flex justify-end">
           <p className="text-gray-400">
             อัพเดตล่าสุดเมื่อ{' '}
-            {format(info.row.original.lastUpdatedAt, 'dd MMM yy', {
+            {format(info.row.original.lastUpdatedAt, 'dd MMM yy, p', {
               locale: th,
             })}
           </p>

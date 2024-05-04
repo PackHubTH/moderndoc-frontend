@@ -1,7 +1,7 @@
 import ProfileBox from '@/modules/document/components/ProfileBox'
+import { Template } from '../types/types'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
-import { Template } from '../types/types'
 
 interface TemplateInfoBoxProps {
   data: Template
@@ -18,7 +18,7 @@ const TemplateInfoBox = ({ data }: TemplateInfoBoxProps) => {
         <p>test</p>
         <p>อัปเดตล่าสุดเมื่อ</p>
         <p>
-          {format(data.lastUpdatedAt, 'dd MMM Y p', {
+          {format(data.lastUpdatedAt, 'dd MMM yy, p', {
             locale: th,
           })}
         </p>

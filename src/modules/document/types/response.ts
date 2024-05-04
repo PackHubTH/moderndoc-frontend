@@ -1,3 +1,5 @@
+import { Document } from './types'
+
 export interface CreateDocument {
   id: string
   title: string
@@ -55,6 +57,12 @@ interface UserCreated {
   defaultEmailIndex: number
   profileImg: string
   phones: string[]
+}
+
+export interface GetDocuments {
+  data: Document[]
+  total: number
+  totalPages: number
 }
 
 export type GetOperatorsByTemplateId = {

@@ -1,10 +1,10 @@
-import { useEffect, useRef } from 'react'
 import { initCanvas, mouseHandler } from '../utils/documentEditorUtils'
+import { useEffect, useRef } from 'react'
 
-import { useUserStore } from '@/stores/userStore'
 import { parseUserDatatoAutofill } from '@/utils/parserUtils'
 import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
+import { useUserStore } from '@/stores/userStore'
 
 interface DocumentCanvasProps {
   id: string

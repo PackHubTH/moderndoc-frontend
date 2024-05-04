@@ -57,8 +57,10 @@ const DocumentListTable = ({ type }: PropsType) => {
       header: (info) => (
         <div className="flex items-center gap-2 font-semibold">
           <FaRegEnvelope />
-          ทั้งหมด{' '}
-          <span className="text-blue-500">{info.table.getRowCount()}</span> ฉบับ
+          ทั้งหมด <span className="text-blue-500">
+            {document?.data?.total}
+          </span>{' '}
+          ฉบับ
         </div>
       ),
       cell: (info) => (
@@ -171,7 +173,7 @@ const DocumentListTable = ({ type }: PropsType) => {
 
   const table = useReactTable({
     columns,
-    data: document?.data ?? [],
+    data: document?.data?.data ?? [],
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     pageCount: -1,
@@ -188,7 +190,7 @@ const DocumentListTable = ({ type }: PropsType) => {
     <div className="flex-1 p-2">
       <TableDisplay table={table} onHoverRow={setHoveredRow} />
       <Pagination
-        totalPage={1}
+        totalPage={document?.data?.totalPages ?? 1}
         currentPage={table.getState().pagination.pageIndex + 1}
         nextPage={table.nextPage}
         prevPage={table.previousPage}
