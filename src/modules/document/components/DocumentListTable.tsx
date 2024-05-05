@@ -5,7 +5,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Document, DocumentSentStatus, DocumentStatus } from '../types/types'
+import { Document, DocumentStatus } from '../types/types'
 import { getStatusBadgeProps, shouldShowAction } from '../utils/statusUtils'
 import { useEffect, useState } from 'react'
 
@@ -103,19 +103,11 @@ const DocumentListTable = ({ type }: PropsType) => {
         <div className="flex flex-col items-end justify-end">
           <Badge
             {...getStatusBadgeProps(
+              info.row.original.documentSents ?? [],
               info.row.original.status as DocumentStatus,
-              (info.row.original.documentSents?.find(
-                (sent) => sent.receiverId === user.id
-              )?.status as DocumentSentStatus) ?? '',
-              (info.row.original.documentSents?.find(
-                (sent) => sent.senderId === user.id
-              )?.status as DocumentSentStatus) ?? '',
-              info.row.original.createdBy === user.id,
-              user.role,
-              info.row.original.operatorId ===
-                (info.row.original.documentSents?.find(
-                  (sent) => sent.senderId === user.id
-                )?.receiverId as DocumentSentStatus)
+              user.id,
+              info.row.original.createdBy,
+              info.row.original.operatorId
             )}
           />
           <p className="text-gray-400">

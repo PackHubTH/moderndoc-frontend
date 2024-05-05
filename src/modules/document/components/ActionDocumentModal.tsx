@@ -71,7 +71,7 @@ const ActionDocumentModal: React.FC<PropsType> = ({
       methods.reset({ receiverId: operatorId, message: '' })
     }
     methods.trigger()
-  }, [documentAction])
+  }, [documentAction, isOpen])
 
   const onSubmit = async (data: ActionDocumentForm) => {
     try {
@@ -172,6 +172,7 @@ const ActionDocumentModal: React.FC<PropsType> = ({
     )
   }
 
+  console.log('method', methods.formState.isValid, methods.formState)
   return (
     <Modal
       isOpen={isOpen}

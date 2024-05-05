@@ -142,7 +142,7 @@ const CreateDocumentModal: React.FC<PropsType> = ({
           name="operatorUserId"
           render={({ field: { onChange } }) => (
             <AutocompleteInput
-              label="เลือกผู้ลงนามหรือผู้ดำเนินการต่อ"
+              label="เลือกผู้รับเอกสาร"
               placeholder="เลือกหรือค้นหารายชื่อ"
               onChange={(e) => {
                 const name = operators.find((operator) => operator.id === e)

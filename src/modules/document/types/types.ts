@@ -39,7 +39,7 @@ export type Document = {
   operator: UserCreated
   documentSents: DocumentSent[]
 }
-type DocumentSent = {
+export type DocumentSent = {
   documentId: string
   receiverId: string
   isEditable: boolean

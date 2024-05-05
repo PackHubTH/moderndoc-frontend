@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { Document, Page } from 'react-pdf'
 import {
   FaAlignJustify,
   FaAlignLeft,
@@ -10,8 +10,6 @@ import {
   FaMousePointer,
   FaPenFancy,
 } from 'react-icons/fa'
-import { Document, Page } from 'react-pdf'
-import { useNavigate, useParams } from 'react-router-dom'
 import {
   getJson,
   hexToRgb,
@@ -22,34 +20,37 @@ import {
   setTextBold,
   setTextItalic,
 } from '../utils/documentEditorUtils'
+import { useEffect, useRef } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
-import exampleFile from '@/assets/FO-TO-44.pdf'
+import ActionDocumentModal from '../components/ActionDocumentModal'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
-import Dropdown from '@/components/Dropdown'
-import MainLogo from '@/components/MainLogo'
-import { useDisclosure } from '@/hooks/useDisclosure'
-import useGetFile from '@/hooks/useGetFile'
-import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
-import { useUserStore } from '@/stores/userStore'
-import { PDFDocument } from 'pdf-lib'
-import { FaA } from 'react-icons/fa6'
-import { IoEyeOutline } from 'react-icons/io5'
-import tw from 'twin.macro'
-import ActionDocumentModal from '../components/ActionDocumentModal'
+import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 import CreateDocumentModal from '../components/CreateDocumentModal'
 import DocumentAccordion from '../components/DocumentAccordion'
 import DocumentCanvas from '../components/DocumentCanvas'
+import { DocumentStatus } from '../types/types'
 import DocumentToolbar from '../components/DocumentToolbar'
+import Dropdown from '@/components/Dropdown'
+import { FaA } from 'react-icons/fa6'
 import GuidelineModal from '../components/GuidelineModal'
+import { IoEyeOutline } from 'react-icons/io5'
+import MainLogo from '@/components/MainLogo'
+import { PDFDocument } from 'pdf-lib'
 import ProfileBox from '../components/ProfileBox'
+import RichTextInputDisplay from '@/components/RichTextInputDisplay'
 import ToolbarButton from '../components/ToolbarButton'
 import ToolbarTextButton from '../components/ToolbarTextButton'
-import useGetDocumentById from '../hooks/api/useGetDocumentById'
+import exampleFile from '@/assets/FO-TO-44.pdf'
+import tw from 'twin.macro'
+import { useDisclosure } from '@/hooks/useDisclosure'
 import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
-import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
-import { DocumentStatus } from '../types/types'
+import useGetDocumentById from '../hooks/api/useGetDocumentById'
+import useGetFile from '@/hooks/useGetFile'
+import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
+import { useUserStore } from '@/stores/userStore'
 
 type PropsType = {
   type: 'create' | 'edit'
@@ -144,6 +145,8 @@ const DocumentEditor = ({ type }: PropsType) => {
     link.click()
   }
 
+  console.log('documentData', documentData)
+  console.log('templateData', templateData)
   return (
     <div>
       {/* Header */}
@@ -192,8 +195,7 @@ const DocumentEditor = ({ type }: PropsType) => {
             variant="green"
             onClick={openProcessModal}
           />
-          {type === 'create' ||
-          documentData?.data?.status === DocumentStatus.DRAFT ? (
+          {type === 'create' ? (
             <CreateDocumentModal
               departmentId={templateData?.data?.departmentId ?? ''}
               isOpen={isProcessModalOpen}
@@ -201,6 +203,13 @@ const DocumentEditor = ({ type }: PropsType) => {
               templateId={templateId}
               close={closeProcessModal}
             />
+          ) : documentData?.data?.status === DocumentStatus.DRAFT ? (
+            // <CreateDraftDocumentModal
+            //   isOpen={isProcessModalOpen}
+            //   documentId={documentId}
+            //   close={closeProcessModal}
+            // />
+            <></>
           ) : (
             <ActionDocumentModal
               isOpen={isProcessModalOpen}
@@ -209,7 +218,7 @@ const DocumentEditor = ({ type }: PropsType) => {
               documentId={documentId}
               operatorId={documentData?.data?.operatorId ?? ''}
               // operatorName={documentData?.data?.operator.nameTh ?? ''}
-              operatorName={'mock operatorName'}
+              operatorName={documentData?.data?.operator?.nameTh ?? ''}
               close={closeProcessModal}
             />
           )}
@@ -413,7 +422,9 @@ const DocumentEditor = ({ type }: PropsType) => {
                         profileImg={timeline.userUpdatedBy.profileImg}
                         timestamp={timeline.createdAt}
                       />
-                      <p className="mb-2 p-2 px-4">{timeline.message}</p>
+                      <div className="mb-2 p-2 px-4">
+                        <RichTextInputDisplay value={timeline.message} />
+                      </div>
                     </div>
                   )
                 )}
