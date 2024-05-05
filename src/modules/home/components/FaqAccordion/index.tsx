@@ -15,6 +15,7 @@ import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetFileMutate from '@/hooks/useGetFileMutate'
 import CreateFaqModal from '@/modules/faq/components/CreateFaqModal'
 import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
+import { getFileExtensionIcon, getFilename } from '@/utils/fileUtils'
 import { isUrl } from '@/utils/stringUtils'
 import { Disclosure } from '@headlessui/react'
 import { HiTrash } from 'react-icons/hi'
@@ -215,18 +216,24 @@ const FaqAccordion: React.FC<PropsType> = ({
                     <h3 className="font-semibold text-blue-500">ไฟล์แนบ</h3>
                     <ul className="space-y-4 pt-1">
                       {faq.files.map((file) => (
-                        <li key={file}>
-                          <a
-                            rel="noreferrer"
-                            className="cursor-pointer rounded-md border border-blue-300 bg-blue-100 p-1 text-blue-500
-                     hover:underline"
-                            onClick={async () => {
+                        <li className="my-2 flex items-center text-center">
+                          <p
+                            className="flex w-full cursor-pointer items-center justify-between rounded-md border border-[#E5E7EB] bg-[#F0F7FF] px-3 py-1.5 text-[#6B7280] hover:underline"
+                            onClick={async (e) => {
+                              e.stopPropagation()
                               const result = await getFile(file)
                               window.open(result.data, '_blank')
                             }}
                           >
-                            {file}
-                          </a>
+                            <div className="flex items-center gap-2">
+                              <img
+                                className="h-6 w-6"
+                                src={getFileExtensionIcon(file)}
+                                alt="file"
+                              />
+                              <span>{getFilename(file)}</span>
+                            </div>
+                          </p>
                         </li>
                       ))}
                     </ul>
