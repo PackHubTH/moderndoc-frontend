@@ -9,6 +9,7 @@ import {
 } from './mapper'
 
 import Button from '@/components/Button'
+import { getContactInfoIcon } from '@/components/JsonTextInput/mappers'
 import RichTextInputDisplay from '@/components/RichTextInputDisplay'
 import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
@@ -188,11 +189,18 @@ const FaqAccordion: React.FC<PropsType> = ({
                     <h3 className="font-semibold text-blue-500">
                       ช่องทางการติดต่อสอบถามเพิ่มเติม
                     </h3>
-                    <ul className="space-y-1.5 pt-1">
+                    <ul className="space-y-2.5 pt-1">
                       {Object.entries(faq.extraContact).map(([key, value]) => (
-                        <li key={key}>
-                          <span className="font-medium text-gray-600">
-                            {key}
+                        <li key={key} className="flex gap-1">
+                          <span className="flex gap-2 font-medium text-gray-600">
+                            {getContactInfoIcon(key) && (
+                              <img
+                                src={getContactInfoIcon(key)}
+                                alt={key}
+                                className="h-6 w-6"
+                              />
+                            )}
+                            <span>{key}</span>
                           </span>{' '}
                           :{' '}
                           {isUrl(value as string) ? (
