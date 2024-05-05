@@ -6,12 +6,11 @@ type Params = {
   title: string
   description: string
   exampleFile?: string
-  // receiver: string[]
-  // receiverGroup: string
   operatorId: string[]
   operatorGroup: string
   templateFile: string
   element: any
+  departmentId?: string
 }
 
 const useCreateTemplate = () => {
