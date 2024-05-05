@@ -19,7 +19,10 @@ export const getFilePath = (url: string) => {
 }
 
 export const getFilename = (url: string) => {
-  return url.split('/').pop()?.split('?')[0] ?? ''
+  const fileName = url.split('/').pop()?.split('?')[0] ?? ''
+  const utf8FileName = decodeURIComponent(fileName)
+
+  return utf8FileName
 }
 
 export const getFileExtension = (url: string) => {
