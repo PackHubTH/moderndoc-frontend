@@ -39,8 +39,8 @@ const CreateFaqModal: React.FC<PropsType> = ({
   callback,
 }) => {
   const { methods } = useCreateFaqForm()
-  const [departmentSearch, setDepartmentSearch] = useState('')
 
+  const [departmentSearch, setDepartmentSearch] = useState('')
   const [searchTemplate, setSearchTemplate] = useState<string>('')
 
   const { data: userData } = useGetUser()

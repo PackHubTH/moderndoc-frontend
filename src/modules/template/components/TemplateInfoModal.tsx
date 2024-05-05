@@ -1,23 +1,28 @@
 import * as CustomSelect from '@/components/Select'
 
 import { fetchFile, getFilename } from '@/utils/fileUtils'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
+import AutocompleteInput from '@/components/AutocompleteInput'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
 import useGetFile from '@/hooks/useGetFile'
 import useUploadFile from '@/hooks/useUploadFile'
+import useGetAllDepartments from '@/modules/department/hooks/api/useGetAllDepartments'
 import { useDocumentStore } from '@/modules/document/stores/documentStore'
 import { getJson } from '@/modules/document/utils/documentEditorUtils'
 import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
+import useGetDepartmentById from '@/modules/user/hooks/api/useGetDepartmentById'
+import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { useTemplateStore } from '@/stores/templateStore'
 import { Controller } from 'react-hook-form'
 import { FaEdit } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import colors from 'tailwindcss/colors'
+import { UserRole } from 'types/user'
 import useCreateTemplate from '../hooks/api/useCreateTemplate'
 import useGetUsersByAllAgency from '../hooks/api/useGetUsersByAllAgency'
 import useUpdateTemplate from '../hooks/api/useUpdateTemplate'
@@ -40,9 +45,16 @@ const TemplateInfoModal = ({
   type,
   close,
 }: TemplateInfoModalProps) => {
+  const navigate = useNavigate()
+
   const { methods } = useCreateTemplateForm()
+
+  const [departmentSearch, setDepartmentSearch] = useState('')
+
   const canvasList = useDocumentStore((state) => state.canvasList)
   const templateFile = useTemplateStore((state) => state.templateFile)
+
+  const { data: userData } = useGetUser()
   const { mutate: createTemplate, isSuccess: isCreateSuccess } =
     useCreateTemplate()
   const { mutate: updateTemplate, isSuccess: isUpdateSuccess } =
@@ -54,9 +66,11 @@ const TemplateInfoModal = ({
   const { data: exampleFileEdit, refetch: refetchExampleFileEdit } = useGetFile(
     templateData?.exampleFile ?? ''
   )
-  const navigate = useNavigate()
+  const { data: departmentData, refetch: refetchDepartmentData } =
+    useGetDepartmentById(methods.watch('departmentId') ?? '')
+  const { data: departments } = useGetAllDepartments(1, departmentSearch)
 
-  const departments = useMemo(() => {
+  const operatorDepartmentOptions = useMemo(() => {
     if (rawDepartments) {
       return [
         { id: '-', name: 'เจ้าหน้าที่ประจำภาควิชา' },
@@ -82,18 +96,43 @@ const TemplateInfoModal = ({
   }, [type, templateData])
 
   useEffect(() => {
+    if (methods.watch('departmentId')) {
+      refetchDepartmentData()
+    }
+  }, [methods.watch('departmentId')])
+
+  useEffect(() => {
+    if (userData?.data.role === UserRole.ADMIN && type === 'create') {
+      methods.setValue('departmentId', '')
+    }
+  }, [userData])
+
+  useEffect(() => {
+    console.log('🚀 ~ useEffect ~ departmentData:', departmentData)
+    if (departmentData) {
+      setDepartmentSearch(departmentData.data.name)
+    }
+  }, [departmentData])
+
+  useEffect(() => {
     if (!isOpen) {
       methods.reset()
-    } else if (type === 'edit' && isOpen && templateData && departments) {
+    } else if (
+      type === 'edit' &&
+      isOpen &&
+      templateData &&
+      operatorDepartmentOptions
+    ) {
       methods.setValue('title', templateData.title)
       methods.setValue('description', templateData.description)
+      methods.setValue('departmentId', templateData.departmentId)
 
       // Call the function to handle file fetching
       setExampleFile(exampleFileEdit?.data ?? '')
 
       // Check and set operator group
       if (
-        !departments.find(
+        !operatorDepartmentOptions.find(
           (department) => department.id === templateData.operatorGroup
         )
       ) {
@@ -107,7 +146,7 @@ const TemplateInfoModal = ({
       }
       methods.trigger()
     }
-  }, [isOpen, type, templateData, departments, methods])
+  }, [isOpen, type, templateData, operatorDepartmentOptions, methods])
 
   const operatorGroup = methods.watch('operatorGroup')
   useEffect(() => {
@@ -144,6 +183,7 @@ const TemplateInfoModal = ({
             operatorGroup: data.operatorGroup === '-' ? '' : data.operatorGroup,
             exampleFile: response[1]?.data?.fileUrl ?? undefined,
             templateFile: response[0]?.data?.fileUrl,
+            departmentId: data.departmentId,
           },
           {
             onSuccess: () => {
@@ -190,6 +230,7 @@ const TemplateInfoModal = ({
             operatorId: data.operatorId ?? [],
             operatorGroup: data.operatorGroup === '-' ? '' : data.operatorGroup,
             exampleFile: response?.data?.fileUrl || templateData?.exampleFile,
+            departmentId: data.departmentId,
           },
           {
             onSuccess: () => {
@@ -260,7 +301,7 @@ const TemplateInfoModal = ({
                 }}
                 value={value}
                 options={
-                  departments?.map((department) => ({
+                  operatorDepartmentOptions?.map((department) => ({
                     label: department.name,
                     value: department.id,
                   })) ?? []
@@ -295,6 +336,32 @@ const TemplateInfoModal = ({
               />
             )}
           />
+          {userData?.data.role === UserRole.ADMIN && (
+            <Controller
+              control={methods.control}
+              name="departmentId"
+              render={({ field }) => (
+                <AutocompleteInput
+                  onSearch={setDepartmentSearch}
+                  onChange={(value) => {
+                    setDepartmentSearch(
+                      departments?.data.data.find((d) => d.id === value)
+                        ?.name ?? ''
+                    )
+                    field.onChange(value)
+                  }}
+                  value={departmentSearch}
+                  label="กำหนดให้อยู่ในหมวดหมู่ของหน่วยงานใด"
+                  options={
+                    departments?.data.data.map((department) => ({
+                      label: department.name,
+                      value: department.id,
+                    })) ?? []
+                  }
+                />
+              )}
+            />
+          )}
           <Controller
             control={methods.control}
             name="exampleFile"

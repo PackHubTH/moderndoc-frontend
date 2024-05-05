@@ -10,6 +10,7 @@ type Params = {
   operatorId: string[]
   operatorGroup: string
   element: any
+  departmentId?: string
 }
 
 const useUpdateTemplate = () => {
