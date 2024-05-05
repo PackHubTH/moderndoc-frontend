@@ -9,6 +9,7 @@ import {
 } from './mapper'
 
 import Button from '@/components/Button'
+import RichTextInputDisplay from '@/components/RichTextInputDisplay'
 import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetFileMutate from '@/hooks/useGetFileMutate'
@@ -18,6 +19,7 @@ import { isUrl } from '@/utils/stringUtils'
 import { Disclosure } from '@headlessui/react'
 import { HiTrash } from 'react-icons/hi'
 import { MdModeEditOutline } from 'react-icons/md'
+import 'react-quill/dist/quill.snow.css'
 import { useNavigate } from 'react-router-dom'
 import tw from 'twin.macro'
 import DeleteSubFaqModal from '../DeleteSubFaqModal'
@@ -164,7 +166,7 @@ const FaqAccordion: React.FC<PropsType> = ({
                 <div className="h-[1px] bg-gray-200" />
                 <div className="space-y-2.5">
                   <h3 className="font-semibold text-blue-500">รายละเอียด</h3>
-                  <p>{faq.description}</p>
+                  <RichTextInputDisplay value={faq.description} />
                 </div>
                 <div className="space-y-2.5">
                   <div className="flex items-center gap-2">
@@ -178,7 +180,7 @@ const FaqAccordion: React.FC<PropsType> = ({
                       borderColor="transparent"
                     />
                   </div>
-                  <p>{faq.sendChannelInfo}</p>
+                  <RichTextInputDisplay value={faq.sendChannelInfo} />
                 </div>
                 {Object.entries(faq.extraContact).length > 0 && (
                   <div className="space-y-2.5">

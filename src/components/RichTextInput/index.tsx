@@ -1,4 +1,6 @@
-import tw from 'twin.macro'
+import { useEffect, useRef } from 'react'
+import QuillEditor from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
 
 type PropsType = {
   label: string
@@ -9,6 +11,23 @@ type PropsType = {
   isError?: boolean
 }
 
+const modules = {
+  toolbar: [
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+  ],
+}
+
+const formats = [
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'list',
+  'bullet',
+  'indent',
+]
+
 const RichTextInput: React.FC<PropsType> = ({
   label,
   placeholder,
@@ -17,7 +36,13 @@ const RichTextInput: React.FC<PropsType> = ({
   onChange,
   isError,
 }) => {
-  console
+  const quill = useRef<any>()
+
+  useEffect(() => {
+    const quillEditor = quill.current.getEditor()
+
+    quillEditor.root.innerHTML = value as string
+  }, [])
 
   return (
     <div className={className}>
@@ -27,22 +52,14 @@ const RichTextInput: React.FC<PropsType> = ({
       >
         {label}
       </label>
-
-      <textarea
-        id={label}
-        css={[
-          tw`block min-h-[96px] w-full rounded-xl border-gray-200 px-4 py-3 text-sm text-gray-500 focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50`,
-          isError && tw`border-red-500 focus:border-red-500 focus:ring-red-500`,
-        ]}
-        placeholder={placeholder}
+      <QuillEditor
+        className=""
+        ref={(el) => (quill.current = el)}
+        theme="snow"
         value={value}
-        onChange={
-          onChange
-            ? (e) => {
-                onChange(e.target.value)
-              }
-            : undefined
-        }
+        onChange={onChange}
+        modules={modules}
+        formats={formats}
       />
     </div>
   )
