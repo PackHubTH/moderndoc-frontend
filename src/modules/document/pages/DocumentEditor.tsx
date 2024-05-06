@@ -1,4 +1,4 @@
-import { Document, Page } from 'react-pdf'
+import { useEffect, useRef } from 'react'
 import {
   FaAlignJustify,
   FaAlignLeft,
@@ -10,6 +10,8 @@ import {
   FaMousePointer,
   FaPenFancy,
 } from 'react-icons/fa'
+import { Document, Page } from 'react-pdf'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   getJson,
   hexToRgb,
@@ -20,37 +22,36 @@ import {
   setTextBold,
   setTextItalic,
 } from '../utils/documentEditorUtils'
-import { useEffect, useRef } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
 
-import ActionDocumentModal from '../components/ActionDocumentModal'
+import exampleFile from '@/assets/FO-TO-44.pdf'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
-import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
-import CreateDocumentModal from '../components/CreateDocumentModal'
-import DocumentAccordion from '../components/DocumentAccordion'
-import DocumentCanvas from '../components/DocumentCanvas'
-import { DocumentStatus } from '../types/types'
-import DocumentToolbar from '../components/DocumentToolbar'
 import Dropdown from '@/components/Dropdown'
-import { FaA } from 'react-icons/fa6'
-import GuidelineModal from '../components/GuidelineModal'
-import { IoEyeOutline } from 'react-icons/io5'
 import MainLogo from '@/components/MainLogo'
-import { PDFDocument } from 'pdf-lib'
-import ProfileBox from '../components/ProfileBox'
 import RichTextInputDisplay from '@/components/RichTextInputDisplay'
-import ToolbarButton from '../components/ToolbarButton'
-import ToolbarTextButton from '../components/ToolbarTextButton'
-import exampleFile from '@/assets/FO-TO-44.pdf'
-import tw from 'twin.macro'
 import { useDisclosure } from '@/hooks/useDisclosure'
-import { useDocumentStore } from '../stores/documentStore'
-import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
-import useGetDocumentById from '../hooks/api/useGetDocumentById'
 import useGetFile from '@/hooks/useGetFile'
 import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
 import { useUserStore } from '@/stores/userStore'
+import { PDFDocument } from 'pdf-lib'
+import { FaA } from 'react-icons/fa6'
+import { IoEyeOutline } from 'react-icons/io5'
+import tw from 'twin.macro'
+import ActionDocumentModal from '../components/ActionDocumentModal'
+import ActionDraftDocumentModal from '../components/ActionDraftDocumentModal'
+import CreateDocumentModal from '../components/CreateDocumentModal'
+import DocumentAccordion from '../components/DocumentAccordion'
+import DocumentCanvas from '../components/DocumentCanvas'
+import DocumentToolbar from '../components/DocumentToolbar'
+import GuidelineModal from '../components/GuidelineModal'
+import ProfileBox from '../components/ProfileBox'
+import ToolbarButton from '../components/ToolbarButton'
+import ToolbarTextButton from '../components/ToolbarTextButton'
+import useGetDocumentById from '../hooks/api/useGetDocumentById'
+import { useDocumentStore } from '../stores/documentStore'
+import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
+import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
+import { DocumentStatus } from '../types/types'
 
 type PropsType = {
   type: 'create' | 'edit'
@@ -204,12 +205,12 @@ const DocumentEditor = ({ type }: PropsType) => {
               close={closeProcessModal}
             />
           ) : documentData?.data?.status === DocumentStatus.DRAFT ? (
-            // <CreateDraftDocumentModal
-            //   isOpen={isProcessModalOpen}
-            //   documentId={documentId}
-            //   close={closeProcessModal}
-            // />
-            <></>
+            <ActionDraftDocumentModal
+              isOpen={isProcessModalOpen}
+              documentId={documentId}
+              suggestOperators={[]}
+              close={closeProcessModal}
+            />
           ) : (
             <ActionDocumentModal
               isOpen={isProcessModalOpen}
@@ -217,7 +218,6 @@ const DocumentEditor = ({ type }: PropsType) => {
               createdByName={documentData?.data?.userCreated.nameTh ?? ''}
               documentId={documentId}
               operatorId={documentData?.data?.operatorId ?? ''}
-              // operatorName={documentData?.data?.operator.nameTh ?? ''}
               operatorName={documentData?.data?.operator?.nameTh ?? ''}
               close={closeProcessModal}
             />
