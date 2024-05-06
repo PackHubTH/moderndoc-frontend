@@ -5,7 +5,7 @@ import { Staff } from './../types'
 
 export const editProfileFormSchema = z.object({
   id: z.string().uuid(),
-  profileImg: z.string().optional(),
+  profileImg: z.any().optional(),
   profileImgFile: z.any().optional(),
   role: z.nativeEnum(UserRole),
   level: z.nativeEnum(Level).optional(),
