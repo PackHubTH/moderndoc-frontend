@@ -41,7 +41,7 @@ const RichTextInput: React.FC<PropsType> = ({
   useEffect(() => {
     const quillEditor = quill.current.getEditor()
 
-    quillEditor.root.innerHTML = value as string
+    quillEditor.root.innerHTML = (value ?? '') as string
   }, [])
 
   return (

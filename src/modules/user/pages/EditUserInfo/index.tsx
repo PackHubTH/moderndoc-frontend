@@ -36,6 +36,7 @@ const EditUserInfo = () => {
             : userData.data.notificationConfig,
         phone: userData.data.phones[0],
         profileImg: userData.data.profileImg,
+        profileImgFile: null,
         defaultEmailIndex: userData.data.defaultEmailIndex,
         role: userData.data.role,
         signatures: userData.data.signatures,
@@ -46,6 +47,8 @@ const EditUserInfo = () => {
       })
     }
   }, [userData])
+
+  console.log('field', methods.watch(), methods.formState)
 
   const onSubmit = async () => {
     const data = methods.getValues()

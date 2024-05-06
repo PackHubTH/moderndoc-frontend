@@ -1,5 +1,5 @@
 import Button from '@/components/Button'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { DEFAULT_PROFILE_IMG } from '../../constants'
 
 type PropsType = {
@@ -24,6 +24,12 @@ const ProfileImageUpload: React.FC<PropsType> = ({ urlValue, onChange }) => {
   const onClickUpload = () => {
     uploadButtonRef.current?.click()
   }
+
+  useEffect(() => {
+    if (urlValue === '' || !urlValue) {
+      onChange(undefined, undefined)
+    }
+  }, [urlValue])
 
   return (
     <div className="flex items-center gap-4">
