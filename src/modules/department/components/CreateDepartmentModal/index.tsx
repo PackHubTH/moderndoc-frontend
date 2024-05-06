@@ -73,7 +73,6 @@ const CreateDepartmentModal: React.FC<PropsType> = ({
           }
         },
         onError: (error: any) => {
-          console.log('🚀 ~ inviteUser ~ error:', error)
           toast(
             `เกิดข้อผิดพลาดในการแก้ไขหน่วยงาน ${
               error?.response.data.error ?? ''

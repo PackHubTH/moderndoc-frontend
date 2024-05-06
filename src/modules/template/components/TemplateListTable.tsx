@@ -8,17 +8,18 @@ import {
 import { useEffect, useState } from 'react'
 
 import Button from '@/components/Button'
-import Pagination from '@/components/TableDisplay/Pagination'
 import TableDisplay from '@/components/TableDisplay'
+import Pagination from '@/components/TableDisplay/Pagination'
+import { useDisclosure } from '@/hooks/useDisclosure'
+import { format } from 'date-fns'
+import { th } from 'date-fns/locale'
+import { useNavigate } from 'react-router-dom'
+import useGetAllTemplate from '../hooks/api/useGetAllTemplate'
 import { Template } from '../types/types'
 import TemplateCopyModal from './TemplateCopyModal'
 import TemplateDeleteModal from './TemplateDeleteModal'
 import TemplateInfoBox from './TemplateInfoBox'
-import { format } from 'date-fns'
-import { th } from 'date-fns/locale'
-import { useDisclosure } from '@/hooks/useDisclosure'
-import useGetAllTemplate from '../hooks/api/useGetAllTemplate'
-import { useNavigate } from 'react-router-dom'
+import { onErrorProfileImage } from '@/modules/document/utils/imageUtils'
 
 const TemplateListTable = () => {
   const {
@@ -73,6 +74,7 @@ const TemplateListTable = () => {
             สร้างโดย
             <img
               src={info.row.original.userCreated.profileImg}
+              onError={onErrorProfileImage}
               alt="create-by-img"
               className="h-5 w-5 rounded-full"
             />

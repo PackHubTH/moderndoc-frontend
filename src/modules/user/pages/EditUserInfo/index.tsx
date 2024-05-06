@@ -48,8 +48,6 @@ const EditUserInfo = () => {
     }
   }, [userData])
 
-  console.log('field', methods.watch(), methods.formState)
-
   const onSubmit = async () => {
     const data = methods.getValues()
 

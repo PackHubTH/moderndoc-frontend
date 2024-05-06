@@ -8,6 +8,7 @@ import UserInfoModal from '@/modules/department/components/UserInfoModal'
 import { GetDepartmentMemberResponse } from '@/modules/department/hooks/api/types'
 import useGetDepartmentMembers from '@/modules/department/hooks/api/useGetDepartmentMembers'
 import { RoleMapper } from '@/modules/department/mappers'
+import { onErrorProfileImage } from '@/modules/document/utils/imageUtils'
 import { DepartmentType } from '@/modules/user/hooks/types'
 import { formatPhoneNumber } from '@/utils/formatUtils'
 import {
@@ -137,6 +138,7 @@ const DepartmentMembersList: React.FC<PropsType> = ({
         <div className="flex w-56 items-center gap-2">
           <img
             src={info.row.original.profileImg}
+            onError={onErrorProfileImage}
             alt="profile"
             className="h-8 w-8 rounded-full"
           />

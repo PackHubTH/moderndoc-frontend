@@ -1,5 +1,6 @@
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
+import { onErrorProfileImage } from '../utils/imageUtils'
 
 type PropsType = {
   name: string
@@ -14,6 +15,7 @@ const ProfileBox = ({ email, name, profileImg, timestamp }: PropsType) => {
       <img
         className="h-7 w-7 rounded-full object-cover"
         src={profileImg ?? 'https://via.placeholder.com/150'}
+        onError={onErrorProfileImage}
         alt={`img-` + name.split(' ')[0]}
       />
       <div className="w-full text-xs">

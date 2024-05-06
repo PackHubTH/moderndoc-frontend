@@ -1,5 +1,6 @@
 import NotAvailableImage from '@/assets/not-available-image.png'
 import moderndocApi from '@/moderndocApi'
+import { DEFAULT_PROFILE_IMG } from '@/modules/user/constants'
 import { getFilePath } from '@/utils/fileUtils'
 import { ApiResponse } from 'types/response'
 
@@ -21,4 +22,10 @@ export const onErrorImage = (
   e: React.SyntheticEvent<HTMLImageElement, Event>
 ) => {
   e.currentTarget.src = NotAvailableImage
+}
+
+export const onErrorProfileImage = (
+  e: React.SyntheticEvent<HTMLImageElement, Event>
+) => {
+  e.currentTarget.src = DEFAULT_PROFILE_IMG
 }

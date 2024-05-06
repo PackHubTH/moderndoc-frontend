@@ -12,6 +12,7 @@ import Pagination from '@/components/TableDisplay/Pagination'
 import Tabs from '@/components/Tabs'
 import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import { onErrorProfileImage } from '@/modules/document/utils/imageUtils'
 import useGetPublicFaqsPagination from '@/modules/faq/hooks/api/useGetPublicFaqsPagination'
 import useFaqStore from '@/modules/faq/stores/useFaqStore'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
@@ -105,7 +106,7 @@ const FaqListTable = () => {
       size: 60,
       header: `ทั้งหมด ${faqsData?.data.total} ข้อมูล`,
       cell: (info) => (
-        <div className="space-y-1 w-48">
+        <div className="w-48 space-y-1">
           {info.row.original.faqTags.map((tag) => (
             <Tag name={tag.tag.name} />
           ))}
@@ -126,6 +127,7 @@ const FaqListTable = () => {
               <img
                 className="w-6 rounded-full"
                 src={info.row.original.userUpdated.profileImg}
+                onError={onErrorProfileImage}
               />
               <span className="text-sm font-semibold text-gray-400">
                 อัปเดตโดย {info.row.original.userUpdated.nameTh}
