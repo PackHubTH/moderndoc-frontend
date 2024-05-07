@@ -16,6 +16,7 @@ type PropsType = {
   variant?: VariantType
   borderColor?: string
   type?: 'button' | 'submit' | 'reset'
+  centerText?: boolean
 }
 const Button: React.FC<PropsType> = ({
   label,
@@ -27,6 +28,9 @@ const Button: React.FC<PropsType> = ({
   variant: colorVariant = 'blue',
   borderColor,
   type,
+  width,
+  height,
+  centerText,
 }) => {
   const BUTTON_STYLES: Record<VariantType, ButtonStyle> = {
     blue: {
@@ -96,6 +100,9 @@ const Button: React.FC<PropsType> = ({
               BUTTON_STYLES[colorVariant].color,
           },
         },
+        width && { width: width },
+        height && { height: height },
+        centerText && tw`justify-center`,
       ]}
       disabled={disabled}
       onClick={!disabled ? onClick : undefined}

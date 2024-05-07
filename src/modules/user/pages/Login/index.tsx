@@ -1,11 +1,12 @@
 import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
 import TextInput from '@/components/TextInput'
+import useLogin from '@/modules/user//hooks/api/useLogin'
+import LoginImage from '@/modules/user/assets/login-image.png'
 import { useUserStore } from '@/stores/userStore'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { UserRole } from 'types/user'
-import useLogin from '../../hooks/api/useLogin'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -37,20 +38,32 @@ const Login = () => {
   }
 
   return (
-    <PageContainer>
-      <form className="max-w-xs p-8">
+    <PageContainer className="mx-auto grid h-full max-w-7xl grid-cols-2 place-items-center">
+      <img src={LoginImage} alt="login" className="max-w-[645px]" />
+      <form>
+        <h1 className="text-2xl font-semibold text-gray-600">
+          ยินดีต้อนรับสู่ ModernDoc! 👋🏻
+        </h1>
+        <p className="mt-2 text-sm text-gray-500">
+          เข้าสู่ระบบด้วยอีเมลมหาวิทยาลัย
+        </p>
         <TextInput
-          label="Email"
-          placeholder="Enter your email"
+          className="mt-6"
+          placeholder="อีเมลมหาวิทยาลัย"
           type="email"
           onChange={setEmail}
         />
-        <Button
-          label="Login"
-          onClick={() => {
-            handleLogin(email)
-          }}
-        />
+        <div className="mt-4">
+          <Button
+            width="100%"
+            label="เข้าสู่ระบบ"
+            onClick={(e) => {
+              e.preventDefault()
+              handleLogin(email)
+            }}
+            centerText
+          />
+        </div>
       </form>
     </PageContainer>
   )
