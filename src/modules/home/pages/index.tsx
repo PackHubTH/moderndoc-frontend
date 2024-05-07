@@ -14,7 +14,6 @@ import { IoDocumentTextOutline } from 'react-icons/io5'
 import { useInView } from 'react-intersection-observer'
 import { UserRole } from 'types/user'
 import FaqAccordion from '../components/FaqAccordion'
-import GuestHomePage from './GuestHomePage'
 
 const Home = () => {
   const { isLogin } = useUserStore()
@@ -51,22 +50,26 @@ const Home = () => {
     refetch()
   }, [search, filterTagId, filterDepartmentId])
 
+  useEffect(() => {
+    setFilterTagId(tags?.data?.[0].id ?? '')
+  }, [tags])
+
   const departmentFilterOptions = useMemo(() => {
     const departmentsOptions = departments?.data.map((department) => ({
       label: department.name,
       value: department.id,
     }))
 
-    return [
-      {
-        label: 'ภาควิชาของฉัน',
-        value: 'MY_DEPARTMENT',
-      },
-      ...(departmentsOptions ?? []),
-    ]
+    return isLogin && !((userData?.data.role ?? '') === UserRole.ADMIN)
+      ? [
+          {
+            label: 'ภาควิชาของฉัน',
+            value: 'MY_DEPARTMENT',
+          },
+          ...(departmentsOptions ?? []),
+        ]
+      : departmentsOptions
   }, [departments])
-
-  if (!isLogin) return <GuestHomePage />
 
   const faqsList = useMemo(() => {
     return (
@@ -143,8 +146,11 @@ const Home = () => {
           setFilterTagId(tags?.data?.[tab].id ?? '')
         }}
       />
-
-      <div ref={ref} className="h-1" />
+      {faqsIsFetched && hasNextPage && (
+        <div ref={ref} className="h-1">
+          <Loading />
+        </div>
+      )}
     </PageContainer>
   )
 }

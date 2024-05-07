@@ -16,6 +16,7 @@ import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetFileMutate from '@/hooks/useGetFileMutate'
 import CreateFaqModal from '@/modules/faq/components/CreateFaqModal'
 import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
+import { useUserStore } from '@/stores/userStore'
 import { getFileExtensionIcon, getFilename } from '@/utils/fileUtils'
 import { isUrl } from '@/utils/stringUtils'
 import { Disclosure } from '@headlessui/react'
@@ -39,6 +40,8 @@ const FaqAccordion: React.FC<PropsType> = ({
   isEditable,
   defaultOpen = false,
 }) => {
+  const { isLogin } = useUserStore()
+
   const {
     isOpen: createSubFaqIsOpen,
     open: createSubFaqOpen,
@@ -82,6 +85,15 @@ const FaqAccordion: React.FC<PropsType> = ({
   const handleClickDeleteSubFaq = (subFaq: SubFaq) => {
     setActionSubFaq(subFaq)
     deleteSubFaqOpen()
+  }
+
+  const handleCreateDocument = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    templateId: string
+  ) => {
+    e.preventDefault()
+    if (!isLogin) navigate('/login')
+    else navigate(`/create-document/${templateId}`)
   }
 
   return (
@@ -139,11 +151,9 @@ const FaqAccordion: React.FC<PropsType> = ({
                     <Button
                       label="สร้างเอกสาร"
                       variant="green"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        console.log('create document', faq.templateId)
-                        navigate(`/create-document/${faq.templateId}`)
-                      }}
+                      onClick={(e) =>
+                        handleCreateDocument(e, faq.templateId ?? '')
+                      }
                       leftIcon={
                         <FaPlus
                           size={24}
