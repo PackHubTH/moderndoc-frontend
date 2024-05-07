@@ -1,4 +1,5 @@
 import Button from '@/components/Button'
+import Loading from '@/components/Loading'
 import PageContainer from '@/components/PageContainer'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
@@ -58,9 +59,11 @@ const AllDepartmentsList = () => {
     isOpen: isOpenDeleteDepartmentModal,
   } = useDisclosure()
 
-  const { data: departments, refetch } = useGetAllDepartments(
-    paginationState.pageIndex + 1
-  )
+  const {
+    data: departments,
+    refetch,
+    isFetched: departmentsIsFetched,
+  } = useGetAllDepartments(paginationState.pageIndex + 1)
 
   const columns: ColumnDef<GetAllDepartmentsResponse>[] = [
     {
@@ -207,13 +210,21 @@ const AllDepartmentsList = () => {
                 title: 'สังกัด/หน่วยงานของทั้งหมด',
                 content: (
                   <>
-                    <TableDisplay table={table} />
-                    <Pagination
-                      totalPage={departments?.data.totalPages ?? 0}
-                      currentPage={table.getState().pagination.pageIndex + 1}
-                      nextPage={table.nextPage}
-                      prevPage={table.previousPage}
-                    />
+                    {departmentsIsFetched ? (
+                      <>
+                        <TableDisplay table={table} />
+                        <Pagination
+                          totalPage={departments?.data.totalPages ?? 0}
+                          currentPage={
+                            table.getState().pagination.pageIndex + 1
+                          }
+                          nextPage={table.nextPage}
+                          prevPage={table.previousPage}
+                        />
+                      </>
+                    ) : (
+                      <Loading />
+                    )}
                   </>
                 ),
               },

@@ -3,9 +3,13 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { ApiResponse } from 'types/response'
 import { GetFaqsListResponse } from '../types'
 
-const useGetPublicFaqs = (search?: string, tagId?: string) => {
+const useGetPublicFaqs = (
+  search?: string,
+  tagId?: string,
+  departmentId?: string
+) => {
   return useInfiniteQuery(
-    ['public-faqs'],
+    ['public-faqs', search, tagId, departmentId],
     async ({ pageParam = 1 }) => {
       const response = await moderndocApi.get<ApiResponse<GetFaqsListResponse>>(
         '/faq',
@@ -14,6 +18,7 @@ const useGetPublicFaqs = (search?: string, tagId?: string) => {
             page: pageParam,
             search,
             tagId,
+            departmentId,
           },
         }
       )

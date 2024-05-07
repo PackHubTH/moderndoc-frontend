@@ -1,12 +1,15 @@
+import Loading from '@/components/Loading'
 import PageContainer from '@/components/PageContainer'
 import Select from '@/components/Select'
+import Tabs from '@/components/Tabs'
 import TextInput from '@/components/TextInput'
 import FaqImage from '@/modules/Home/assets/faq-image.png'
 import useGetAllTags from '@/modules/faq/hooks/api/useGetAllTags'
 import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
+import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { useUserStore } from '@/stores/userStore'
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { IoDocumentTextOutline } from 'react-icons/io5'
 import { useInView } from 'react-intersection-observer'
 import { UserRole } from 'types/user'
@@ -18,16 +21,19 @@ const Home = () => {
 
   const [search, setSearch] = useState('')
   const [filterTagId, setFilterTagId] = useState<string>('')
+  const [filterDepartmentId, setFilterDepartmentId] = useState<string>('')
 
   const { data: userData } = useGetUser()
   const { data: tags } = useGetAllTags()
+  const { data: departments } = useGetDepartments()
 
   const {
     data: faqs,
     fetchNextPage,
     hasNextPage,
     refetch,
-  } = useGetPublicFaqs(search, filterTagId)
+    isFetched: faqsIsFetched,
+  } = useGetPublicFaqs(search, filterTagId, filterDepartmentId)
 
   const faqsData = faqs?.pages.map((page) => page.data.data).flat()
 
@@ -43,36 +49,27 @@ const Home = () => {
 
   useEffect(() => {
     refetch()
-  }, [search, filterTagId])
+  }, [search, filterTagId, filterDepartmentId])
+
+  const departmentFilterOptions = useMemo(() => {
+    const departmentsOptions = departments?.data.map((department) => ({
+      label: department.name,
+      value: department.id,
+    }))
+
+    return [
+      {
+        label: 'ภาควิชาของฉัน',
+        value: 'MY_DEPARTMENT',
+      },
+      ...(departmentsOptions ?? []),
+    ]
+  }, [departments])
 
   if (!isLogin) return <GuestHomePage />
 
-  return (
-    <PageContainer className="p-4 ">
-      <div className="space-y-2 text-center">
-        <img src={FaqImage} alt="faq" className="mx-auto w-[356px]" />
-        <div className="flex items-center justify-center gap-4">
-          <TextInput
-            className="w-[600px]"
-            value={search}
-            onChange={(val) => setSearch(val)}
-            placeholder="ค้นหาเอกสาร..."
-          />
-          <Select
-            className="w-48"
-            placeholder="ค้นหาตามหมวดหมู่"
-            options={
-              tags?.data.map((tag) => ({
-                label: tag.name,
-                value: tag.id,
-              })) ?? []
-            }
-            onChange={(val) => setFilterTagId(val as string)}
-            value={filterTagId ?? ''}
-            label=""
-          />
-        </div>
-      </div>
+  const faqsList = useMemo(() => {
+    return (
       <div className="space-y-2.5">
         {faqsData?.map((faq, index) => {
           const shouldShowDepartment =
@@ -108,6 +105,45 @@ const Home = () => {
           )
         })}
       </div>
+    ) as ReactNode
+  }, [faqsData, userData])
+
+  return (
+    <PageContainer className="p-4 ">
+      <div className="mb-6 space-y-2 text-center">
+        <img src={FaqImage} alt="faq" className="mx-auto w-[356px]" />
+        <div className="flex items-center justify-center gap-4">
+          <TextInput
+            className="w-[600px]"
+            value={search}
+            onChange={(val) => setSearch(val)}
+            placeholder="ค้นหาเอกสาร..."
+          />
+          <Select
+            className="-mt-2 w-48"
+            placeholder="ค้นหาตามหน่วยงาน"
+            options={departmentFilterOptions ?? []}
+            onChange={(val) => setFilterDepartmentId(val as string)}
+            value={filterDepartmentId ?? ''}
+            label=""
+          />
+        </div>
+      </div>
+      <Tabs
+        variant="outline"
+        tabs={
+          tags?.data.map((tag) => {
+            return {
+              title: tag.name,
+              content: faqsIsFetched ? faqsList : <Loading />,
+            }
+          }) ?? []
+        }
+        onChangeTab={(tab) => {
+          setFilterTagId(tags?.data?.[tab].id ?? '')
+        }}
+      />
+
       <div ref={ref} className="h-1" />
     </PageContainer>
   )

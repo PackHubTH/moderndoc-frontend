@@ -1,4 +1,5 @@
 import Button from '@/components/Button'
+import Loading from '@/components/Loading'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import { useDisclosure } from '@/hooks/useDisclosure'
@@ -52,7 +53,11 @@ const DepartmentMembersList: React.FC<PropsType> = ({
     departmentName?: string
   } | null>(null)
 
-  const { data: members, refetch } = useGetDepartmentMembers(
+  const {
+    data: members,
+    refetch,
+    isFetched: membersIsFetched,
+  } = useGetDepartmentMembers(
     paginationState.pageIndex + 1,
     isApproved,
     departmentId
@@ -326,13 +331,19 @@ const DepartmentMembersList: React.FC<PropsType> = ({
   return (
     <>
       <div className="p-2">
-        <TableDisplay table={table} />
-        <Pagination
-          totalPage={members?.data.totalPages ?? 0}
-          currentPage={table.getState().pagination.pageIndex + 1}
-          nextPage={table.nextPage}
-          prevPage={table.previousPage}
-        />
+        {membersIsFetched ? (
+          <>
+            <TableDisplay table={table} />
+            <Pagination
+              totalPage={members?.data.totalPages ?? 0}
+              currentPage={table.getState().pagination.pageIndex + 1}
+              nextPage={table.nextPage}
+              prevPage={table.previousPage}
+            />
+          </>
+        ) : (
+          <Loading />
+        )}
       </div>
       <UserInfoModal
         isOpen={isOpenUserInfo}

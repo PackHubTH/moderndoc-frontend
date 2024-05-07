@@ -7,6 +7,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { MdModeEditOutline, MdRemoveRedEye } from 'react-icons/md'
 
+import Loading from '@/components/Loading'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import Tabs from '@/components/Tabs'
@@ -52,15 +53,21 @@ const FaqListTable = () => {
 
   const { data: userData } = useGetUser()
 
-  const { data: departmentFaqs, refetch: refetchDepartmentFaqs } =
-    useGetDepartmentFaqs(
-      paginationState.pageIndex + 1,
-      '',
-      userData?.data?.role === UserRole.ADMIN
-    )
+  const {
+    data: departmentFaqs,
+    refetch: refetchDepartmentFaqs,
+    isFetched: departmentFaqsIsFetched,
+  } = useGetDepartmentFaqs(
+    paginationState.pageIndex + 1,
+    '',
+    userData?.data?.role === UserRole.ADMIN
+  )
 
-  const { data: publicFaqs, refetch: reftechPublicFaqs } =
-    useGetPublicFaqsPagination(paginationState.pageIndex + 1)
+  const {
+    data: publicFaqs,
+    refetch: refetchPublicFaqs,
+    isFetched: publicFaqsIsFetched,
+  } = useGetPublicFaqsPagination(paginationState.pageIndex + 1)
 
   const faqsData = useMemo(() => {
     if (faqType === 'department') {
@@ -74,9 +81,9 @@ const FaqListTable = () => {
     if (faqType === 'department') {
       return refetchDepartmentFaqs
     } else {
-      return reftechPublicFaqs
+      return refetchPublicFaqs
     }
-  }, [departmentFaqs, publicFaqs, faqType])
+  }, [faqType])
 
   const columns: ColumnDef<Faq>[] = [
     {
@@ -105,7 +112,7 @@ const FaqListTable = () => {
       size: 60,
       header: `ทั้งหมด ${faqsData?.data.total} ข้อมูล`,
       cell: (info) => (
-        <div className="space-y-1 w-48">
+        <div className="w-48 space-y-1">
           {info.row.original.faqTags.map((tag) => (
             <Tag name={tag.tag.name} />
           ))}
@@ -197,7 +204,19 @@ const FaqListTable = () => {
               title: 'รายการของฉัน',
               content: (
                 <div className="mt-4">
-                  <TableDisplay table={table} />
+                  {departmentFaqsIsFetched ? (
+                    <>
+                      <TableDisplay table={table} />
+                      <Pagination
+                        totalPage={faqsData?.data.totalPages ?? 0}
+                        currentPage={table.getState().pagination.pageIndex + 1}
+                        nextPage={table.nextPage}
+                        prevPage={table.previousPage}
+                      />
+                    </>
+                  ) : (
+                    <Loading />
+                  )}
                 </div>
               ),
             },
@@ -205,7 +224,19 @@ const FaqListTable = () => {
               title: 'รายการทั้งหมด',
               content: (
                 <div className="mt-4">
-                  <TableDisplay table={table} />
+                  {publicFaqsIsFetched ? (
+                    <>
+                      <TableDisplay table={table} />
+                      <Pagination
+                        totalPage={faqsData?.data.totalPages ?? 0}
+                        currentPage={table.getState().pagination.pageIndex + 1}
+                        nextPage={table.nextPage}
+                        prevPage={table.previousPage}
+                      />
+                    </>
+                  ) : (
+                    <Loading />
+                  )}
                 </div>
               ),
             },
@@ -221,12 +252,6 @@ const FaqListTable = () => {
               pageSize: 10,
             })
           }}
-        />
-        <Pagination
-          totalPage={faqsData?.data.totalPages ?? 0}
-          currentPage={table.getState().pagination.pageIndex + 1}
-          nextPage={table.nextPage}
-          prevPage={table.previousPage}
         />
       </div>
       <CreateFaqModal
