@@ -83,7 +83,7 @@ const FaqListTable = () => {
     } else {
       return refetchPublicFaqs
     }
-  }, [departmentFaqs, publicFaqs, faqType])
+  }, [faqType])
 
   const columns: ColumnDef<Faq>[] = [
     {

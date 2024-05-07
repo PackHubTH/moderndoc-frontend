@@ -20,7 +20,7 @@ const Tabs: React.FC<PropsType> = ({
 
   useEffect(() => {
     onChangeTab && onChangeTab(tabIndex)
-  }, [tabIndex, tabs])
+  }, [tabIndex])
 
   return (
     <>
