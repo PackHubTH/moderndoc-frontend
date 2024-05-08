@@ -14,22 +14,18 @@ const autoFillData = [
 ]
 
 export const parseUserDatatoAutofill = (user: User, role?: any): any => {
-  console.log('before parseuser', user)
-  // if user is empty object return empty object
-  if (!user) return {}
+  console.log('before parseuser', user, user.role)
+  if (!user || user.role !== UserRole.STUDENT) return {}
 
-  if (user.role === UserRole.STUDENT) {
-    return {
-      name: user.nameTh,
-      educationLevel: 'test',
-      faculty: 'test',
-      major: 'test',
-      course: 'test',
-      studentNumber: user.student.studentNumber,
-      email: user.emails[user.defaultEmailIndex],
-      phone: user.phones[user.defaultPhoneIndex],
-      teacher: user?.teacher?.id ?? '',
-    }
+  return {
+    name: user.nameTh,
+    educationLevel: 'ระดับการศึกษา',
+    faculty: 'คณะ',
+    major: 'ภาค/สาขาวิชา',
+    course: 'หลักสูตร',
+    studentNumber: user.student.studentNumber,
+    email: user.emails[user.defaultEmailIndex],
+    phone: user.phones[user.defaultPhoneIndex],
+    teacher: user.student?.advisor?.user?.nameTh ?? 'อาจารย์ที่ปรึกษา',
   }
-  return {}
 }

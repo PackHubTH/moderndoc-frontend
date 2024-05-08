@@ -43,6 +43,7 @@ const DocumentCanvas = ({ id, element, type }: DocumentCanvasProps) => {
     const isHasPage = canvasSizes.findIndex((page) => page.id === id) !== -1
     const isHasCanvas = canvasList.findIndex((page) => page.id === id) !== -1
     console.log('isHasPage', isHasPage, 'isHasCanvas', isHasCanvas, element)
+    console.log('type', type)
     if (isHasPage && !isHasCanvas) {
       initCanvas(
         id,

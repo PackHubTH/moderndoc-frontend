@@ -1,23 +1,22 @@
 import { useEffect, useState } from 'react'
 
-import { ActionDocumentForm } from '../hooks/useActionDocumentForm/validation'
 import AutocompleteInput from '@/components/AutocompleteInput'
 import Button from '@/components/Button'
-import { Controller } from 'react-hook-form'
-import { DocumentAction } from '../types/types'
 import Modal from '@/components/Modal'
 import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
-import TextInput from '@/components/TextInput'
-import { UserRole } from 'types/user'
-import { getJson } from '../utils/documentEditorUtils'
+import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
+import { useUserStore } from '@/stores/userStore'
+import { Controller } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { UserRole } from 'types/user'
 import useActionDocument from '../hooks/api/useActionDocument'
 import useActionDocumentForm from '../hooks/useActionDocumentForm'
+import { ActionDocumentForm } from '../hooks/useActionDocumentForm/validation'
 import { useDocumentStore } from '../stores/documentStore'
-import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
-import { useNavigate } from 'react-router-dom'
-import { useUserStore } from '@/stores/userStore'
+import { DocumentAction } from '../types/types'
+import { getJson } from '../utils/documentEditorUtils'
 
 type PropsType = {
   createdById: string
@@ -69,6 +68,7 @@ const ActionDocumentModal: React.FC<PropsType> = ({
     }
     if (documentAction === DocumentAction.SEND_TO_OPERATOR) {
       methods.reset({ receiverId: operatorId, message: '' })
+      setSearchUserList(operatorName)
     }
     methods.trigger()
   }, [documentAction, isOpen])
@@ -109,37 +109,38 @@ const ActionDocumentModal: React.FC<PropsType> = ({
       return null
     return (
       <form className="max-h-[586px] space-y-5 overflow-y-auto p-1">
-        {documentAction === DocumentAction.SEND_TO_REVIEW && (
-          <Controller
-            control={methods.control}
-            name="receiverId"
-            render={({ field: { onChange } }) => (
-              <AutocompleteInput
-                label="เลือกผู้รับเอกสาร"
-                options={
-                  userList?.data?.map((user) => ({
-                    label: user.nameTh,
-                    value: user.id,
-                  })) ?? []
-                }
-                onChange={(e) => {
-                  const name = userList?.data.find((user) => user.id === e)
-                    ?.nameTh
-                  onChange(e)
-                  setSearchUserList(name ?? '')
-                }}
-                onSearch={(e) => {
-                  setSearchUserList(e)
-                  const name = userList?.data.find((user) => user.id === e)
-                    ?.nameTh
-                  if (!name) onChange('')
-                }}
-                value={searchUserList ?? ''}
-              />
-            )}
-          />
-        )}
-        {(documentAction === DocumentAction.SEND_BACK_TO_OWNER ||
+        {/* {documentAction === DocumentAction.SEND_TO_REVIEW && ( */}
+        <Controller
+          control={methods.control}
+          name="receiverId"
+          render={({ field: { onChange } }) => (
+            <AutocompleteInput
+              label="เลือกผู้รับเอกสาร"
+              options={
+                userList?.data?.map((user) => ({
+                  label: user.nameTh,
+                  value: user.id,
+                })) ?? []
+              }
+              onChange={(e) => {
+                const name = userList?.data.find((user) => user.id === e)
+                  ?.nameTh
+                onChange(e)
+                setSearchUserList(name ?? '')
+              }}
+              onSearch={(e) => {
+                setSearchUserList(e)
+                const name = userList?.data.find((user) => user.id === e)
+                  ?.nameTh
+                if (!name) onChange('')
+              }}
+              // value={searchUserList ?? ''}
+              value={searchUserList ?? ''}
+            />
+          )}
+        />
+        {/* )} */}
+        {/* {(documentAction === DocumentAction.SEND_BACK_TO_OWNER ||
           documentAction === DocumentAction.SEND_TO_OPERATOR) && (
           <Controller
             control={methods.control}
@@ -156,7 +157,7 @@ const ActionDocumentModal: React.FC<PropsType> = ({
               />
             )}
           />
-        )}
+        )} */}
         <Controller
           control={methods.control}
           name="message"

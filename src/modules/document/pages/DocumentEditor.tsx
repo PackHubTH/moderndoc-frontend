@@ -17,10 +17,12 @@ import {
   hexToRgb,
   rgbToHex,
   saveCanvas,
+  setFontFamily,
   setFontSize,
   setTextAlign,
   setTextBold,
   setTextItalic,
+  setTextSpacing,
 } from '../utils/documentEditorUtils'
 
 import exampleFile from '@/assets/FO-TO-44.pdf'
@@ -34,6 +36,7 @@ import useGetFile from '@/hooks/useGetFile'
 import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
 import { useUserStore } from '@/stores/userStore'
 import { PDFDocument } from 'pdf-lib'
+import { BsDistributeHorizontal } from 'react-icons/bs'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
 import tw from 'twin.macro'
@@ -52,6 +55,7 @@ import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 import { DocumentStatus } from '../types/types'
+import { downloadFile } from '../utils/downloadUtils'
 
 type PropsType = {
   type: 'create' | 'edit'
@@ -231,124 +235,144 @@ const DocumentEditor = ({ type }: PropsType) => {
       </div>
       {/*  */}
       {/* Main */}
-      <div className="flex h-[calc(100vh-92px)]">
+      <DocumentToolbar isEdit={type === 'edit'}>
+        <ToolbarButton icon={<FaA />} id={ButtonId.Text} label="Text" />
+        <ToolbarButton icon={<FaPenFancy />} id={ButtonId.Pen} label="Sign" />
+        <ToolbarButton icon={<FaCheck />} id={ButtonId.Correct} label="Check" />
+        <ToolbarButton
+          onClick={() => console.log(getJson(canvasList))}
+          icon={<FaMousePointer />}
+          id={ButtonId.Default}
+          label="Select"
+        />
+        {activeObject && activeObject.fontSize ? (
+          <div className="ms-8 space-x-2">
+            <Dropdown
+              label={activeObject?.fontSize?.toString() ?? '16'}
+              dropdownSection={[
+                {
+                  lists: [8, 12, 16, 20, 24, 48, 72].map((size) => ({
+                    displayText: size,
+                    onClick: () =>
+                      setFontSize(canvasList, activeCanvasId, size),
+                  })),
+                },
+              ]}
+            />
+            <Dropdown
+              label={activeObject?.fontFamily ?? 'Arial'}
+              dropdownSection={[
+                {
+                  lists: [
+                    'Arial',
+                    'Courier New',
+                    'Tahoma',
+                    'Times New Roman',
+                  ].map((font) => ({
+                    displayText: font,
+                    // onClick: () => activeObject?.set('fontFamily', font),
+                    onClick: () =>
+                      setFontFamily(canvasList, activeCanvasId, font),
+                  })),
+                },
+              ]}
+            />
+            <input
+              type="color"
+              value={rgbToHex(activeObject?.fill)}
+              onChange={(e) => {
+                console.log('color', e.target.value)
+                activeObject?.set('fill', hexToRgb(e.target.value))
+                canvasList
+                  .find((page) => page.id === activeCanvasId)
+                  ?.canvas?.renderAll()
+              }}
+            />
+            <ToolbarTextButton
+              icon={<FaBold />}
+              name="fontWeight"
+              value="bold"
+              onClick={() =>
+                setTextBold(canvasList, activeCanvasId, setActiveObject)
+              }
+            />
+            <ToolbarTextButton
+              icon={<FaItalic />}
+              name="fontStyle"
+              value="italic"
+              onClick={() =>
+                setTextItalic(canvasList, activeCanvasId, setActiveObject)
+              }
+            />
+            <ToolbarTextButton
+              icon={<FaAlignLeft />}
+              name="textAlign"
+              value="left"
+              onClick={() => setTextAlign(canvasList, activeCanvasId, 'left')}
+            />
+            <ToolbarTextButton
+              icon={<FaAlignJustify />}
+              name="textAlign"
+              value="center"
+              onClick={() => setTextAlign(canvasList, activeCanvasId, 'center')}
+            />
+            <ToolbarTextButton
+              icon={<FaAlignRight />}
+              name="textAlign"
+              value="right"
+              onClick={() => setTextAlign(canvasList, activeCanvasId, 'right')}
+            />
+            <div className="inline-flex items-center gap-2">
+              <BsDistributeHorizontal />
+              <span>{activeObject?.charSpacing / 100} px</span>
+              <input
+                type="range"
+                defaultValue={activeObject?.charSpacing ?? 0}
+                onChange={(e) => {
+                  setTextSpacing(
+                    canvasList,
+                    activeCanvasId,
+                    Number(e.target.value) * 10
+                  )
+                  setActiveObject({
+                    ...activeObject,
+                    charSpacing: Number(e.target.value) * 10,
+                  })
+                }}
+              />
+            </div>
+          </div>
+        ) : null}
+      </DocumentToolbar>
+      <div className="flex h-[calc(100vh-140px)]">
+        {/* <div className="p-4">
+          <Document file={file?.data}>
+            {Array.apply(null, Array(pageTotal))
+              .map((x, i) => i + 1)
+              .map((page) => {
+                return (
+                  <div className="relative">
+                    <span className="absolute z-10 bg-blue-500 px-4 py-2 text-white">
+                      {page}
+                    </span>
+                    <Page
+                      pageNumber={page}
+                      renderTextLayer={false}
+                      renderAnnotationLayer={false}
+                      scale={1}
+                      width={200}
+                      onLoadSuccess={() => onPageLoadSuccess(page)}
+                    />
+                  </div>
+                )
+              })}
+          </Document>
+        </div> */}
         <div css={[type === 'edit' ? tw`w-3/4` : tw`w-full`]}>
-          <DocumentToolbar>
-            <ToolbarButton
-              icon={<FaA />}
-              id={ButtonId.Text}
-              label="Text"
-              // onClick={() => console.log(getJson(canvasList))}
-            />
-            <ToolbarButton
-              icon={<FaPenFancy />}
-              id={ButtonId.Pen}
-              label="Sign"
-              // onClick={() =>
-              //   addImg(
-              //     canvasList,
-              //     activeCanvasId,
-              //     'https://placehold.co/600x400',
-              //     0,
-              //     0
-              //   )
-              // }
-            />
-            <ToolbarButton
-              icon={<FaCheck />}
-              id={ButtonId.Correct}
-              label="Check"
-            />
-            <ToolbarButton
-              onClick={() => console.log(getJson(canvasList))}
-              icon={<FaMousePointer />}
-              id={ButtonId.Default}
-              label="Select"
-            />
-            {activeObject && activeObject.text ? (
-              <>
-                <Dropdown
-                  label={activeObject?.fontSize?.toString() ?? '16'}
-                  dropdownSection={[
-                    {
-                      lists: [8, 12, 16, 20, 24, 48, 72].map((size) => ({
-                        displayText: size,
-                        onClick: () =>
-                          setFontSize(canvasList, activeCanvasId, size),
-                      })),
-                    },
-                  ]}
-                />
-                <Dropdown
-                  label={activeObject?.fontFamily ?? 'Arial'}
-                  dropdownSection={[
-                    {
-                      lists: ['Arial', 'Kanit', 'Sarabun', 'Prompt'].map(
-                        (font) => ({
-                          displayText: font,
-                          onClick: () => activeObject?.set('fontFamily', font),
-                        })
-                      ),
-                    },
-                  ]}
-                />
-                <ToolbarTextButton
-                  icon={<FaAlignLeft />}
-                  name="textAlign"
-                  value="left"
-                  onClick={() =>
-                    setTextAlign(canvasList, activeCanvasId, 'left')
-                  }
-                />
-                <ToolbarTextButton
-                  icon={<FaAlignJustify />}
-                  name="textAlign"
-                  value="center"
-                  onClick={() =>
-                    setTextAlign(canvasList, activeCanvasId, 'center')
-                  }
-                />
-                <ToolbarTextButton
-                  icon={<FaAlignRight />}
-                  name="textAlign"
-                  value="right"
-                  onClick={() =>
-                    setTextAlign(canvasList, activeCanvasId, 'right')
-                  }
-                />
-                <ToolbarTextButton
-                  icon={<FaBold />}
-                  name="fontWeight"
-                  value="bold"
-                  onClick={() =>
-                    setTextBold(canvasList, activeCanvasId, setActiveObject)
-                  }
-                />
-                <ToolbarTextButton
-                  icon={<FaItalic />}
-                  name="fontStyle"
-                  value="italic"
-                  onClick={() =>
-                    setTextItalic(canvasList, activeCanvasId, setActiveObject)
-                  }
-                />
-                <input
-                  type="color"
-                  value={rgbToHex(activeObject?.fill)}
-                  onChange={(e) => {
-                    console.log('color', e.target.value)
-                    activeObject?.set('fill', hexToRgb(e.target.value))
-                    canvasList
-                      .find((page) => page.id === activeCanvasId)
-                      ?.canvas?.renderAll()
-                  }}
-                />
-              </>
-            ) : null}
-          </DocumentToolbar>
           {/* canvas section */}
+
           <div
-            className="flex h-[calc(100vh-122px)] justify-center overflow-auto bg-[#f1f2f5]"
+            className="flex h-[calc(100vh-140px)] justify-center overflow-auto bg-[#f1f2f5]"
             ref={canvasRef}
           >
             <Document file={file?.data} onLoadSuccess={onDocumentLoadSuccess}>
@@ -373,7 +397,7 @@ const DocumentEditor = ({ type }: PropsType) => {
                         renderAnnotationLayer={false}
                         scale={1}
                         width={800}
-                        className="mt-2 border-black"
+                        className="my-2 border-black"
                         onLoadSuccess={() => onPageLoadSuccess(page)}
                       />
                     </div>
@@ -390,28 +414,31 @@ const DocumentEditor = ({ type }: PropsType) => {
             data-hs-accordion-always-open
           >
             <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
-              <ProfileBox
-                name={documentData?.data?.userCreated.nameTh ?? ''}
-                email={
-                  documentData?.data?.userCreated.emails[
-                    documentData?.data?.userCreated.defaultEmailIndex
-                  ] ?? ''
-                }
-                profileImg={documentData?.data?.userCreated.profileImg ?? ''}
-              />
-              <div className="p-4">
-                <p>{documentData?.data?.userCreated.phones[0]}</p>
-                <p>TEST</p>
-                <p>TEST</p>
-                <p>TEST</p>
-                <p>TEST</p>
+              <div className="px-4">
+                <ProfileBox
+                  name={documentData?.data?.userCreated.nameTh ?? ''}
+                  email={
+                    documentData?.data?.userCreated.emails[
+                      documentData?.data?.userCreated.defaultEmailIndex
+                    ] ?? ''
+                  }
+                  profileImg={documentData?.data?.userCreated.profileImg ?? ''}
+                />
+                <p>
+                  รหัสนักศึกษา :{' '}
+                  {documentData?.data?.userCreated?.student?.studentNumber}
+                </p>
+                <p>คณะ : -</p>
+                <p>ภาควิชา : -</p>
+                <p>อาจารย์ที่ปรึกษา : -</p>
+                <p>โทรศัพท์ : {documentData?.data?.userCreated.phones[0]}</p>
               </div>
             </DocumentAccordion>
             <DocumentAccordion title={'การแสดงความคิดเห็น'}>
               {documentData &&
                 documentData?.data?.documentTimelines.map(
                   (timeline: any, index) => (
-                    <div>
+                    <div className="px-4">
                       <ProfileBox
                         name={timeline.userUpdatedBy.nameTh}
                         email={
@@ -422,7 +449,7 @@ const DocumentEditor = ({ type }: PropsType) => {
                         profileImg={timeline.userUpdatedBy.profileImg}
                         timestamp={timeline.createdAt}
                       />
-                      <div className="mb-2 p-2 px-4">
+                      <div className="mb-2 p-2">
                         <RichTextInputDisplay value={timeline.message} />
                       </div>
                     </div>
@@ -434,9 +461,12 @@ const DocumentEditor = ({ type }: PropsType) => {
       </div>
       {/*  */}
       {/* pdf lib test */}
-      {/* <button id="a" onClick={() => handlePDFUpload()}>
+      <button
+        id="a"
+        onClick={() => downloadFile(file?.data ?? '', getJson(canvasList))}
+      >
         TeSt
-      </button> */}
+      </button>
     </div>
   )
 }

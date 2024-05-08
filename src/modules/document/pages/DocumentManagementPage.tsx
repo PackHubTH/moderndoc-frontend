@@ -1,9 +1,9 @@
 import Button from '@/components/Button'
-import DocumentListTable from '../components/DocumentListTable'
 import PageContainer from '@/components/PageContainer'
 import Tabs from '@/components/Tabs'
 import TextInput from '@/components/TextInput'
 import { useNavigate } from 'react-router-dom'
+import DocumentListTable from '../components/DocumentListTable'
 
 // import TemplateInfoBox from '../components/TemplateInfoBox'
 // import TemplateListTable from '../components/TemplateListTable'
@@ -20,7 +20,7 @@ const DocumentManagementPage: React.FC = () => {
           label="สร้าง mock"
           variant="green"
           onClick={() => {
-            navigate('/create-document/f5fb00e4-7d45-43a8-9781-dbb72833c4a4')
+            navigate('/create-document/7719fea9-efa1-4165-8f8a-6b90e16c5fe2')
           }}
         />
         <TextInput className="w-[240px]" placeholder="ค้นหา..." />

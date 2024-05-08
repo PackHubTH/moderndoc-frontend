@@ -59,13 +59,14 @@ const CreateDocumentModal: React.FC<PropsType> = ({
       )
       .map((user) => ({
         id: user.id,
-        nameTh: user.nameTh,
+        nameTh: user.nameTh + ' *',
       }))
     return [...suggestOperators, ...filterStaffList]
   }, [userList, suggestOperators])
 
   const onProcessSubmit = async (data: CreateDocumentForm) => {
     try {
+      console.log('Process', getJson(canvasList))
       createDocument(
         {
           templateId,
@@ -109,6 +110,7 @@ const CreateDocumentModal: React.FC<PropsType> = ({
   }
 
   const onNonProcessSubmit = async () => {
+    console.log('nonProcess', getJson(canvasList))
     try {
       createDocument(
         {

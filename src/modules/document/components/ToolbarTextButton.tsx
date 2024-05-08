@@ -7,6 +7,7 @@ interface ToolbarTextButtonProps {
   name: string
   value: string
   onClick: VoidFunction
+  label?: string
 }
 
 const ToolbarTextButton = ({
@@ -14,6 +15,7 @@ const ToolbarTextButton = ({
   name,
   value,
   onClick,
+  label,
 }: ToolbarTextButtonProps) => {
   const activeObject = useDocumentToolbarStore((state) => state.activeObject)
   const setActiveObject = useDocumentToolbarStore(
@@ -24,7 +26,7 @@ const ToolbarTextButton = ({
     <button
       type="button"
       css={[
-        tw`inline-flex flex-col items-center justify-center gap-x-2 rounded-sm border border-transparent p-1 text-sm font-semibold text-gray-800 hover:bg-gray-300 disabled:pointer-events-none disabled:opacity-50 dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600`,
+        tw`inline-flex items-center justify-center gap-x-2 rounded-sm border border-transparent p-1 text-sm font-semibold text-gray-800 hover:bg-gray-300 disabled:pointer-events-none disabled:opacity-50 dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600`,
         activeObject[name] === value ? tw`bg-gray-300` : tw`bg-transparent`,
       ]}
       onClick={() => {
@@ -32,7 +34,7 @@ const ToolbarTextButton = ({
         setActiveObject({ ...activeObject, [name]: value })
       }}
     >
-      {icon}
+      {icon} {label}
     </button>
   )
 }

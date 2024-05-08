@@ -162,7 +162,7 @@ const addAutoFill = (
 ) => {
   console.log('addAutoFill')
 
-  const fabricText = new Fabric.Textbox('text', {
+  const fabricText = new Fabric.Textbox('', {
     top: y,
     left: x,
     fontSize: 14,
@@ -184,21 +184,88 @@ const addAutoFill = (
   setActiveButton(ActiveToolbarButton.Default)
 }
 
+// const addCheck = (canvas: Fabric.Canvas, x: number, y: number) => {
+//   console.log('addCheck', canvas)
+//   // add correct check
+//   // canvas.add(
+//   //   new Fabric.Textbox('✓', {
+//   //     top: y,
+//   //     left: x,
+//   //     fontSize: 40,
+//   //     fill: 'green',
+//   //     minWidth: 20,
+
+//   //     // is_locked: false,
+//   //   })
+//   // )
+//   // canvas.renderAll()
+//   if (canvas) {
+//     // const img = new Image()
+//     // img.onload = function () {
+//     //   const fabricImg = new Fabric.Image(img, {
+//     //     top: y,
+//     //     left: x,
+//     //     width: 100,
+//     //     height: 100,
+//     //   })
+//     //   fabricImg.controls.deleteIcon = deleteIcon
+//     //   canvas.add(fabricImg)
+//     // }
+//     // img.src = black_check
+//     Fabric.Image.fromURL(require(black_check), (img: any) => {
+//       console.log('img', img)
+//       img.set({
+//         top: y,
+//         left: x,
+//         width: 100,
+//         height: 100,
+//       })
+//       img.controls.deleteIcon = deleteIcon
+//       canvas.add(img)
+//     })
+//     canvas.renderAll()
+//   }
+// }
+
 const addCheck = (canvas: Fabric.Canvas, x: number, y: number) => {
-  console.log('addCheck')
-  // add correct check
-  canvas.add(
-    new Fabric.Textbox('✓', {
+  // Ensure canvas exists
+  if (!canvas) return
+
+  // Create a new Image element
+  const img = new Image()
+
+  // Set up the onload event handler to execute once the image is loaded
+  img.onload = () => {
+    // Create a Fabric Image object using the loaded image
+    const fabricImg = new Fabric.Image(img, {
       top: y,
       left: x,
-      fontSize: 40,
-      fill: 'green',
-      minWidth: 20,
-
-      // is_locked: false,
+      width: 100,
+      height: 100,
     })
-  )
-  canvas.renderAll()
+
+    // Add custom controls if needed
+    fabricImg.setControlsVisibility({
+      bl: false, // Disable bottom-left control
+      br: false, // Disable bottom-right control
+      mb: false, // Disable middle-bottom control
+      ml: false, // Disable middle-left control
+      mr: false, // Disable middle-right control
+      mt: false, // Disable middle-top control
+      tl: false, // Disable top-left control
+      tr: false, // Disable top-right control
+    })
+
+    // Add the Fabric Image object to the canvas
+    canvas.add(fabricImg)
+
+    // Render the canvas to reflect changes
+    canvas.renderAll()
+  }
+
+  // Set the source of the image (local file path or Blob URL)
+  img.src =
+    'https://www.pngall.com/wp-content/uploads/8/Check-Mark-PNG-File.png'
 }
 
 const addField = (
@@ -253,8 +320,8 @@ const addImg = (canvas: Fabric.Canvas, url: string, x: number, y: number) => {
       const fabricImg = new Fabric.Image(img, {
         top: y,
         left: x,
-        width: 100,
-        height: 100,
+        width: 150,
+        height: 150,
       })
       fabricImg.controls.deleteIcon = deleteIcon
       canvas.add(fabricImg)
@@ -311,9 +378,14 @@ const initCanvas = (
   newCanvas.loadFromJSON(json).then(() => {
     newCanvas.forEachObject((obj: any) => {
       if (type === 'document-create') {
+        console.log('creating this ', obj, user)
         if (obj?.elName && user && user[obj?.elName]) {
           obj.set({ text: user[obj?.elName] as string })
+          // set background color to none
+          obj.set({ backgroundColor: '' })
         }
+      } else if (type === 'document-edit') {
+        obj.set({ backgroundColor: '' })
       }
       // hide controls visible on y axis
       obj.setControlsVisibility({ mt: false, mb: false })
@@ -392,7 +464,13 @@ const mouseHandler = (
       break
     case ActiveToolbarButton.Correct:
       console.log('correct')
-      addCheck(canvas, option.x, option.y)
+      // addCheck(canvas, option.x, option.y)
+      addImg(
+        canvas,
+        'https://png.pngtree.com/element_our/sm/20180515/sm_5afb099b30a2a.jpg',
+        option.x,
+        option.y
+      )
       break
     default:
       console.log('default')
@@ -514,13 +592,35 @@ const setTextItalic = (
   const activeObject = canvas?.getActiveObject()
 
   if (activeObject && canvas) {
-    const updatedObject = activeObject.set({
+    const newObject = new Fabric.Textbox(activeObject.get('text') as string, {
       ...activeObject,
       fontStyle:
         activeObject.get('fontStyle') === 'italic' ? 'normal' : 'italic',
     })
-    console.log('Updated Object', updatedObject)
-    setActiveObject(updatedObject) // Updating state with the new object
+    canvas.remove(activeObject)
+    canvas.add(newObject)
+    newObject.exitEditing()
+    canvas.setActiveObject(newObject)
+    canvas.renderAll()
+  }
+}
+
+const setTextSpacing = (
+  canvasList: CanvasProps[],
+  id: string,
+  spacing: number
+) => {
+  const canvas = canvasList.find((page) => page.id === id)?.canvas
+  const activeObject = canvas?.getActiveObject()
+  if (activeObject && canvas) {
+    const newObject = new Fabric.Textbox(activeObject.get('text') as string, {
+      ...activeObject,
+      charSpacing: spacing,
+    })
+    canvas.remove(activeObject)
+    canvas.add(newObject)
+    newObject.exitEditing()
+    canvas.setActiveObject(newObject)
     canvas.renderAll()
   }
 }
@@ -549,18 +649,15 @@ const setFontSize = (
   const canvas = canvasList.find((page) => page.id === id)?.canvas
   const activeObject = canvas?.getActiveObject()
 
-  console.log('createNewObject', canvas, activeObject)
-
   if (activeObject && canvas) {
-    // const updatedObject = activeObject.set({ fontSize })
-    // console.log('Updated Object', updatedObject)
     const newObject = new Fabric.Textbox(activeObject.get('text') as string, {
       ...activeObject,
       fontSize,
     })
-    console.log('createNewObject', newObject)
     canvas.remove(activeObject)
     canvas.add(newObject)
+    newObject.exitEditing()
+    canvas.setActiveObject(newObject)
     canvas.renderAll()
   }
 }
@@ -574,14 +671,14 @@ const setFontFamily = (
   const activeObject = canvas?.getActiveObject()
 
   if (activeObject && canvas) {
-    // const updatedObject = activeObject.set({ fontSize })
-    // console.log('Updated Object', updatedObject)
     const newObject = new Fabric.Textbox(activeObject.get('text') as string, {
       ...activeObject,
       fontFamily,
     })
     canvas.remove(activeObject)
     canvas.add(newObject)
+    newObject.exitEditing()
+    canvas.setActiveObject(newObject)
     canvas.renderAll()
   }
 }
@@ -648,8 +745,10 @@ export {
   rgbToHex,
   saveCanvas,
   setAutoFillType,
+  setFontFamily,
   setFontSize,
   setTextAlign,
   setTextBold,
   setTextItalic,
+  setTextSpacing,
 }

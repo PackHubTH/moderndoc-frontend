@@ -21,7 +21,7 @@ const ProfileBox = ({ email, name, profileImg, timestamp }: PropsType) => {
           <h1>{name}</h1>
           {timestamp && (
             <p>
-              {format(timestamp, 'dd MMM yy', {
+              {format(timestamp, 'dd MMM yy, p', {
                 locale: th,
               })}
             </p>
