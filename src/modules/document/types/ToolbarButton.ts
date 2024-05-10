@@ -5,6 +5,7 @@ export enum ActiveToolbarButton {
   Redo,
   Text,
   Pen,
+  Date,
   Delete,
   Correct,
   FontSize,

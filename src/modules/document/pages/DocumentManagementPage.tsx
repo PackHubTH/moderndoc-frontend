@@ -28,16 +28,28 @@ const DocumentManagementPage: React.FC = () => {
       <Tabs
         tabs={[
           {
-            content: <DocumentListTable type="ALL" />,
-            title: 'เอกสารทั้งหมด',
+            content: <DocumentListTable type="RECEIVED" />,
+            title: 'งานของฉัน',
           },
           {
             content: <DocumentListTable type="SENT" />,
-            title: 'เอกสารของฉัน',
+            title: 'กำลังดำเนินการ',
           },
           {
-            content: <DocumentListTable type="RECEIVED" />,
-            title: 'เอกสารที่ได้รับ',
+            content: <DocumentListTable type="COMPLETED" />,
+            title: 'เสร็จสิ้นแล้ว',
+          },
+          {
+            content: <DocumentListTable type="CANCELED" />,
+            title: 'ยกเลิกแล้ว',
+          },
+          {
+            content: <DocumentListTable type="DRAFT" />,
+            title: 'ฉบับร่าง',
+          },
+          {
+            content: <DocumentListTable type="ALL" />,
+            title: 'เอกสารทั้งหมด',
           },
         ]}
       />

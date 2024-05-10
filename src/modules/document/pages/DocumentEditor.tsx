@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   FaAlignJustify,
   FaAlignLeft,
@@ -9,6 +9,7 @@ import {
   FaItalic,
   FaMousePointer,
   FaPenFancy,
+  FaRegCalendarAlt,
 } from 'react-icons/fa'
 import { Document, Page } from 'react-pdf'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -55,7 +56,7 @@ import { DocumentStatus } from '../types/types'
 import { convertCanvasToPdf } from '../utils/downloadUtils'
 
 type PropsType = {
-  type: 'create' | 'edit'
+  type: 'create' | 'edit' | 'document-view'
 }
 
 const DocumentEditor = ({ type }: PropsType) => {
@@ -90,6 +91,8 @@ const DocumentEditor = ({ type }: PropsType) => {
   const { data: file, refetch: refetchFile } = useGetFile(
     (documentData?.data?.templateFile || templateData?.data?.templateFile) ?? ''
   )
+
+  const [documentScale, setDocumentScale] = useState(1)
 
   useEffect(() => {
     if (!file) refetchFile()
@@ -148,21 +151,25 @@ const DocumentEditor = ({ type }: PropsType) => {
           />
         </div>
         <div className="space-x-3">
-          <Button
-            label="Download"
-            leftIcon={<FaDownload />}
-            onClick={() =>
-              convertCanvasToPdf(
-                file?.data ?? '',
-                Array.from({ length: pageTotal }, (v, k) => k.toString())
-              )
-            }
-          />
-          <Button
-            label="ดำเนินการ"
-            variant="green"
-            onClick={openProcessModal}
-          />
+          {type !== 'document-view' && (
+            <>
+              <Button
+                label="Download"
+                leftIcon={<FaDownload />}
+                onClick={() =>
+                  convertCanvasToPdf(
+                    file?.data ?? '',
+                    Array.from({ length: pageTotal }, (v, k) => k.toString())
+                  )
+                }
+              />
+              <Button
+                label="ดำเนินการ"
+                variant="green"
+                onClick={openProcessModal}
+              />
+            </>
+          )}
           {type === 'create' ? (
             <CreateDocumentModal
               departmentId={templateData?.data?.departmentId ?? ''}
@@ -198,115 +205,177 @@ const DocumentEditor = ({ type }: PropsType) => {
       </div>
       {/*  */}
       {/* Main */}
-      <DocumentToolbar isEdit={type === 'edit'}>
-        <ToolbarButton icon={<FaA />} id={ButtonId.Text} label="Text" />
-        <ToolbarButton icon={<FaPenFancy />} id={ButtonId.Pen} label="Sign" />
-        <ToolbarButton icon={<FaCheck />} id={ButtonId.Correct} label="Check" />
-        <ToolbarButton
-          onClick={() => console.log(getJson(canvasList))}
-          icon={<FaMousePointer />}
-          id={ButtonId.Default}
-          label="Select"
-        />
-        {activeObject && activeObject.fontSize ? (
-          <div className="ms-8 space-x-2">
-            <Dropdown
-              label={activeObject?.fontSize?.toString() ?? '16'}
-              dropdownSection={[
-                {
-                  lists: [8, 12, 16, 20, 24, 48, 72].map((size) => ({
-                    displayText: size,
-                    onClick: () =>
-                      setFontSize(canvasList, activeCanvasId, size),
-                  })),
-                },
-              ]}
-            />
-            <Dropdown
-              label={activeObject?.fontFamily ?? 'Arial'}
-              dropdownSection={[
-                {
-                  lists: [
-                    'Arial',
-                    'Courier New',
-                    'Tahoma',
-                    'Times New Roman',
-                  ].map((font) => ({
-                    displayText: font,
-                    // onClick: () => activeObject?.set('fontFamily', font),
-                    onClick: () =>
-                      setFontFamily(canvasList, activeCanvasId, font),
-                  })),
-                },
-              ]}
-            />
-            <input
-              type="color"
-              value={rgbToHex(activeObject?.fill)}
-              onChange={(e) => {
-                console.log('color', e.target.value)
-                activeObject?.set('fill', hexToRgb(e.target.value))
-                canvasList
-                  .find((page) => page.id === activeCanvasId)
-                  ?.canvas?.renderAll()
-              }}
-            />
-            <ToolbarTextButton
-              icon={<FaBold />}
-              name="fontWeight"
-              value="bold"
-              onClick={() =>
-                setTextBold(canvasList, activeCanvasId, setActiveObject)
-              }
-            />
-            <ToolbarTextButton
-              icon={<FaItalic />}
-              name="fontStyle"
-              value="italic"
-              onClick={() =>
-                setTextItalic(canvasList, activeCanvasId, setActiveObject)
-              }
-            />
-            <ToolbarTextButton
-              icon={<FaAlignLeft />}
-              name="textAlign"
-              value="left"
-              onClick={() => setTextAlign(canvasList, activeCanvasId, 'left')}
-            />
-            <ToolbarTextButton
-              icon={<FaAlignJustify />}
-              name="textAlign"
-              value="center"
-              onClick={() => setTextAlign(canvasList, activeCanvasId, 'center')}
-            />
-            <ToolbarTextButton
-              icon={<FaAlignRight />}
-              name="textAlign"
-              value="right"
-              onClick={() => setTextAlign(canvasList, activeCanvasId, 'right')}
-            />
-            <div className="inline-flex items-center gap-2">
-              <BsDistributeHorizontal />
-              <span>{activeObject?.charSpacing / 100} px</span>
-              <input
-                type="range"
-                defaultValue={activeObject?.charSpacing ?? 0}
-                onChange={(e) => {
-                  setTextSpacing(
-                    canvasList,
-                    activeCanvasId,
-                    Number(e.target.value) * 10
-                  )
-                  setActiveObject({
-                    ...activeObject,
-                    charSpacing: Number(e.target.value) * 10,
-                  })
-                }}
+      {type !== 'document-view' && (
+        <DocumentToolbar isEdit={type === 'edit'}>
+          <ToolbarButton icon={<FaA />} id={ButtonId.Text} label="Text" />
+          <div className="hs-dropdown relative inline-flex">
+            <div id="hs-dropdown-custom-icon-trigger">
+              <ToolbarButton
+                icon={<FaPenFancy />}
+                id={ButtonId.Pen}
+                label="Sign"
+                onClick={() => console.log('test')}
               />
             </div>
+
+            {/* <button
+              id="hs-dropdown-custom-icon-trigger"
+              type="button"
+              className="hs-dropdown-toggle size-9 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-sm font-semibold text-gray-800 shadow-sm hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800"
+            >
+              <svg
+                className="size-4 flex-none text-gray-600 dark:text-neutral-500"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="1" />
+                <circle cx="12" cy="5" r="1" />
+                <circle cx="12" cy="19" r="1" />
+              </svg>
+            </button> */}
+
+            <div
+              className="hs-dropdown-menu duration min-w-60 z-20 mt-2 hidden rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:border dark:border-neutral-700 dark:bg-neutral-800"
+              aria-labelledby="hs-dropdown-custom-icon-trigger"
+            >
+              <div className="rounded-md border-b p-2">
+                <img src="https://via.placeholder.com/200x50" alt="test" />
+              </div>
+              <div className="rounded-md border-b p-2">
+                <img src="https://via.placeholder.com/200x50" alt="test" />
+              </div>
+              <div className="rounded-md border-b p-2">
+                <img src="https://via.placeholder.com/200x50" alt="test" />
+              </div>
+            </div>
           </div>
-        ) : null}
-      </DocumentToolbar>
+          <ToolbarButton
+            icon={<FaRegCalendarAlt />}
+            id={ButtonId.Date}
+            label="Date"
+          />
+          <ToolbarButton
+            icon={<FaCheck />}
+            id={ButtonId.Correct}
+            label="Check"
+          />
+          <ToolbarButton
+            onClick={() => console.log(getJson(canvasList))}
+            icon={<FaMousePointer />}
+            id={ButtonId.Default}
+            label="Select"
+          />
+          {activeObject && activeObject.fontSize ? (
+            <div className="ms-8 space-x-2">
+              <Dropdown
+                label={activeObject?.fontSize?.toString() ?? '16'}
+                dropdownSection={[
+                  {
+                    lists: [8, 12, 16, 20, 24, 48, 72].map((size) => ({
+                      displayText: size,
+                      onClick: () =>
+                        setFontSize(canvasList, activeCanvasId, size),
+                    })),
+                  },
+                ]}
+              />
+              <Dropdown
+                label={activeObject?.fontFamily ?? 'Arial'}
+                dropdownSection={[
+                  {
+                    lists: [
+                      'Arial',
+                      'Courier New',
+                      'Tahoma',
+                      'Times New Roman',
+                    ].map((font) => ({
+                      displayText: font,
+                      // onClick: () => activeObject?.set('fontFamily', font),
+                      onClick: () =>
+                        setFontFamily(canvasList, activeCanvasId, font),
+                    })),
+                  },
+                ]}
+              />
+              <input
+                type="color"
+                value={rgbToHex(activeObject?.fill)}
+                onChange={(e) => {
+                  console.log('color', e.target.value)
+                  activeObject?.set('fill', hexToRgb(e.target.value))
+                  canvasList
+                    .find((page) => page.id === activeCanvasId)
+                    ?.canvas?.renderAll()
+                }}
+              />
+              <ToolbarTextButton
+                icon={<FaBold />}
+                name="fontWeight"
+                value="bold"
+                onClick={() =>
+                  setTextBold(canvasList, activeCanvasId, setActiveObject)
+                }
+              />
+              <ToolbarTextButton
+                icon={<FaItalic />}
+                name="fontStyle"
+                value="italic"
+                onClick={() =>
+                  setTextItalic(canvasList, activeCanvasId, setActiveObject)
+                }
+              />
+              <ToolbarTextButton
+                icon={<FaAlignLeft />}
+                name="textAlign"
+                value="left"
+                onClick={() => setTextAlign(canvasList, activeCanvasId, 'left')}
+              />
+              <ToolbarTextButton
+                icon={<FaAlignJustify />}
+                name="textAlign"
+                value="center"
+                onClick={() =>
+                  setTextAlign(canvasList, activeCanvasId, 'center')
+                }
+              />
+              <ToolbarTextButton
+                icon={<FaAlignRight />}
+                name="textAlign"
+                value="right"
+                onClick={() =>
+                  setTextAlign(canvasList, activeCanvasId, 'right')
+                }
+              />
+              <div className="inline-flex items-center gap-2">
+                <BsDistributeHorizontal />
+                <span>{activeObject?.charSpacing / 100} px</span>
+                <input
+                  type="range"
+                  defaultValue={activeObject?.charSpacing ?? 0}
+                  onChange={(e) => {
+                    setTextSpacing(
+                      canvasList,
+                      activeCanvasId,
+                      Number(e.target.value) * 10
+                    )
+                    setActiveObject({
+                      ...activeObject,
+                      charSpacing: Number(e.target.value) * 10,
+                    })
+                  }}
+                />
+              </div>
+            </div>
+          ) : null}
+        </DocumentToolbar>
+      )}
       <div className="flex h-[calc(100vh-140px)]">
         {/* <div className="p-4">
           <Document file={file?.data}>
@@ -331,9 +400,20 @@ const DocumentEditor = ({ type }: PropsType) => {
               })}
           </Document>
         </div> */}
-        <div css={[type === 'edit' ? tw`w-3/4` : tw`w-full`]}>
+        <div css={[type === 'edit' ? tw`w-3/4` : tw`w-full`, tw`relative`]}>
           {/* canvas section */}
-
+          {/* <div className="absolute bottom-16 right-8 z-20">
+            <Button
+              label="+"
+              onClick={() => setDocumentScale((prev) => prev + 0.5)}
+            />
+          </div>
+          <div className="absolute bottom-4 right-8 z-20">
+            <Button
+              label="--"
+              onClick={() => setDocumentScale((prev) => prev - 0.5)}
+            />
+          </div> */}
           <div
             className="flex h-[calc(100vh-140px)] justify-center overflow-auto bg-[#f1f2f5]"
             ref={canvasRef}
@@ -358,7 +438,7 @@ const DocumentEditor = ({ type }: PropsType) => {
                         pageNumber={page}
                         renderTextLayer={false}
                         renderAnnotationLayer={false}
-                        scale={1}
+                        scale={documentScale}
                         className="my-2 border-black"
                         onLoadSuccess={() => onPageLoadSuccess(page)}
                       />
@@ -423,7 +503,7 @@ const DocumentEditor = ({ type }: PropsType) => {
       </div>
       {/*  */}
       {/* pdf lib test */}
-      <button
+      {/* <button
         id="a"
         // onClick={() => downloadFile(file?.data ?? '', getJson(canvasList))}
         onClick={() =>
@@ -435,7 +515,7 @@ const DocumentEditor = ({ type }: PropsType) => {
         }
       >
         TeSttse
-      </button>
+      </button> */}
     </div>
   )
 }

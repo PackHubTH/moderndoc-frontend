@@ -1,132 +1,9 @@
 import * as Fabric from 'fabric'
 
-import { ActiveToolbarButton } from '../types/ToolbarButton'
-import { CanvasProps } from '../types/DocumentField'
+import { useUserStore } from '@/stores/userStore'
 import { PDFDocument } from 'pdf-lib'
-
-const _json = {
-  version: '6.0.0-beta9',
-  objects: [
-    {
-      fontSize: 40,
-      text: 'test text',
-      type: 'Textbox',
-      fill: 'rgb(255, 0, 0)',
-      width: 200,
-      minWidth: 20,
-      left: 164,
-      top: 99,
-      version: '6.0.0-beta9',
-      editable: false,
-      // custom field
-      // is_locked: true,
-    },
-    {
-      fontSize: 40,
-      text: 'test text',
-      type: 'Textbox',
-      fill: 'rgb(255, 0, 0)',
-      width: 200,
-      minWidth: 20,
-      left: 364,
-      top: 99,
-      version: '6.0.0-beta9',
-      editable: false,
-      // custom field
-      // is_locked: true,
-    },
-    {
-      fontSize: 40,
-      text: 'moveable text',
-      type: 'Textbox',
-      fill: 'rgb(255, 0, 0)',
-      // width: 200,
-      minWidth: 20,
-      left: 364,
-      top: 199,
-      lockScalingY: true,
-      version: '6.0.0-beta9',
-      // editable: false,
-      // custom field
-      // is_locked: true,
-      elName: 'nameTh',
-    },
-    {
-      fontSize: 40,
-      text: 'moveable text',
-      type: 'Textbox',
-      fill: 'rgb(255, 0, 0)',
-      // width: 200,
-      minWidth: 20,
-      left: 164,
-      top: 199,
-      lockScalingY: true,
-      version: '6.0.0-beta9',
-      // editable: false,
-      // custom field
-      // is_locked: true,
-    },
-  ],
-}
-
-const temp = {
-  version: '6.0.0-beta9',
-  objects: [
-    {
-      fontSize: 40,
-      fontWeight: 'normal',
-      fontFamily: 'Times New Roman',
-      fontStyle: 'normal',
-      lineHeight: 1.16,
-      text: 'fabric.js sandbox0',
-      charSpacing: 0,
-      textAlign: 'left',
-      styles: [],
-      path: null,
-      pathStartOffset: 0,
-      pathSide: 'left',
-      pathAlign: 'baseline',
-      underline: false,
-      overline: false,
-      linethrough: false,
-      textBackgroundColor: '',
-      direction: 'ltr',
-      minWidth: 20,
-      splitByGrapheme: false,
-      type: 'Textbox',
-      version: '6.0.0-beta9',
-      originX: 'left',
-      originY: 'top',
-      left: 64,
-      top: 99,
-      width: 153.3203,
-      height: 97.632,
-      fill: 'rgb(255, 0, 0)',
-      stroke: null,
-      strokeWidth: 1,
-      strokeDashArray: null,
-      strokeLineCap: 'butt',
-      strokeDashOffset: 0,
-      strokeLineJoin: 'miter',
-      strokeUniform: false,
-      strokeMiterLimit: 4,
-      scaleX: 1,
-      scaleY: 1,
-      angle: 0,
-      flipX: false,
-      flipY: false,
-      opacity: 1,
-      shadow: null,
-      visible: true,
-      backgroundColor: '',
-      fillRule: 'nonzero',
-      paintFirst: 'fill',
-      globalCompositeOperation: 'source-over',
-      skewX: 0,
-      skewY: 0,
-    },
-  ],
-}
+import { CanvasProps } from '../types/DocumentField'
+import { ActiveToolbarButton } from '../types/ToolbarButton'
 
 // add delete icon controls
 const deleteIcon = new Fabric.Control({
@@ -171,6 +48,7 @@ const addAutoFill = (
     minWidth: 20,
     backgroundColor: '#DBEAFE',
     textAlign: 'center',
+    createdBy: useUserStore.getState().user?.id,
   })
   canvasList.forEach((item) => {
     item.canvas.discardActiveObject()
@@ -182,90 +60,6 @@ const addAutoFill = (
   canvas.renderAll()
 
   setActiveButton(ActiveToolbarButton.Default)
-}
-
-// const addCheck = (canvas: Fabric.Canvas, x: number, y: number) => {
-//   console.log('addCheck', canvas)
-//   // add correct check
-//   // canvas.add(
-//   //   new Fabric.Textbox('✓', {
-//   //     top: y,
-//   //     left: x,
-//   //     fontSize: 40,
-//   //     fill: 'green',
-//   //     minWidth: 20,
-
-//   //     // is_locked: false,
-//   //   })
-//   // )
-//   // canvas.renderAll()
-//   if (canvas) {
-//     // const img = new Image()
-//     // img.onload = function () {
-//     //   const fabricImg = new Fabric.Image(img, {
-//     //     top: y,
-//     //     left: x,
-//     //     width: 100,
-//     //     height: 100,
-//     //   })
-//     //   fabricImg.controls.deleteIcon = deleteIcon
-//     //   canvas.add(fabricImg)
-//     // }
-//     // img.src = black_check
-//     Fabric.Image.fromURL(require(black_check), (img: any) => {
-//       console.log('img', img)
-//       img.set({
-//         top: y,
-//         left: x,
-//         width: 100,
-//         height: 100,
-//       })
-//       img.controls.deleteIcon = deleteIcon
-//       canvas.add(img)
-//     })
-//     canvas.renderAll()
-//   }
-// }
-
-const addCheck = (canvas: Fabric.Canvas, x: number, y: number) => {
-  // Ensure canvas exists
-  if (!canvas) return
-
-  // Create a new Image element
-  const img = new Image()
-
-  // Set up the onload event handler to execute once the image is loaded
-  img.onload = () => {
-    // Create a Fabric Image object using the loaded image
-    const fabricImg = new Fabric.Image(img, {
-      top: y,
-      left: x,
-      width: 100,
-      height: 100,
-    })
-
-    // Add custom controls if needed
-    fabricImg.setControlsVisibility({
-      bl: false, // Disable bottom-left control
-      br: false, // Disable bottom-right control
-      mb: false, // Disable middle-bottom control
-      ml: false, // Disable middle-left control
-      mr: false, // Disable middle-right control
-      mt: false, // Disable middle-top control
-      tl: false, // Disable top-left control
-      tr: false, // Disable top-right control
-    })
-
-    // Add the Fabric Image object to the canvas
-    canvas.add(fabricImg)
-
-    // Render the canvas to reflect changes
-    canvas.renderAll()
-  }
-
-  // Set the source of the image (local file path or Blob URL)
-  img.src =
-    'https://www.pngall.com/wp-content/uploads/8/Check-Mark-PNG-File.png'
 }
 
 const addField = (
@@ -286,6 +80,7 @@ const addField = (
     minWidth: 20,
     backgroundColor: '#DBEAFE',
     textAlign: 'center',
+    createdBy: useUserStore.getState().user?.id,
   })
 
   fabricText.controls.deleteIcon = deleteIcon
@@ -310,18 +105,29 @@ const addField = (
   setActiveButton(ActiveToolbarButton.Default)
 }
 
-const addImg = (canvas: Fabric.Canvas, url: string, x: number, y: number) => {
+const addImg = (
+  canvas: Fabric.Canvas,
+  url: string,
+  x: number,
+  y: number,
+  isCheck?: boolean
+) => {
   console.log('addImg')
-  console.log('canvas', canvas)
-  // add correct check
+
   if (canvas) {
     const img = new Image()
+    img.crossOrigin = 'anonymous'
     img.onload = function () {
       const fabricImg = new Fabric.Image(img, {
         top: y,
         left: x,
-        width: 150,
-        height: 150,
+        width: img.width,
+        height: img.height,
+        originX: 'center',
+        originY: 'center',
+        scaleX: isCheck ? 0.05 : 1,
+        scaleY: isCheck ? 0.05 : 1,
+        createdBy: useUserStore.getState().user?.id,
       })
       fabricImg.controls.deleteIcon = deleteIcon
       canvas.add(fabricImg)
@@ -370,7 +176,7 @@ const initCanvas = (
 
   newCanvas.toObject = () => ({
     ...originalToObject(
-      ['elName'] // Add the custom property to the list of properties to include
+      ['createdBy', 'elName'] // Add the custom property to the list of properties to include
     ),
   })
 
@@ -456,7 +262,17 @@ const mouseHandler = (
       break
     case ActiveToolbarButton.Pen:
       console.log('pen')
-      addImg(canvas, 'https://via.placeholder.com/150', option.x, option.y)
+      // addImg(canvas, 'https://via.placeholder.com/150', option.x, option.y)
+      break
+    case ActiveToolbarButton.Date:
+      console.log('date')
+      addField(
+        canvas,
+        new Date().toLocaleDateString(),
+        option.x,
+        option.y,
+        setActiveButton
+      )
       break
     case ActiveToolbarButton.Delete:
       console.log('delete')
@@ -464,12 +280,12 @@ const mouseHandler = (
       break
     case ActiveToolbarButton.Correct:
       console.log('correct')
-      // addCheck(canvas, option.x, option.y)
       addImg(
         canvas,
-        'https://png.pngtree.com/element_our/sm/20180515/sm_5afb099b30a2a.jpg',
+        'https://www.pngall.com/wp-content/uploads/8/Check-Mark-PNG-File.png',
         option.x,
-        option.y
+        option.y,
+        true
       )
       break
     default:
@@ -734,7 +550,6 @@ const hexToRgb = (hex: string): string => {
 
 export {
   addAutoFill,
-  addCheck,
   addField,
   addImg,
   getJson,

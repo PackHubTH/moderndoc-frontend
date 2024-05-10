@@ -39,6 +39,10 @@ function App() {
           element={<DocumentEditor type="edit" />}
         />
         <Route
+          path="/view-document/:documentId"
+          element={<DocumentEditor type="document-view" />}
+        />
+        <Route
           path="/document-management"
           element={<DocumentManagementPage />}
         />

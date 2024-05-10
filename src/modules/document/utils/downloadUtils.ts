@@ -12,10 +12,31 @@ const convertCanvasToPdf = async (file: string, ids: string[]) => {
   for (const id of ids) {
     const page = pdfDoc.getPages()[Number(id)]
     const canvas = document.getElementById(id) as HTMLCanvasElement
+    const ctx = canvas.getContext('2d')
+
+    if (ctx) {
+      // Get the image data from the canvas
+      let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      let data = imgData.data
+
+      // Modify the contrast of the image
+      const contrast = 1.5 // Adjust this value to set contrast level
+      const factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
+
+      for (let i = 0; i < data.length; i += 4) {
+        data[i] = factor * (data[i] - 128) + 128 // Red
+        data[i + 1] = factor * (data[i + 1] - 128) + 128 // Green
+        data[i + 2] = factor * (data[i + 2] - 128) + 128 // Blue
+      }
+
+      // Put the modified image data back to the canvas
+      ctx.putImageData(imgData, 0, 0)
+    }
+
     const dataUrl = canvas.toDataURL()
 
     const img = await pdfDoc.embedPng(dataUrl)
-    const imgDims = img.scale(0.8)
+    const imgDims = img.scale(1)
     page.drawImage(img, {
       x: 0,
       y: 0,

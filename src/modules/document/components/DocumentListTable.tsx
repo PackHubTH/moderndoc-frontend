@@ -5,24 +5,24 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useEffect, useState } from 'react'
 import { Document, DocumentStatus } from '../types/types'
 import { getStatusBadgeProps, shouldShowAction } from '../utils/statusUtils'
-import { useEffect, useState } from 'react'
 
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
-import { FaRegEnvelope } from 'react-icons/fa6'
-import Pagination from '@/components/TableDisplay/Pagination'
 import TableDisplay from '@/components/TableDisplay'
+import Pagination from '@/components/TableDisplay/Pagination'
+import { useUserStore } from '@/stores/userStore'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
-import useGetAllDocument from '../hooks/api/useGetAllDocument'
+import { FaRegEnvelope } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
-import { useUserStore } from '@/stores/userStore'
+import useGetAllDocument from '../hooks/api/useGetAllDocument'
 
 interface PropsType {
-  type: 'ALL' | 'SENT' | 'RECEIVED'
+  type: 'ALL' | 'SENT' | 'RECEIVED' | 'DRAFT' | 'CANCELED' | 'COMPLETED'
 }
 
 const DocumentListTable = ({ type }: PropsType) => {
@@ -140,7 +140,7 @@ const DocumentListTable = ({ type }: PropsType) => {
                       {
                         displayText: 'ดูรายละเอียด',
                         onClick: () =>
-                          navigate(`/edit-document/${info.row.original.id}`),
+                          navigate(`/view-document/${info.row.original.id}`),
                       },
                       {
                         displayText: 'คัดลอก',
