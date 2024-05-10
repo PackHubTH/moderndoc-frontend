@@ -68,11 +68,11 @@ const CreateProfilePage = () => {
               )}
             />
             <UserInfoSection />
-            {methods.watch('role') === UserRole.STUDENT ? (
+            {/* {methods.watch('role') === UserRole.STUDENT ? (
               <StudentSection />
             ) : (
               <StaffSection />
-            )}
+            )} */}
             <div className="mt-8 w-full">
               <div className="text-right">
                 <Button

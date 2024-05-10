@@ -4,11 +4,11 @@ import { ApiResponse } from 'types/response'
 import { User } from '../types'
 
 const useLogin = () => {
-  const context = useMutation(async (email: string) => {
+  const context = useMutation(async (accessToken: string) => {
     const response = await moderndocApi.post<ApiResponse<User | null>>(
       '/user/login',
       {
-        email,
+        accessToken,
       }
     )
     return response.data
