@@ -30,7 +30,7 @@ const Login = () => {
           !data ||
           (data.data?.role !== UserRole.ADMIN && !data.data?.isFinishRegister)
         ) {
-          setUserEmail(email)
+          setUserEmail((data.data as any)?.email ?? data.data?.emails[0])
           return navigate('/create-profile', { replace: true })
         }
 
@@ -55,12 +55,6 @@ const Login = () => {
         <p className="mt-2 text-sm text-gray-500">
           เข้าสู่ระบบด้วยอีเมลมหาวิทยาลัย
         </p>
-        {/* <TextInput
-          className="mt-6"
-          placeholder="อีเมลมหาวิทยาลัย"
-          type="email"
-          onChange={setEmail}
-        /> */}
         <div className="mt-4">
           <Button
             width="100%"
