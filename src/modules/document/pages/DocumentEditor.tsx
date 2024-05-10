@@ -16,7 +16,6 @@ import {
   getJson,
   hexToRgb,
   rgbToHex,
-  saveCanvas,
   setFontFamily,
   setFontSize,
   setTextAlign,
@@ -25,7 +24,6 @@ import {
   setTextSpacing,
 } from '../utils/documentEditorUtils'
 
-import exampleFile from '@/assets/FO-TO-44.pdf'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
@@ -35,7 +33,6 @@ import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetFile from '@/hooks/useGetFile'
 import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
 import { useUserStore } from '@/stores/userStore'
-import { PDFDocument } from 'pdf-lib'
 import { BsDistributeHorizontal } from 'react-icons/bs'
 import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
@@ -55,7 +52,7 @@ import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 import { DocumentStatus } from '../types/types'
-import { downloadFile } from '../utils/downloadUtils'
+import { convertCanvasToPdf } from '../utils/downloadUtils'
 
 type PropsType = {
   type: 'create' | 'edit'
@@ -111,45 +108,6 @@ const DocumentEditor = ({ type }: PropsType) => {
       )
   }
 
-  //////////////////////////// modify pdf /////////////////////////////
-  async function handlePDFUpload() {
-    // Step 1: Retrieve the file from the input
-    // const file = event.target.files[0];
-    const file = exampleFile
-    if (!file) {
-      return
-    }
-
-    // Step 2: Convert the file into an ArrayBuffer
-    const arrayBuffer = await fetch(file).then((res) => {
-      if (res.ok) return res.arrayBuffer()
-      throw new Error('Failed to fetch PDF.')
-    })
-
-    // Step 3: Load into PDFDocument
-    const pdfDoc = await PDFDocument.load(arrayBuffer)
-    const pages = pdfDoc.getPages()
-    const firstPage = pages[0]
-
-    // Modify your PDF here
-    firstPage.drawText('This text was added with pdf-lib!', {
-      x: 5,
-      y: firstPage.getHeight() - 40,
-      size: 12,
-    })
-
-    // Step 4: Serialize the PDFDocument to bytes
-    const pdfBytes = await pdfDoc.save()
-    console.log('pdfBytes', pdfBytes)
-
-    // Step 5: Prompt the user to download the modified PDF
-    const blob = new Blob([pdfBytes], { type: 'application/pdf' })
-    const link = document.createElement('a')
-    link.href = window.URL.createObjectURL(blob)
-    link.download = 'modified_document.pdf'
-    link.click()
-  }
-
   console.log('documentData', documentData)
   console.log('templateData', templateData)
   return (
@@ -193,7 +151,12 @@ const DocumentEditor = ({ type }: PropsType) => {
           <Button
             label="Download"
             leftIcon={<FaDownload />}
-            onClick={() => saveCanvas(canvasList, exampleFile)}
+            onClick={() =>
+              convertCanvasToPdf(
+                file?.data ?? '',
+                Array.from({ length: pageTotal }, (v, k) => k.toString())
+              )
+            }
           />
           <Button
             label="ดำเนินการ"
@@ -396,7 +359,6 @@ const DocumentEditor = ({ type }: PropsType) => {
                         renderTextLayer={false}
                         renderAnnotationLayer={false}
                         scale={1}
-                        width={800}
                         className="my-2 border-black"
                         onLoadSuccess={() => onPageLoadSuccess(page)}
                       />
@@ -463,9 +425,16 @@ const DocumentEditor = ({ type }: PropsType) => {
       {/* pdf lib test */}
       <button
         id="a"
-        onClick={() => downloadFile(file?.data ?? '', getJson(canvasList))}
+        // onClick={() => downloadFile(file?.data ?? '', getJson(canvasList))}
+        onClick={() =>
+          convertCanvasToPdf(
+            // list of canvas id
+            file?.data ?? '',
+            Array.from({ length: pageTotal }, (v, k) => k.toString())
+          )
+        }
       >
-        TeSt
+        TeSttse
       </button>
     </div>
   )

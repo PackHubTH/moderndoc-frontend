@@ -1,30 +1,30 @@
-import { Document, Page } from 'react-pdf'
 import {
   getJson,
   previewCanvas,
   setAutoFillType,
 } from '@/modules/document/utils/documentEditorUtils'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Document, Page } from 'react-pdf'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import Button from '@/components/Button'
-import { ActiveToolbarButton as ButtonId } from '@/modules/document/types/ToolbarButton'
+import Dropdown from '@/components/Dropdown'
+import MainLogo from '@/components/MainLogo'
+import { useDisclosure } from '@/hooks/useDisclosure'
 import DocumentAccordion from '@/modules/document/components/DocumentAccordion'
 import DocumentCanvas from '@/modules/document/components/DocumentCanvas'
 import DocumentToolbar from '@/modules/document/components/DocumentToolbar'
-import Dropdown from '@/components/Dropdown'
-import { FaFileSignature } from 'react-icons/fa6'
-import MainLogo from '@/components/MainLogo'
-import PreviewButton from '../components/PreviewButton'
-import TemplateInfoModal from '../components/TemplateInfoModal'
 import ToolbarButton from '@/modules/document/components/ToolbarButton'
-import tw from 'twin.macro'
-import { useDisclosure } from '@/hooks/useDisclosure'
 import { useDocumentStore } from '@/modules/document/stores/documentStore'
 import { useDocumentToolbarStore } from '@/modules/document/stores/documentToolbarStore'
-import useGetFile from '../../../hooks/useGetFile'
-import useGetTemplateById from '../hooks/api/useGetTemplateById'
+import { ActiveToolbarButton as ButtonId } from '@/modules/document/types/ToolbarButton'
 import { useTemplateStore } from '@/stores/templateStore'
+import { FaFileSignature } from 'react-icons/fa6'
+import tw from 'twin.macro'
+import useGetFile from '../../../hooks/useGetFile'
+import PreviewButton from '../components/PreviewButton'
+import TemplateInfoModal from '../components/TemplateInfoModal'
+import useGetTemplateById from '../hooks/api/useGetTemplateById'
 
 // import file from './example.pdf'
 
@@ -191,7 +191,6 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
                           renderTextLayer={false}
                           renderAnnotationLayer={false}
                           scale={1}
-                          width={800}
                           className="my-2 border-black"
                           onLoadSuccess={() => onPageLoadSuccess(page)}
                         />
