@@ -1,11 +1,12 @@
 import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
-import TextInput from '@/components/TextInput'
 import useLogin from '@/modules/user//hooks/api/useLogin'
 import LoginImage from '@/modules/user/assets/login-image.png'
 import { useUserStore } from '@/stores/userStore'
+import { useGoogleLogin } from '@react-oauth/google'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { UserRole } from 'types/user'
 
 const Login = () => {
@@ -16,14 +17,20 @@ const Login = () => {
 
   const { setIsLogin, setUser, setEmail: setUserEmail } = useUserStore()
 
-  const handleLogin = (email: string) => {
-    login(email, {
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (data) => {
+      handleAccessTokenLogin(data.access_token)
+    },
+  })
+
+  const handleAccessTokenLogin = (accessToken: string) => {
+    login(accessToken, {
       onSuccess: (data) => {
         if (
-          data.data?.role !== UserRole.ADMIN &&
-          !data.data?.isFinishRegister
+          !data ||
+          (data.data?.role !== UserRole.ADMIN && !data.data?.isFinishRegister)
         ) {
-          setUserEmail(email)
+          setUserEmail((data.data as any)?.email ?? data.data?.emails[0])
           return navigate('/create-profile', { replace: true })
         }
 
@@ -33,6 +40,7 @@ const Login = () => {
       },
       onError: (error) => {
         console.log(error)
+        toast.error('เข้าสู่ระบบไม่สำเร็จ')
       },
     })
   }
@@ -47,19 +55,13 @@ const Login = () => {
         <p className="mt-2 text-sm text-gray-500">
           เข้าสู่ระบบด้วยอีเมลมหาวิทยาลัย
         </p>
-        <TextInput
-          className="mt-6"
-          placeholder="อีเมลมหาวิทยาลัย"
-          type="email"
-          onChange={setEmail}
-        />
         <div className="mt-4">
           <Button
             width="100%"
             label="เข้าสู่ระบบ"
             onClick={(e) => {
               e.preventDefault()
-              handleLogin(email)
+              handleGoogleLogin()
             }}
             centerText
           />
