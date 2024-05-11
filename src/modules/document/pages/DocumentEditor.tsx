@@ -389,7 +389,7 @@ const DocumentEditor = ({ type }: PropsType) => {
           <div
             css={[
               tw`flex justify-center overflow-auto bg-[#f1f2f5]`,
-              type === 'document-view'
+              type === 'document-view' || type === 'edit'
                 ? tw`h-[calc(100vh-92px)]`
                 : tw`h-[calc(100vh-140px)]`,
             ]}
