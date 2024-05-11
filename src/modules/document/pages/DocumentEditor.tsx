@@ -113,6 +113,12 @@ const DocumentEditor = ({ type }: PropsType) => {
 
   console.log('documentData', documentData)
   console.log('templateData', templateData)
+  console.log(
+    'iseditable',
+    documentData?.data?.documentSents.find(
+      (sent: any) => sent.receiverId === user.id && sent.editable
+    ) || user.id === documentData?.data?.createdBy
+  )
   return (
     <div>
       {/* Header */}
@@ -432,6 +438,16 @@ const DocumentEditor = ({ type }: PropsType) => {
                         }
                         type={
                           type === 'edit' ? 'document-edit' : 'document-create'
+                        }
+                        isEditable={
+                          (user.id === documentData?.data?.createdBy ||
+                            (documentData?.data?.documentSents.find(
+                              (sent: any) =>
+                                sent.receiverId === user.id && sent.editable
+                            )
+                              ? true
+                              : false)) &&
+                          type !== 'document-view'
                         }
                       />
                       <Page

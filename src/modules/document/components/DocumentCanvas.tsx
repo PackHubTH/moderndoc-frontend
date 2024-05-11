@@ -10,9 +10,15 @@ interface DocumentCanvasProps {
   id: string
   element: any
   type: 'document-create' | 'document-edit' | 'template'
+  isEditable?: boolean
 }
 
-const DocumentCanvas = ({ id, element, type }: DocumentCanvasProps) => {
+const DocumentCanvas = ({
+  id,
+  isEditable,
+  element,
+  type,
+}: DocumentCanvasProps) => {
   const canvasList = useDocumentStore((state) => state.canvasList)
   const canvasSizes = useDocumentStore((state) => state.canvasSizes)
   const setCanvasList = useDocumentStore((state) => state.setCanvasList)
@@ -50,6 +56,7 @@ const DocumentCanvas = ({ id, element, type }: DocumentCanvasProps) => {
         element ?? {},
         setCanvasList,
         type,
+        isEditable ?? true,
         parseUserDatatoAutofill(user)
       )
     }
@@ -74,6 +81,7 @@ const DocumentCanvas = ({ id, element, type }: DocumentCanvasProps) => {
       console.log('mouse down', option?.absolutePointer, activeButton)
       if (canvas)
         mouseHandler(canvasList, canvas, activeButton, setActiveButton, {
+          isEditable: isEditable ?? true,
           text: '',
           x: option.absolutePointer.x,
           y: option.absolutePointer.y,

@@ -50,13 +50,34 @@ const addAutoFill = (
     textAlign: 'center',
     createdBy: useUserStore.getState().user?.id,
   })
+  const rect = new Fabric.Rect({
+    top: y,
+    left: x,
+    width: 200,
+    height: 40,
+    fill: 'rgb(0, 0, 0)',
+    borderColor: 'red',
+    strokeWidth: 1,
+    createdBy: useUserStore.getState().user?.id,
+  })
+  const group = new Fabric.Group([rect, fabricText], {
+    left: x,
+    top: y,
+    angle: 0,
+    width: 200,
+    height: 20,
+    selectable: true,
+  })
   canvasList.forEach((item) => {
     item.canvas.discardActiveObject()
     item.canvas.renderAll()
   })
-  fabricText.controls.deleteIcon = deleteIcon
-  canvas.add(fabricText)
-  canvas.setActiveObject(fabricText)
+  // fabricText.controls.deleteIcon = deleteIcon
+  // canvas.add(fabricText)
+  // canvas.setActiveObject(fabricText)
+  group.controls.deleteIcon = deleteIcon
+  canvas.add(group)
+  canvas.setActiveObject(group)
   canvas.renderAll()
 
   setActiveButton(ActiveToolbarButton.Default)
@@ -167,6 +188,7 @@ const initCanvas = (
   json: any,
   setCanvasList: (id: string, canvas: Fabric.Canvas) => void,
   type: string,
+  isEditable: boolean,
   user?: DataProps
 ) => {
   console.log('initCanvas')
@@ -193,10 +215,18 @@ const initCanvas = (
       } else if (type === 'document-edit') {
         obj.set({ backgroundColor: '' })
       }
+
       // hide controls visible on y axis
       obj.setControlsVisibility({ mt: false, mb: false })
       // set delete icon
       obj.controls.deleteIcon = deleteIcon
+
+      // set editable
+      obj.set({
+        editable: isEditable,
+        selectable: isEditable,
+        evented: isEditable,
+      })
     })
     newCanvas.renderAll()
   })
@@ -240,8 +270,13 @@ const mouseHandler = (
     canvas.discardActiveObject()
   } else {
     canvas.forEachObject((obj: any) => {
-      obj.set({ selectable: true })
-      obj.set({ evented: true })
+      if (
+        obj.get('createdBy') === useUserStore.getState().user?.id ||
+        option.isEditable
+      ) {
+        obj.set({ selectable: true })
+        obj.set({ evented: true })
+      }
     })
   }
   switch (activeButton) {
