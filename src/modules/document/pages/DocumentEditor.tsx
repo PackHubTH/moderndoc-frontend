@@ -387,6 +387,12 @@ const DocumentEditor = ({ type }: PropsType) => {
             />
           </div> */}
           <div
+            css={[
+              tw`flex justify-center overflow-auto bg-[#f1f2f5]`,
+              type === 'document-view'
+                ? tw`h-[calc(100vh-92px)]`
+                : tw`h-[calc(100vh-140px)]`,
+            ]}
             className="flex h-[calc(100vh-140px)] justify-center overflow-auto bg-[#f1f2f5]"
             ref={canvasRef}
           >
@@ -432,56 +438,59 @@ const DocumentEditor = ({ type }: PropsType) => {
           {/*  */}
         </div>
         {/* sidebar */}
-        {type === 'edit' && (
-          <div
-            className="hs-accordion-group w-1/4 overflow-y-auto"
-            data-hs-accordion-always-open
-          >
-            <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
-              <div className="px-4">
-                <ProfileBox
-                  name={documentData?.data?.userCreated.nameTh ?? ''}
-                  email={
-                    documentData?.data?.userCreated.emails[
-                      documentData?.data?.userCreated.defaultEmailIndex
-                    ] ?? ''
-                  }
-                  profileImg={documentData?.data?.userCreated.profileImg ?? ''}
-                />
-                <p>
-                  รหัสนักศึกษา :{' '}
-                  {documentData?.data?.userCreated?.student?.studentNumber}
-                </p>
-                <p>คณะ : -</p>
-                <p>ภาควิชา : -</p>
-                <p>อาจารย์ที่ปรึกษา : -</p>
-                <p>โทรศัพท์ : {documentData?.data?.userCreated.phones[0]}</p>
-              </div>
-            </DocumentAccordion>
-            <DocumentAccordion title={'การแสดงความคิดเห็น'}>
-              {documentData &&
-                documentData?.data?.documentTimelines.map(
-                  (timeline: any, index) => (
-                    <div className="px-4">
-                      <ProfileBox
-                        name={timeline.userUpdatedBy.nameTh}
-                        email={
-                          timeline.userUpdatedBy.emails[
-                            timeline.userUpdatedBy.defaultEmailIndex
-                          ]
-                        }
-                        profileImg={timeline.userUpdatedBy.profileImg}
-                        timestamp={timeline.createdAt}
-                      />
-                      <div className="mb-2 p-2">
-                        <RichTextInputDisplay value={timeline.message} />
+        {type === 'edit' ||
+          (type === 'document-view' && (
+            <div
+              className="hs-accordion-group w-1/4 overflow-y-auto"
+              data-hs-accordion-always-open
+            >
+              <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
+                <div className="px-4">
+                  <ProfileBox
+                    name={documentData?.data?.userCreated.nameTh ?? ''}
+                    email={
+                      documentData?.data?.userCreated.emails[
+                        documentData?.data?.userCreated.defaultEmailIndex
+                      ] ?? ''
+                    }
+                    profileImg={
+                      documentData?.data?.userCreated.profileImg ?? ''
+                    }
+                  />
+                  <p>
+                    รหัสนักศึกษา :{' '}
+                    {documentData?.data?.userCreated?.student?.studentNumber}
+                  </p>
+                  <p>คณะ : -</p>
+                  <p>ภาควิชา : -</p>
+                  <p>อาจารย์ที่ปรึกษา : -</p>
+                  <p>โทรศัพท์ : {documentData?.data?.userCreated.phones[0]}</p>
+                </div>
+              </DocumentAccordion>
+              <DocumentAccordion title={'การแสดงความคิดเห็น'}>
+                {documentData &&
+                  documentData?.data?.documentTimelines.map(
+                    (timeline: any, index) => (
+                      <div className="px-4">
+                        <ProfileBox
+                          name={timeline.userUpdatedBy.nameTh}
+                          email={
+                            timeline.userUpdatedBy.emails[
+                              timeline.userUpdatedBy.defaultEmailIndex
+                            ]
+                          }
+                          profileImg={timeline.userUpdatedBy.profileImg}
+                          timestamp={timeline.createdAt}
+                        />
+                        <div className="mb-2 p-2">
+                          <RichTextInputDisplay value={timeline.message} />
+                        </div>
                       </div>
-                    </div>
-                  )
-                )}
-            </DocumentAccordion>
-          </div>
-        )}
+                    )
+                  )}
+              </DocumentAccordion>
+            </div>
+          ))}
       </div>
     </div>
   )

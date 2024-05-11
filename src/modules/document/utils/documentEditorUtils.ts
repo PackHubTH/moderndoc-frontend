@@ -47,6 +47,7 @@ const addAutoFill = (
     width: 200,
     minWidth: 20,
     backgroundColor: '#DBEAFE',
+
     textAlign: 'center',
     createdBy: useUserStore.getState().user?.id,
   })
@@ -100,6 +101,7 @@ const addField = (
     width: 200,
     minWidth: 20,
     backgroundColor: '#DBEAFE',
+    borderRadius: '16px',
     textAlign: 'center',
     createdBy: useUserStore.getState().user?.id,
   })
