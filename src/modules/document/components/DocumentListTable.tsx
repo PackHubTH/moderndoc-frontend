@@ -24,7 +24,13 @@ import { useNavigate } from 'react-router-dom'
 import useGetAllDocument from '../hooks/api/useGetAllDocument'
 
 interface PropsType {
-  type: 'ALL' | 'SENT' | 'RECEIVED' | 'DRAFT' | 'CANCELED' | 'COMPLETED'
+  type:
+    | 'ASSIGNED_TO_ME'
+    | 'PROCESSING'
+    | 'COMPLETED'
+    | 'CANCELED'
+    | 'DRAFT'
+    | 'ALL'
 }
 
 const DocumentListTable = ({ type }: PropsType) => {

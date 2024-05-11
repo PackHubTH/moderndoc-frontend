@@ -1,4 +1,3 @@
-import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
 import Tabs from '@/components/Tabs'
 import { useNavigate } from 'react-router-dom'
@@ -14,7 +13,7 @@ const DocumentManagementPage: React.FC = () => {
   return (
     <PageContainer className="space-y-8 p-7">
       <h1 className="text-2xl font-bold text-gray-600">รายการเอกสาร</h1>
-      <div className="flex items-center justify-end">
+      {/* <div className="flex items-center justify-end">
         <Button
           label="สร้าง mock"
           variant="green"
@@ -22,16 +21,16 @@ const DocumentManagementPage: React.FC = () => {
             navigate('/create-document/7719fea9-efa1-4165-8f8a-6b90e16c5fe2')
           }}
         />
-      </div>
+      </div> */}
       <Tabs
         onSearch={(val) => console.log(val)}
         tabs={[
           {
-            content: <DocumentListTable type="RECEIVED" />,
+            content: <DocumentListTable type="ASSIGNED_TO_ME" />,
             title: 'งานของฉัน',
           },
           {
-            content: <DocumentListTable type="SENT" />,
+            content: <DocumentListTable type="PROCESSING" />,
             title: 'กำลังดำเนินการ',
           },
           {
