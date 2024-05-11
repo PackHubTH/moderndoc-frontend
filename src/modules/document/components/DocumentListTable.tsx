@@ -6,18 +6,20 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
+import { FaCopy, FaEye } from 'react-icons/fa'
 import { Document, DocumentStatus } from '../types/types'
 import { getStatusBadgeProps, shouldShowAction } from '../utils/statusUtils'
 
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
-import Dropdown from '@/components/Dropdown'
+import DropdownItem from '@/components/Dropdown/DropdownItem'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import { useUserStore } from '@/stores/userStore'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
 import { FaRegEnvelope } from 'react-icons/fa6'
+import { HiTrash } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
 import useGetAllDocument from '../hooks/api/useGetAllDocument'
 
@@ -126,36 +128,43 @@ const DocumentListTable = ({ type }: PropsType) => {
               ) && (
                 <Button
                   label="ดำเนินการ"
-                  variant="outline-blue"
                   onClick={() =>
                     navigate(`/edit-document/${info.row.original.id}`)
                   }
                 />
               )}
-              <Dropdown
-                label="เพิ่มเติม"
-                dropdownSection={[
-                  {
-                    lists: [
-                      {
-                        displayText: 'ดูรายละเอียด',
-                        onClick: () =>
-                          navigate(`/view-document/${info.row.original.id}`),
-                      },
-                      {
-                        displayText: 'คัดลอก',
-                        onClick: () =>
-                          navigate(`/edit-document/${info.row.original.id}`),
-                      },
-                      {
-                        displayText: 'ลบเอกสาร',
-                        onClick: () =>
-                          navigate(`/edit-document/${info.row.original.id}`),
-                      },
-                    ],
-                  },
-                ]}
-              />
+              <div className="hs-dropdown relative z-20 inline-flex">
+                <Button
+                  id="hs-dropdown-with-title"
+                  label="เพิ่มเติม"
+                  variant="outline-blue"
+                  // onClick={() =>
+                  //   navigate(`/edit-document/${info.row.original.id}`)
+                  // }
+                />
+                <div
+                  className="hs-dropdown-menu duration mt-2 hidden min-w-[15rem] divide-y divide-gray-200 rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100"
+                  aria-labelledby="hs-dropdown-with-title"
+                >
+                  <div className="py-2 first:pt-0 last:pb-0">
+                    <DropdownItem
+                      displayText="ดูรายละเอียด"
+                      icon={<FaEye className="text-blue-500" />}
+                      onClick={() =>
+                        navigate(`/view-document/${info.row.original.id}`)
+                      }
+                    />
+                    <DropdownItem
+                      displayText="คัดลอก"
+                      icon={<FaCopy className="text-blue-500" />}
+                    />
+                    <DropdownItem
+                      displayText="ลบเอกสาร"
+                      icon={<HiTrash className="text-red-500" />}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>

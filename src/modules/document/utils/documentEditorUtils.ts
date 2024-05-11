@@ -72,12 +72,12 @@ const addAutoFill = (
     item.canvas.discardActiveObject()
     item.canvas.renderAll()
   })
-  // fabricText.controls.deleteIcon = deleteIcon
-  // canvas.add(fabricText)
-  // canvas.setActiveObject(fabricText)
-  group.controls.deleteIcon = deleteIcon
-  canvas.add(group)
-  canvas.setActiveObject(group)
+  fabricText.controls.deleteIcon = deleteIcon
+  canvas.add(fabricText)
+  canvas.setActiveObject(fabricText)
+  // group.controls.deleteIcon = deleteIcon
+  // canvas.add(group)
+  // canvas.setActiveObject(group)
   canvas.renderAll()
 
   setActiveButton(ActiveToolbarButton.Default)

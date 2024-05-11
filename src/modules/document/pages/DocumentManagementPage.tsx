@@ -1,7 +1,6 @@
 import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
 import Tabs from '@/components/Tabs'
-import TextInput from '@/components/TextInput'
 import { useNavigate } from 'react-router-dom'
 import DocumentListTable from '../components/DocumentListTable'
 
@@ -23,9 +22,9 @@ const DocumentManagementPage: React.FC = () => {
             navigate('/create-document/7719fea9-efa1-4165-8f8a-6b90e16c5fe2')
           }}
         />
-        <TextInput className="w-[240px]" placeholder="ค้นหา..." />
       </div>
       <Tabs
+        onSearch={(val) => console.log(val)}
         tabs={[
           {
             content: <DocumentListTable type="RECEIVED" />,

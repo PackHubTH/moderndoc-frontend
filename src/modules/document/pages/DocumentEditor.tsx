@@ -111,14 +111,6 @@ const DocumentEditor = ({ type }: PropsType) => {
       )
   }
 
-  console.log('documentData', documentData)
-  console.log('templateData', templateData)
-  console.log(
-    'iseditable',
-    documentData?.data?.documentSents.find(
-      (sent: any) => sent.receiverId === user.id && sent.editable
-    ) || user.id === documentData?.data?.createdBy
-  )
   return (
     <div>
       {/* Header */}
@@ -223,30 +215,6 @@ const DocumentEditor = ({ type }: PropsType) => {
                 onClick={() => console.log('test')}
               />
             </div>
-
-            {/* <button
-              id="hs-dropdown-custom-icon-trigger"
-              type="button"
-              className="hs-dropdown-toggle size-9 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-sm font-semibold text-gray-800 shadow-sm hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800"
-            >
-              <svg
-                className="size-4 flex-none text-gray-600 dark:text-neutral-500"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="1" />
-                <circle cx="12" cy="5" r="1" />
-                <circle cx="12" cy="19" r="1" />
-              </svg>
-            </button> */}
-
             <div
               className="hs-dropdown-menu duration min-w-60 z-20 mt-2 hidden rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:border dark:border-neutral-700 dark:bg-neutral-800"
               aria-labelledby="hs-dropdown-custom-icon-trigger"
@@ -303,7 +271,6 @@ const DocumentEditor = ({ type }: PropsType) => {
                       'Times New Roman',
                     ].map((font) => ({
                       displayText: font,
-                      // onClick: () => activeObject?.set('fontFamily', font),
                       onClick: () =>
                         setFontFamily(canvasList, activeCanvasId, font),
                     })),
@@ -314,7 +281,6 @@ const DocumentEditor = ({ type }: PropsType) => {
                 type="color"
                 value={rgbToHex(activeObject?.fill)}
                 onChange={(e) => {
-                  console.log('color', e.target.value)
                   activeObject?.set('fill', hexToRgb(e.target.value))
                   canvasList
                     .find((page) => page.id === activeCanvasId)
@@ -517,21 +483,6 @@ const DocumentEditor = ({ type }: PropsType) => {
           </div>
         )}
       </div>
-      {/*  */}
-      {/* pdf lib test */}
-      {/* <button
-        id="a"
-        // onClick={() => downloadFile(file?.data ?? '', getJson(canvasList))}
-        onClick={() =>
-          convertCanvasToPdf(
-            // list of canvas id
-            file?.data ?? '',
-            Array.from({ length: pageTotal }, (v, k) => k.toString())
-          )
-        }
-      >
-        TeSttse
-      </button> */}
     </div>
   )
 }

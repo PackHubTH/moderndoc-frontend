@@ -1,9 +1,29 @@
 import {
   getJson,
+  hexToRgb,
   previewCanvas,
+  rgbToHex,
   setAutoFillType,
+  setFontFamily,
+  setFontSize,
+  setTextAlign,
+  setTextBold,
+  setTextItalic,
+  setTextSpacing,
 } from '@/modules/document/utils/documentEditorUtils'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { FaMousePointer, FaRegCalendarAlt } from 'react-icons/fa'
+import {
+  FaA,
+  FaAlignJustify,
+  FaAlignLeft,
+  FaAlignRight,
+  FaBold,
+  FaCheck,
+  FaFileSignature,
+  FaItalic,
+  FaPenFancy,
+} from 'react-icons/fa6'
 import { Document, Page } from 'react-pdf'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -15,11 +35,12 @@ import DocumentAccordion from '@/modules/document/components/DocumentAccordion'
 import DocumentCanvas from '@/modules/document/components/DocumentCanvas'
 import DocumentToolbar from '@/modules/document/components/DocumentToolbar'
 import ToolbarButton from '@/modules/document/components/ToolbarButton'
+import ToolbarTextButton from '@/modules/document/components/ToolbarTextButton'
 import { useDocumentStore } from '@/modules/document/stores/documentStore'
 import { useDocumentToolbarStore } from '@/modules/document/stores/documentToolbarStore'
 import { ActiveToolbarButton as ButtonId } from '@/modules/document/types/ToolbarButton'
 import { useTemplateStore } from '@/stores/templateStore'
-import { FaFileSignature } from 'react-icons/fa6'
+import { BsDistributeHorizontal } from 'react-icons/bs'
 import tw from 'twin.macro'
 import useGetFile from '../../../hooks/useGetFile'
 import PreviewButton from '../components/PreviewButton'
@@ -142,22 +163,155 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
       {/* <ToolBarButtonGroup /> */}
       <div className="flex h-[calc(100vh-92px)]">
         <div css={[activeObject ? tw`w-3/4` : tw`w-full`]}>
-          {/* <div className="flex h-12 items-center justify-center bg-gray-200 px-4"> */}
           <DocumentToolbar>
             <ToolbarButton
               icon={<FaFileSignature size={20} />}
               id={ButtonId.AutoFill}
               label="Create Autofill"
             />
+            <ToolbarButton icon={<FaA />} id={ButtonId.Text} label="Text" />
+            <div className="hs-dropdown relative inline-flex">
+              <div id="hs-dropdown-custom-icon-trigger">
+                <ToolbarButton
+                  icon={<FaPenFancy />}
+                  id={ButtonId.Pen}
+                  label="Sign"
+                  onClick={() => console.log('test')}
+                />
+              </div>
+              <div
+                className="hs-dropdown-menu duration min-w-60 z-20 mt-2 hidden rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:border dark:border-neutral-700 dark:bg-neutral-800"
+                aria-labelledby="hs-dropdown-custom-icon-trigger"
+              >
+                <div className="rounded-md border-b p-2">
+                  <img src="https://via.placeholder.com/200x50" alt="test" />
+                </div>
+                <div className="rounded-md border-b p-2">
+                  <img src="https://via.placeholder.com/200x50" alt="test" />
+                </div>
+                <div className="rounded-md border-b p-2">
+                  <img src="https://via.placeholder.com/200x50" alt="test" />
+                </div>
+              </div>
+            </div>
             <ToolbarButton
-              icon={<FaFileSignature />}
-              id={ButtonId.Correct}
-              label="<dev> Get json"
-              onClick={() => {
-                console.log('dada', canvasList)
-                console.log(getJson(canvasList))
-              }}
+              icon={<FaRegCalendarAlt />}
+              id={ButtonId.Date}
+              label="Date"
             />
+            <ToolbarButton
+              icon={<FaCheck />}
+              id={ButtonId.Correct}
+              label="Check"
+            />
+            <ToolbarButton
+              onClick={() => console.log(getJson(canvasList))}
+              icon={<FaMousePointer />}
+              id={ButtonId.Default}
+              label="Select"
+            />
+            {activeObject && activeObject.fontSize ? (
+              <div className="ms-8 space-x-2">
+                <Dropdown
+                  label={activeObject?.fontSize?.toString() ?? '16'}
+                  dropdownSection={[
+                    {
+                      lists: [8, 12, 16, 20, 24, 48, 72].map((size) => ({
+                        displayText: size,
+                        onClick: () =>
+                          setFontSize(canvasList, activeCanvasId, size),
+                      })),
+                    },
+                  ]}
+                />
+                <Dropdown
+                  label={activeObject?.fontFamily ?? 'Arial'}
+                  dropdownSection={[
+                    {
+                      lists: [
+                        'Arial',
+                        'Courier New',
+                        'Tahoma',
+                        'Times New Roman',
+                      ].map((font) => ({
+                        displayText: font,
+                        onClick: () =>
+                          setFontFamily(canvasList, activeCanvasId, font),
+                      })),
+                    },
+                  ]}
+                />
+                <input
+                  type="color"
+                  value={rgbToHex(activeObject?.fill)}
+                  onChange={(e) => {
+                    activeObject?.set('fill', hexToRgb(e.target.value))
+                    canvasList
+                      .find((page) => page.id === activeCanvasId)
+                      ?.canvas?.renderAll()
+                  }}
+                />
+                <ToolbarTextButton
+                  icon={<FaBold />}
+                  name="fontWeight"
+                  value="bold"
+                  onClick={() =>
+                    setTextBold(canvasList, activeCanvasId, setActiveObject)
+                  }
+                />
+                <ToolbarTextButton
+                  icon={<FaItalic />}
+                  name="fontStyle"
+                  value="italic"
+                  onClick={() =>
+                    setTextItalic(canvasList, activeCanvasId, setActiveObject)
+                  }
+                />
+                <ToolbarTextButton
+                  icon={<FaAlignLeft />}
+                  name="textAlign"
+                  value="left"
+                  onClick={() =>
+                    setTextAlign(canvasList, activeCanvasId, 'left')
+                  }
+                />
+                <ToolbarTextButton
+                  icon={<FaAlignJustify />}
+                  name="textAlign"
+                  value="center"
+                  onClick={() =>
+                    setTextAlign(canvasList, activeCanvasId, 'center')
+                  }
+                />
+                <ToolbarTextButton
+                  icon={<FaAlignRight />}
+                  name="textAlign"
+                  value="right"
+                  onClick={() =>
+                    setTextAlign(canvasList, activeCanvasId, 'right')
+                  }
+                />
+                <div className="inline-flex items-center gap-2">
+                  <BsDistributeHorizontal />
+                  <span>{activeObject?.charSpacing / 100} px</span>
+                  <input
+                    type="range"
+                    defaultValue={activeObject?.charSpacing ?? 0}
+                    onChange={(e) => {
+                      setTextSpacing(
+                        canvasList,
+                        activeCanvasId,
+                        Number(e.target.value) * 10
+                      )
+                      setActiveObject({
+                        ...activeObject,
+                        charSpacing: Number(e.target.value) * 10,
+                      })
+                    }}
+                  />
+                </div>
+              </div>
+            ) : null}
           </DocumentToolbar>
           {/* </div> */}
           {/* Content */}
