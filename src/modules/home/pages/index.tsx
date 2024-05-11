@@ -9,18 +9,24 @@ import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
 import useGetDepartments from '@/modules/user/hooks/api/useGetDepartment'
 import useGetUser from '@/modules/user/hooks/api/useGetUser'
 import { useUserStore } from '@/stores/userStore'
-import { ReactNode, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useEffect, useMemo } from 'react'
 import { IoDocumentTextOutline } from 'react-icons/io5'
 import { useInView } from 'react-intersection-observer'
 import { UserRole } from 'types/user'
 import FaqAccordion from '../components/FaqAccordion'
+import { useFaqSearchStore } from '../stores/useFaqSearchStore'
 
 const Home = () => {
   const { isLogin } = useUserStore()
 
-  const [search, setSearch] = useState('')
-  const [filterTagId, setFilterTagId] = useState<string>('')
-  const [filterDepartmentId, setFilterDepartmentId] = useState<string>('')
+  const {
+    search,
+    setSearch,
+    filterTagId,
+    setFilterTagId,
+    filterDepartmentId,
+    setFilterDepartmentId,
+  } = useFaqSearchStore()
 
   const { data: userData } = useGetUser()
   const { data: tags } = useGetAllTags()

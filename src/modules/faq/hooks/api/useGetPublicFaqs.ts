@@ -25,6 +25,7 @@ const useGetPublicFaqs = (
       return response.data
     },
     {
+      cacheTime: 0,
       getNextPageParam: (lastPage, pages) => {
         if (pages.length + 1 > lastPage.data.totalPages) return undefined
         return pages.length + 1
