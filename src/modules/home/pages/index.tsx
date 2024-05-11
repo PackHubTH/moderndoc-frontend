@@ -81,10 +81,6 @@ const Home = () => {
 
           const shouldAbleToEdit =
             userData?.data.role === UserRole.ADMIN ||
-            !!userData?.data.teacher?.teacherDepartments.find(
-              (teacherDepartment) =>
-                teacherDepartment.departmentId === faq.department.id
-            ) ||
             !!userData?.data.staff?.staffDepartments.find(
               (staffDepartment) =>
                 staffDepartment.departmentId === faq.department.id
