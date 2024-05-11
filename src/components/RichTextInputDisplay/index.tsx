@@ -3,11 +3,12 @@ import { styled } from 'twin.macro'
 
 type PropsType = {
   value: string
+  color?: string
 }
 
 const RichText = styled.div`
   font-size: 1rem;
-  color: #333;
+  color: ${(props) => props.color};
 
   ol {
     list-style-type: decimal;
@@ -19,9 +20,11 @@ const RichText = styled.div`
     margin-left: 2rem;
   }
 `
-
-const RichTextInputDisplay: React.FC<PropsType> = ({ value }) => {
-  return <RichText dangerouslySetInnerHTML={{ __html: value }} />
+const RichTextInputDisplay: React.FC<PropsType> = ({
+  value,
+  color = '#333',
+}) => {
+  return <RichText dangerouslySetInnerHTML={{ __html: value }} color={color} />
 }
 
 export default RichTextInputDisplay

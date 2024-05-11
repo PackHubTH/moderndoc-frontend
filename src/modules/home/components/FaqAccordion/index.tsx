@@ -1,7 +1,7 @@
 import { Faq, SubFaq } from '@/modules/faq/types'
 import { useState } from 'react'
 import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa6'
-import { blue, white, yellow } from 'tailwindcss/colors'
+import { blue, gray, white, yellow } from 'tailwindcss/colors'
 import {
   SendChannelBgColorMapper,
   SendChannelTextColorMapper,
@@ -25,6 +25,7 @@ import { MdModeEditOutline } from 'react-icons/md'
 import 'react-quill/dist/quill.snow.css'
 import { useNavigate } from 'react-router-dom'
 import tw from 'twin.macro'
+import { useFaqSearchStore } from '../../stores/useFaqSearchStore'
 import DeleteSubFaqModal from '../DeleteSubFaqModal'
 import SubFaqActionModal from '../SubFaqActionModal'
 
@@ -41,6 +42,8 @@ const FaqAccordion: React.FC<PropsType> = ({
   defaultOpen = false,
 }) => {
   const { isLogin } = useUserStore()
+
+  const { search, filterTagId, filterDepartmentId } = useFaqSearchStore()
 
   const {
     isOpen: createSubFaqIsOpen,
@@ -68,7 +71,11 @@ const FaqAccordion: React.FC<PropsType> = ({
     'CREATE'
   )
 
-  const { refetch: refetchPublicFaqs } = useGetPublicFaqs()
+  const { refetch: refetchPublicFaqs } = useGetPublicFaqs(
+    search,
+    filterTagId,
+    filterDepartmentId
+  )
 
   const handleClickCreateSubFaq = (faqId: string) => {
     setSubFaqModalType('CREATE')
@@ -312,7 +319,10 @@ const FaqAccordion: React.FC<PropsType> = ({
                                 </div>
                               </Disclosure.Button>
                               <Disclosure.Panel className="flex items-start justify-between bg-gray-100 p-4">
-                                <p>{subFaq.description}</p>
+                                <RichTextInputDisplay
+                                  value={subFaq.description}
+                                  color={gray[500]}
+                                />
                               </Disclosure.Panel>
                             </>
                           )}
@@ -332,6 +342,7 @@ const FaqAccordion: React.FC<PropsType> = ({
         onClose={createSubFaqClose}
         faqId={actionFaqId}
         subFaq={actionSubFaq}
+        callback={refetchPublicFaqs}
       />
       <DeleteSubFaqModal
         isOpen={deleteSubFaqIsOpen}

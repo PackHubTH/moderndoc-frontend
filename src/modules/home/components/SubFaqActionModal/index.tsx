@@ -3,7 +3,6 @@ import Modal from '@/components/Modal'
 import RichTextInput from '@/components/RichTextInput'
 import TextInput from '@/components/TextInput'
 import useCreateSubFaq from '@/modules/faq/hooks/api/useCreateSubFaq'
-import useGetPublicFaqs from '@/modules/faq/hooks/api/useGetPublicFaqs'
 import useUpdateSubFaq from '@/modules/faq/hooks/api/useUpdateSubFaq'
 import { SubFaq } from '@/modules/faq/types'
 import { useEffect, useState } from 'react'
@@ -16,6 +15,7 @@ type PropsType = {
   faqId: string | null
   subFaq?: SubFaq | null
   type: 'CREATE' | 'UPDATE'
+  callback?: () => void
 }
 const SubFaqActionModal: React.FC<PropsType> = ({
   isOpen,
@@ -23,6 +23,7 @@ const SubFaqActionModal: React.FC<PropsType> = ({
   faqId,
   type,
   subFaq,
+  callback,
 }) => {
   const [title, setTitle] = useState(
     type === 'UPDATE' && subFaq ? subFaq.title : ''
@@ -33,7 +34,6 @@ const SubFaqActionModal: React.FC<PropsType> = ({
 
   const { mutate: createSubFaq } = useCreateSubFaq()
   const { mutate: updateSubFaq } = useUpdateSubFaq()
-  const { refetch: refetchFaq } = useGetPublicFaqs()
 
   const resetAllFields = () => {
     setTitle('')
@@ -48,7 +48,7 @@ const SubFaqActionModal: React.FC<PropsType> = ({
         onSuccess: () => {
           toast.success('สร้างรายการ FAQ สำเร็จ')
           resetAllFields()
-          refetchFaq()
+          callback?.()
           onClose()
         },
         onError: (error) => {
@@ -67,7 +67,7 @@ const SubFaqActionModal: React.FC<PropsType> = ({
       {
         onSuccess: () => {
           toast.success('แก้ไขรายการ FAQ สำเร็จ')
-          refetchFaq()
+          callback?.()
           onClose()
         },
         onError: (error) => {
