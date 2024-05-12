@@ -92,6 +92,7 @@ export interface GetDocumentById {
   exampleFile: string
   element: Element
   status: string
+  createdAt: string
   createdBy: string
   updatedBy: string
   lastUpdatedAt: string

@@ -1,3 +1,6 @@
+import { format } from 'date-fns'
+import { th } from 'date-fns/locale'
+
 export const formatPhoneNumber = (phones: string) => {
   try {
     return phones
@@ -9,4 +12,10 @@ export const formatPhoneNumber = (phones: string) => {
   } catch (e) {
     return '-'
   }
+}
+
+export const formatFullDatetime = (datetime: string | Date) => {
+  return format(datetime, 'dd MMM yy, HH:mm:ss', {
+    locale: th,
+  })
 }

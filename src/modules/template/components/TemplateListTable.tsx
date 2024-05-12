@@ -8,17 +8,16 @@ import {
 import { useEffect, useState } from 'react'
 
 import Button from '@/components/Button'
-import Pagination from '@/components/TableDisplay/Pagination'
 import TableDisplay from '@/components/TableDisplay'
+import Pagination from '@/components/TableDisplay/Pagination'
+import { useDisclosure } from '@/hooks/useDisclosure'
+import { formatFullDatetime } from '@/utils/formatUtils'
+import { useNavigate } from 'react-router-dom'
+import useGetAllTemplate from '../hooks/api/useGetAllTemplate'
 import { Template } from '../types/types'
 import TemplateCopyModal from './TemplateCopyModal'
 import TemplateDeleteModal from './TemplateDeleteModal'
 import TemplateInfoBox from './TemplateInfoBox'
-import { format } from 'date-fns'
-import { th } from 'date-fns/locale'
-import { useDisclosure } from '@/hooks/useDisclosure'
-import useGetAllTemplate from '../hooks/api/useGetAllTemplate'
-import { useNavigate } from 'react-router-dom'
 
 const TemplateListTable = () => {
   const {
@@ -88,9 +87,7 @@ const TemplateListTable = () => {
         <div className="flex justify-end">
           <p className="text-gray-400">
             อัพเดตล่าสุดเมื่อ{' '}
-            {format(info.row.original.lastUpdatedAt, 'dd MMM yy, p', {
-              locale: th,
-            })}
+            {formatFullDatetime(info.row.original.lastUpdatedAt)}
           </p>
           {hoveredRow && hoveredRow.id === info.row.id && (
             <div className="absolute right-4 top-3 space-x-2">

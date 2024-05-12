@@ -15,13 +15,15 @@ import Button from '@/components/Button'
 import DropdownItem from '@/components/Dropdown/DropdownItem'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
+import { useDisclosure } from '@/hooks/useDisclosure'
+import TimelineDescriptionBox from '@/modules/timeline/components/TimelineDescriptionBox'
 import { useUserStore } from '@/stores/userStore'
-import { format } from 'date-fns'
-import { th } from 'date-fns/locale'
+import { formatFullDatetime } from '@/utils/formatUtils'
 import { FaRegEnvelope } from 'react-icons/fa6'
 import { HiTrash } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
 import useGetAllDocument from '../hooks/api/useGetAllDocument'
+import useGetDocumentById from '../hooks/api/useGetDocumentById'
 
 interface PropsType {
   type:
@@ -34,6 +36,7 @@ interface PropsType {
 }
 
 const DocumentListTable = ({ type }: PropsType) => {
+  const { isOpen, open } = useDisclosure()
   const navigate = useNavigate()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -41,10 +44,13 @@ const DocumentListTable = ({ type }: PropsType) => {
   })
   const [hoveredRow, setHoveredRow] = useState<Row<Document> | null>(null)
   const user = useUserStore((state) => state.user)
-  const { data: document, refetch } = useGetAllDocument(
+  const { data: document, refetch: refetchAllDocument } = useGetAllDocument(
     paginationState.pageIndex + 1,
     type
   )
+  const [documentId, setDocumentId] = useState('')
+  const { data: documentData, refetch: refetchDocumentById } =
+    useGetDocumentById(documentId)
 
   const columns: ColumnDef<Document>[] = [
     {
@@ -120,9 +126,7 @@ const DocumentListTable = ({ type }: PropsType) => {
           />
           <p className="text-gray-400">
             อัพเดตล่าสุดเมื่อ{' '}
-            {format(info.row.original.lastUpdatedAt, 'dd MMM yy, p', {
-              locale: th,
-            })}
+            {formatFullDatetime(info.row.original.lastUpdatedAt)}
           </p>
           {hoveredRow && hoveredRow.id === info.row.id && (
             <div className="absolute right-2 top-4 space-x-2">
@@ -193,15 +197,31 @@ const DocumentListTable = ({ type }: PropsType) => {
     })
   }, [table.getState().pagination.pageIndex])
 
+  const onRowClick = (row: any) => {
+    console.log('clicked', row)
+    setDocumentId(row.original.id)
+    if (documentId) refetchDocumentById()
+    open()
+  }
+
   return (
-    <div className="flex-1 p-2">
-      <TableDisplay table={table} onHoverRow={setHoveredRow} />
-      <Pagination
-        totalPage={document?.data?.totalPages ?? 1}
-        currentPage={table.getState().pagination.pageIndex + 1}
-        nextPage={table.nextPage}
-        prevPage={table.previousPage}
-      />
+    <div className="flex">
+      <div className="flex-1 p-2">
+        <TableDisplay
+          table={table}
+          onHoverRow={setHoveredRow}
+          onClick={onRowClick}
+        />
+        <Pagination
+          totalPage={document?.data?.totalPages ?? 1}
+          currentPage={table.getState().pagination.pageIndex + 1}
+          nextPage={table.nextPage}
+          prevPage={table.previousPage}
+        />
+      </div>
+      {isOpen && documentData && (
+        <TimelineDescriptionBox data={documentData?.data} />
+      )}
     </div>
   )
 }

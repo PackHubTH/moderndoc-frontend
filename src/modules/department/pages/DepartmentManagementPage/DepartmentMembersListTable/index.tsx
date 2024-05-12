@@ -1,3 +1,14 @@
+import { formatFullDatetime, formatPhoneNumber } from '@/utils/formatUtils'
+import {
+  ColumnDef,
+  PaginationState,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { useEffect, useState } from 'react'
+import { MdCancel, MdCheckCircle } from 'react-icons/md'
+import { green, red, white } from 'tailwindcss/colors'
+
 import Button from '@/components/Button'
 import Loading from '@/components/Loading'
 import TableDisplay from '@/components/TableDisplay'
@@ -10,20 +21,8 @@ import { GetDepartmentMemberResponse } from '@/modules/department/hooks/api/type
 import useGetDepartmentMembers from '@/modules/department/hooks/api/useGetDepartmentMembers'
 import { RoleMapper } from '@/modules/department/mappers'
 import { DepartmentType } from '@/modules/user/hooks/types'
-import { formatPhoneNumber } from '@/utils/formatUtils'
-import {
-  ColumnDef,
-  PaginationState,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { format } from 'date-fns'
-import { th } from 'date-fns/locale'
-import { useEffect, useState } from 'react'
 import { BiTransfer } from 'react-icons/bi'
 import { FaEye } from 'react-icons/fa6'
-import { MdCancel, MdCheckCircle } from 'react-icons/md'
-import { green, red, white } from 'tailwindcss/colors'
 import { UserRole } from 'types/user'
 
 type PropsType = {
@@ -208,9 +207,7 @@ const DepartmentMembersList: React.FC<PropsType> = ({
       header: `ลงทะเบียน`,
       cell: (info) => (
         <div className="w-28 space-y-1">
-          {format(info.row.original.createdAt, 'dd MMM yy, HH:mm:ss', {
-            locale: th,
-          })}
+          {formatFullDatetime(info.row.original.createdAt)}
         </div>
       ),
     },

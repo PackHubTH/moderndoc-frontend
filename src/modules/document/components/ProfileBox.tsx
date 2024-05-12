@@ -1,5 +1,4 @@
-import { format } from 'date-fns'
-import { th } from 'date-fns/locale'
+import { formatFullDatetime } from '@/utils/formatUtils'
 
 type PropsType = {
   name: string
@@ -19,13 +18,7 @@ const ProfileBox = ({ email, name, profileImg, timestamp }: PropsType) => {
       <div className="w-full text-xs">
         <div className="flex justify-between">
           <h1>{name}</h1>
-          {timestamp && (
-            <p>
-              {format(timestamp, 'dd MMM yy, p', {
-                locale: th,
-              })}
-            </p>
-          )}
+          {timestamp && <p>{formatFullDatetime(timestamp)}</p>}
         </div>
         <p>{email}</p>
       </div>

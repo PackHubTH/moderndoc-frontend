@@ -1,7 +1,6 @@
 import ProfileBox from '@/modules/document/components/ProfileBox'
+import { formatFullDatetime } from '@/utils/formatUtils'
 import { Template } from '../types/types'
-import { format } from 'date-fns'
-import { th } from 'date-fns/locale'
 
 interface TemplateInfoBoxProps {
   data: Template
@@ -17,11 +16,7 @@ const TemplateInfoBox = ({ data }: TemplateInfoBoxProps) => {
         <p>สร้างเมื่อ</p>
         <p>test</p>
         <p>อัปเดตล่าสุดเมื่อ</p>
-        <p>
-          {format(data.lastUpdatedAt, 'dd MMM yy, p', {
-            locale: th,
-          })}
-        </p>
+        <p>{formatFullDatetime(data.lastUpdatedAt)}</p>
         <p>ถูกสร้างเอกสาร</p>
         <p>
           {data.createdCount} <span className="ms-3">ครั้ง</span>

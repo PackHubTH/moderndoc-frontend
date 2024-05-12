@@ -11,6 +11,7 @@ import {
   FaPenFancy,
   FaRegCalendarAlt,
 } from 'react-icons/fa'
+import { FaA, FaPlus } from 'react-icons/fa6'
 import { Document, Page } from 'react-pdf'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
@@ -25,6 +26,8 @@ import {
   setTextSpacing,
 } from '../utils/documentEditorUtils'
 
+import mock_signature_1 from '@/assets/mock_signature_1.png'
+import mock_signature_2 from '@/assets/mock_signature_2.png'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
@@ -35,7 +38,6 @@ import useGetFile from '@/hooks/useGetFile'
 import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
 import { useUserStore } from '@/stores/userStore'
 import { BsDistributeHorizontal } from 'react-icons/bs'
-import { FaA } from 'react-icons/fa6'
 import { IoEyeOutline } from 'react-icons/io5'
 import tw from 'twin.macro'
 import ActionDocumentModal from '../components/ActionDocumentModal'
@@ -219,14 +221,22 @@ const DocumentEditor = ({ type }: PropsType) => {
               className="hs-dropdown-menu duration min-w-60 z-20 mt-2 hidden rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:border dark:border-neutral-700 dark:bg-neutral-800"
               aria-labelledby="hs-dropdown-custom-icon-trigger"
             >
-              <div className="rounded-md border-b p-2">
-                <img src="https://via.placeholder.com/200x50" alt="test" />
+              <div className="m-2 flex justify-center rounded-md border-2">
+                <img
+                  src={mock_signature_1}
+                  alt="sig-1"
+                  className="max-h-[96px]"
+                />
               </div>
-              <div className="rounded-md border-b p-2">
-                <img src="https://via.placeholder.com/200x50" alt="test" />
+              <div className="m-2 flex justify-center rounded-md border-2">
+                <img
+                  src={mock_signature_2}
+                  alt="sig-2"
+                  className="max-h-[96px]"
+                />
               </div>
-              <div className="rounded-md border-b p-2">
-                <img src="https://via.placeholder.com/200x50" alt="test" />
+              <div className="m-2 flex justify-center rounded-md border-4 border-dashed p-2 text-blue-500">
+                <FaPlus size={32} />
               </div>
             </div>
           </div>
@@ -438,59 +448,56 @@ const DocumentEditor = ({ type }: PropsType) => {
           {/*  */}
         </div>
         {/* sidebar */}
-        {type === 'edit' ||
-          (type === 'document-view' && (
-            <div
-              className="hs-accordion-group w-1/4 overflow-y-auto"
-              data-hs-accordion-always-open
-            >
-              <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
-                <div className="px-4">
-                  <ProfileBox
-                    name={documentData?.data?.userCreated.nameTh ?? ''}
-                    email={
-                      documentData?.data?.userCreated.emails[
-                        documentData?.data?.userCreated.defaultEmailIndex
-                      ] ?? ''
-                    }
-                    profileImg={
-                      documentData?.data?.userCreated.profileImg ?? ''
-                    }
-                  />
-                  <p>
-                    รหัสนักศึกษา :{' '}
-                    {documentData?.data?.userCreated?.student?.studentNumber}
-                  </p>
-                  <p>คณะ : -</p>
-                  <p>ภาควิชา : -</p>
-                  <p>อาจารย์ที่ปรึกษา : -</p>
-                  <p>โทรศัพท์ : {documentData?.data?.userCreated.phones[0]}</p>
-                </div>
-              </DocumentAccordion>
-              <DocumentAccordion title={'การแสดงความคิดเห็น'}>
-                {documentData &&
-                  documentData?.data?.documentTimelines.map(
-                    (timeline: any, index) => (
-                      <div className="px-4">
-                        <ProfileBox
-                          name={timeline.userUpdatedBy.nameTh}
-                          email={
-                            timeline.userUpdatedBy.emails[
-                              timeline.userUpdatedBy.defaultEmailIndex
-                            ]
-                          }
-                          profileImg={timeline.userUpdatedBy.profileImg}
-                          timestamp={timeline.createdAt}
-                        />
-                        <div className="mb-2 p-2">
-                          <RichTextInputDisplay value={timeline.message} />
-                        </div>
+        {type === 'edit' && (
+          <div
+            className="hs-accordion-group w-1/4 overflow-y-auto"
+            data-hs-accordion-always-open
+          >
+            <DocumentAccordion title={'ข้อมูลผู้สร้างเอกสาร'}>
+              <div className="px-4">
+                <ProfileBox
+                  name={documentData?.data?.userCreated.nameTh ?? ''}
+                  email={
+                    documentData?.data?.userCreated.emails[
+                      documentData?.data?.userCreated.defaultEmailIndex
+                    ] ?? ''
+                  }
+                  profileImg={documentData?.data?.userCreated.profileImg ?? ''}
+                />
+                <p>
+                  รหัสนักศึกษา :{' '}
+                  {documentData?.data?.userCreated?.student?.studentNumber}
+                </p>
+                <p>คณะ : -</p>
+                <p>ภาควิชา : -</p>
+                <p>อาจารย์ที่ปรึกษา : -</p>
+                <p>โทรศัพท์ : {documentData?.data?.userCreated.phones[0]}</p>
+              </div>
+            </DocumentAccordion>
+            <DocumentAccordion title={'การแสดงความคิดเห็น'}>
+              {documentData &&
+                documentData?.data?.documentTimelines.map(
+                  (timeline: any, index) => (
+                    <div className="px-4">
+                      <ProfileBox
+                        name={timeline.userUpdatedBy.nameTh}
+                        email={
+                          timeline.userUpdatedBy.emails[
+                            timeline.userUpdatedBy.defaultEmailIndex
+                          ]
+                        }
+                        profileImg={timeline.userUpdatedBy.profileImg}
+                        timestamp={timeline.createdAt}
+                      />
+                      <div className="mb-2 p-2">
+                        <RichTextInputDisplay value={timeline.message} />
                       </div>
-                    )
-                  )}
-              </DocumentAccordion>
-            </div>
-          ))}
+                    </div>
+                  )
+                )}
+            </DocumentAccordion>
+          </div>
+        )}
       </div>
     </div>
   )

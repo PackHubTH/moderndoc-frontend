@@ -23,10 +23,13 @@ import {
   FaFileSignature,
   FaItalic,
   FaPenFancy,
+  FaPlus,
 } from 'react-icons/fa6'
 import { Document, Page } from 'react-pdf'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import mock_signature_1 from '@/assets/mock_signature_1.png'
+import mock_signature_2 from '@/assets/mock_signature_2.png'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
 import MainLogo from '@/components/MainLogo'
@@ -46,8 +49,6 @@ import useGetFile from '../../../hooks/useGetFile'
 import PreviewButton from '../components/PreviewButton'
 import TemplateInfoModal from '../components/TemplateInfoModal'
 import useGetTemplateById from '../hooks/api/useGetTemplateById'
-
-// import file from './example.pdf'
 
 const autoFillData = [
   { label: 'ชื่อ-นามสกุล', value: 'name' },
@@ -183,14 +184,22 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
                 className="hs-dropdown-menu duration min-w-60 z-20 mt-2 hidden rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:border dark:border-neutral-700 dark:bg-neutral-800"
                 aria-labelledby="hs-dropdown-custom-icon-trigger"
               >
-                <div className="rounded-md border-b p-2">
-                  <img src="https://via.placeholder.com/200x50" alt="test" />
+                <div className="m-2 flex justify-center rounded-md border-2">
+                  <img
+                    src={mock_signature_1}
+                    alt="sig-1"
+                    className="max-h-[96px]"
+                  />
                 </div>
-                <div className="rounded-md border-b p-2">
-                  <img src="https://via.placeholder.com/200x50" alt="test" />
+                <div className="m-2 flex justify-center rounded-md border-2">
+                  <img
+                    src={mock_signature_2}
+                    alt="sig-2"
+                    className="max-h-[96px]"
+                  />
                 </div>
-                <div className="rounded-md border-b p-2">
-                  <img src="https://via.placeholder.com/200x50" alt="test" />
+                <div className="m-2 flex justify-center rounded-md border-4 border-dashed p-2 text-blue-500">
+                  <FaPlus size={32} />
                 </div>
               </div>
             </div>
