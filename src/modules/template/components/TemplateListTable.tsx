@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from 'react'
 
 import Button from '@/components/Button'
+import Loading from '@/components/Loading'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import { useDisclosure } from '@/hooks/useDisclosure'
@@ -38,9 +39,11 @@ const TemplateListTable = () => {
   })
   const [hoveredRow, setHoveredRow] = useState<Row<Document> | null>(null)
 
-  const { data: template, refetch } = useGetAllTemplate(
-    paginationState.pageIndex + 1
-  )
+  const {
+    data: template,
+    refetch,
+    isFetched,
+  } = useGetAllTemplate(paginationState.pageIndex + 1)
   const columns: ColumnDef<Template>[] = [
     {
       id: 'index',
@@ -153,6 +156,8 @@ const TemplateListTable = () => {
     openInfoBox()
     setSelectedTemplate(row.original)
   }
+
+  if (!isFetched) return <Loading />
 
   return (
     <div className="flex">

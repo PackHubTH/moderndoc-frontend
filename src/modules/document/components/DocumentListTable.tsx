@@ -13,6 +13,7 @@ import { getStatusBadgeProps, shouldShowAction } from '../utils/statusUtils'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import DropdownItem from '@/components/Dropdown/DropdownItem'
+import Loading from '@/components/Loading'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import TableInfoBox from '@/components/TableInfoBox'
@@ -45,10 +46,11 @@ const DocumentListTable = ({ type }: PropsType) => {
   })
   const [hoveredRow, setHoveredRow] = useState<Row<Document> | null>(null)
   const user = useUserStore((state) => state.user)
-  const { data: document, refetch: refetchAllDocument } = useGetAllDocument(
-    paginationState.pageIndex + 1,
-    type
-  )
+  const {
+    data: document,
+    refetch: refetchAllDocument,
+    isFetched,
+  } = useGetAllDocument(paginationState.pageIndex + 1, type)
   const [documentId, setDocumentId] = useState('')
   const { data: documentData, refetch: refetchDocumentById } =
     useGetDocumentById(documentId)
@@ -186,6 +188,8 @@ const DocumentListTable = ({ type }: PropsType) => {
     if (documentId) refetchDocumentById()
     open()
   }
+
+  if (!isFetched) return <Loading />
 
   return (
     <div className="flex">

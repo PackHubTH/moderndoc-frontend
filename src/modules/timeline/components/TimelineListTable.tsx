@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 
+import Loading from '@/components/Loading'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import TableInfoBox from '@/components/TableInfoBox'
@@ -27,7 +28,9 @@ const TimelineListTable = () => {
     pageSize: 10,
   })
 
-  const { data: timeline } = useGetAllTimeline(paginationState.pageIndex + 1)
+  const { data: timeline, isFetched } = useGetAllTimeline(
+    paginationState.pageIndex + 1
+  )
   const [documentId, setDocumentId] = useState('')
   const { data: documentData, refetch } = useGetDocumentById(documentId)
 
@@ -108,6 +111,8 @@ const TimelineListTable = () => {
     if (documentId) refetch()
     open()
   }
+
+  if (!isFetched) return <Loading />
 
   return (
     <div className="flex">

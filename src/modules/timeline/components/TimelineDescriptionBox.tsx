@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { Document, Page } from 'react-pdf'
 
 import Badge from '@/components/Badge'
+import Loading from '@/components/Loading'
 import useGetFile from '@/hooks/useGetFile'
 import ProfileBox from '@/modules/document/components/ProfileBox'
 import { GetDocumentById } from '@/modules/document/types/response'
@@ -20,9 +21,11 @@ type PropsType = {
 }
 
 const TimelineDescriptionBox = ({ data, isSidebar }: PropsType) => {
-  const { data: file, refetch: refetchFile } = useGetFile(
-    data?.templateFile ?? ''
-  )
+  const {
+    data: file,
+    refetch: refetchFile,
+    isFetched,
+  } = useGetFile(data?.templateFile ?? '')
   const user = useUserStore((state) => state.user)
 
   const [pageTotal, setPageTotal] = useState(0)
@@ -35,12 +38,12 @@ const TimelineDescriptionBox = ({ data, isSidebar }: PropsType) => {
     setPageTotal(numPages)
   }
 
-  if (data)
-    return (
-      <div className={!isSidebar ? 'mt-4 rounded-lg border-2' : ''}>
-        <div className="bg-gray-100 px-6 py-3 font-semibold text-blue-500">
-          รายละเอียดเอกสาร
-        </div>
+  return (
+    <div className={!isSidebar ? 'mt-4 rounded-lg border-2' : ''}>
+      <div className="bg-gray-100 px-6 py-3 font-semibold text-blue-500">
+        รายละเอียดเอกสาร
+      </div>
+      {data && isFetched ? (
         <div className="p-5">
           <div className="flex h-36 justify-center overflow-hidden border-b-2">
             <Document file={file?.data} onLoadSuccess={onDocumentLoadSuccess}>
@@ -143,8 +146,11 @@ const TimelineDescriptionBox = ({ data, isSidebar }: PropsType) => {
             </>
           )}
         </div>
-      </div>
-    )
+      ) : (
+        <Loading />
+      )}
+    </div>
+  )
 }
 
 export default TimelineDescriptionBox
