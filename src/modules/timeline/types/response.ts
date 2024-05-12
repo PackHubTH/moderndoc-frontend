@@ -1,3 +1,6 @@
+import { DocumentStatus } from '@/modules/document/types/types'
+import { DocumentSentStatus } from './types'
+
 export interface GetAllTimeline {
   data: Timeline[]
   totalPages: number
@@ -6,12 +9,13 @@ export interface GetAllTimeline {
 
 export interface Timeline {
   documentId: string
+  documentStatus: DocumentStatus
   message: string
   updatedBy: string
   createdAt: string
   userId: string
   id: string
-  status: string
+  status: DocumentSentStatus
   document: Document
 }
 interface Document {

@@ -13,6 +13,7 @@ import TableInfoBox from '@/components/TableInfoBox'
 import TableStatusBox from '@/components/TableStatusBox'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetDocumentById from '@/modules/document/hooks/api/useGetDocumentById'
+import { getTimelineStatusBadge } from '@/modules/document/utils/statusUtils'
 import { FaRegEnvelope } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
 import useGetAllTimeline from '../hooks/api/useGetAllTimeline'
@@ -56,11 +57,24 @@ const TimelineListTable = () => {
         <div className=" flex items-center gap-2 font-semibold">
           <FaRegEnvelope />
           ทั้งหมด{' '}
-          <span className="text-blue-500">{info.table.getRowCount()}</span> ฉบับ
-          รอดำเนินการ test ฉบับ
+          <span className="text-blue-500">
+            {timeline?.data?.total ?? 0}
+          </span>{' '}
+          ฉบับ
         </div>
       ),
-      cell: (info) => <TimelineStatusBox status={info.row.original.status} />,
+      cell: (info) => (
+        <TimelineStatusBox
+          status={
+            getTimelineStatusBadge(
+              info.row.original.documentStatus,
+              info.row.original.status,
+              info.row.original.updatedBy,
+              info.row.original.userId
+            ).label
+          }
+        />
+      ),
     },
     {
       id: 'documentId',
@@ -84,8 +98,13 @@ const TimelineListTable = () => {
       header: '',
       cell: (info) => (
         <TableStatusBox
-          status={info.row.original.status}
-          updatedAt={new Date(info.row.original.createdAt).toLocaleDateString()}
+          {...getTimelineStatusBadge(
+            info.row.original.documentStatus,
+            info.row.original.status,
+            info.row.original.updatedBy,
+            info.row.original.userId
+          )}
+          updatedAt={info.row.original.createdAt}
         />
       ),
     },
@@ -119,7 +138,7 @@ const TimelineListTable = () => {
       <div className="flex-1 p-2">
         <TableDisplay table={table} onClick={onRowClick} />
         <Pagination
-          totalPage={1}
+          totalPage={timeline?.data.totalPages ?? 1}
           currentPage={table.getState().pagination.pageIndex + 1}
           nextPage={table.nextPage}
           prevPage={table.previousPage}

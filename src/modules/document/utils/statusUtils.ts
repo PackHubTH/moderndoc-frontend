@@ -204,6 +204,50 @@ export const getTimelineStatus = (
   return '-'
 }
 
+export const getTimelineStatusBadge = (
+  documentStatus: DocumentStatus,
+  senderStatus: DocumentSentStatus,
+  senderId: string,
+  receiverId: string
+) => {
+  if (documentStatus === DocumentStatus.DRAFT) {
+    return { variant: 'action' as VariantType, label: 'ฉบับร่าง' }
+  }
+  if (documentStatus === DocumentStatus.COMPLETED) {
+    return { variant: 'success' as VariantType, label: 'เสร็จสิ้นแล้ว' }
+  }
+  if (documentStatus === DocumentStatus.CANCELED) {
+    return { variant: 'error' as VariantType, label: 'ยกเลิกแล้ว' }
+  }
+  if (
+    documentStatus === DocumentStatus.PROCESSING &&
+    senderStatus === DocumentSentStatus.WAITING &&
+    senderId === receiverId
+  ) {
+    return { variant: 'waiting' as VariantType, label: 'รอตรวจสอบเอกสาร' }
+  }
+  if (
+    documentStatus === DocumentStatus.PROCESSING &&
+    senderStatus === DocumentSentStatus.WAITING &&
+    senderId !== receiverId
+  ) {
+    return { variant: 'waiting' as VariantType, label: 'รอพิจารณาเอกสาร' }
+  }
+  if (
+    documentStatus === DocumentStatus.PROCESSING &&
+    senderStatus === DocumentSentStatus.RETURNING
+  ) {
+    return { variant: 'waiting' as VariantType, label: 'รอแก้ไขเอกสาร' }
+  }
+  if (
+    documentStatus === DocumentStatus.PROCESSING &&
+    senderStatus === DocumentSentStatus.PROCESSING
+  ) {
+    return { variant: 'waiting' as VariantType, label: 'ตรวจสอบเอกสาร' }
+  }
+  return { variant: 'waiting' as VariantType, label: '-' }
+}
+
 export const shouldShowAction = (
   status: string,
   documentSentStatus: string
