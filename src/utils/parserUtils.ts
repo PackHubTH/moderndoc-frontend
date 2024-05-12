@@ -1,5 +1,6 @@
-import { User } from '@/modules/user/hooks/types'
 import { Level, UserRole } from 'types/user'
+
+import { User } from '@/modules/user/hooks/types'
 
 const autoFillData = [
   { label: 'ชื่อ-นามสกุล', value: 'name' },
@@ -19,7 +20,8 @@ const educationLevelMapper: Record<Level, string> = {
   [Level.DOCTOR]: 'ปริญญาเอก',
 }
 
-const getUserDepartment = (user: User) => {
+export const getUserDepartment = (user?: User) => {
+  if (!user) return ''
   switch (user.role) {
     case UserRole.STAFF:
       return user.staff?.staffDepartments?.[0]?.department?.name
@@ -30,7 +32,8 @@ const getUserDepartment = (user: User) => {
   }
 }
 
-const getUserFacultyName = (user: User) => {
+export const getUserFacultyName = (user?: User) => {
+  if (!user) return ''
   switch (user.role) {
     case UserRole.STAFF:
       return user.staff?.staffDepartments?.[0]?.department?.faculty?.name
@@ -41,7 +44,8 @@ const getUserFacultyName = (user: User) => {
   }
 }
 
-const getUserCourseName = (user: User) => {
+export const getUserCourseName = (user?: User) => {
+  if (!user) return ''
   switch (user.role) {
     case UserRole.STUDENT:
       return user.student?.course?.name
@@ -50,9 +54,9 @@ const getUserCourseName = (user: User) => {
   }
 }
 
-export const parseUserDatatoAutofill = (user: User, role?: any): any => {
+export const parseUserDatatoAutofill = (user: User): any => {
   console.log('before parseuser', user, user.role)
-  if (!user || user.role !== UserRole.STUDENT) return {}
+  if (!user) return {}
 
   let educationLevel = user?.student?.course?.level
     ? educationLevelMapper[user.student.course.level]
@@ -64,7 +68,7 @@ export const parseUserDatatoAutofill = (user: User, role?: any): any => {
     faculty: getUserFacultyName(user),
     major: getUserDepartment(user),
     course: getUserCourseName(user),
-    studentNumber: user.student.studentNumber,
+    studentNumber: user?.student?.studentNumber ?? '-',
     email: user.emails[user.defaultEmailIndex],
     phone: user.phones[user.defaultPhoneIndex],
     teacher: user.student?.advisor?.user?.nameTh ?? 'อาจารย์ที่ปรึกษา',

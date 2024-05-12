@@ -1,5 +1,7 @@
 import { Document, DocumentSentStatus, DocumentStatus } from './types'
 
+import { User } from '@/modules/user/hooks/types'
+
 export interface CreateDocument {
   id: string
   title: string
@@ -98,7 +100,7 @@ export interface GetDocumentById {
   lastUpdatedAt: string
   operatorId: string
   description: string
-  userCreated: UserCreated
+  userCreated: User
   operator: Operator
   documentSents: DocumentSent[]
   documentTimelines: DocumentTimeline[]

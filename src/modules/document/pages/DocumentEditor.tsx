@@ -1,3 +1,4 @@
+import { getUserDepartment, getUserFacultyName } from '@/utils/parserUtils'
 import { useEffect, useRef, useState } from 'react'
 import {
   FaAlignJustify,
@@ -473,14 +474,24 @@ const DocumentEditor = ({ type }: PropsType) => {
                   }
                   profileImg={documentData?.data?.userCreated.profileImg ?? ''}
                 />
+
                 <p>
                   รหัสนักศึกษา :{' '}
-                  {documentData?.data?.userCreated?.student?.studentNumber}
+                  {documentData?.data?.userCreated?.student?.studentNumber ??
+                    '-'}
                 </p>
-                <p>คณะ : -</p>
-                <p>ภาควิชา : -</p>
-                <p>อาจารย์ที่ปรึกษา : -</p>
-                <p>โทรศัพท์ : {documentData?.data?.userCreated.phones[0]}</p>
+                <p>คณะ : {getUserDepartment(documentData?.data.userCreated)}</p>
+                <p>
+                  ภาควิชา : {getUserFacultyName(documentData?.data.userCreated)}
+                </p>
+                <p>
+                  อาจารย์ที่ปรึกษา :{' '}
+                  {documentData?.data?.userCreated?.student?.advisor?.user
+                    ?.nameTh ?? '-'}
+                </p>
+                <p>
+                  โทรศัพท์ : {documentData?.data?.userCreated.phones[0] ?? '-'}
+                </p>
               </div>
             </DocumentAccordion>
             <DocumentAccordion title={'การแสดงความคิดเห็น'}>
