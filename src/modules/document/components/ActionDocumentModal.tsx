@@ -65,6 +65,7 @@ const ActionDocumentModal: React.FC<PropsType> = ({
       documentAction === DocumentAction.REJECT
     ) {
       methods.reset({ receiverId: createdById, message: '' })
+      setSearchUserList(createdByName)
     }
     if (documentAction === DocumentAction.SEND_TO_OPERATOR) {
       methods.reset({ receiverId: operatorId, message: '' })
