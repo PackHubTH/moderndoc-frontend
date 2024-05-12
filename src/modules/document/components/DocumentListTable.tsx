@@ -37,7 +37,7 @@ interface PropsType {
 }
 
 const DocumentListTable = ({ type }: PropsType) => {
-  const { isOpen, open } = useDisclosure()
+  const { isOpen, open, close } = useDisclosure()
   const navigate = useNavigate()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -127,9 +127,6 @@ const DocumentListTable = ({ type }: PropsType) => {
                   id="hs-dropdown-with-title"
                   label="เพิ่มเติม"
                   variant="outline-blue"
-                  // onClick={() =>
-                  //   navigate(`/edit-document/${info.row.original.id}`)
-                  // }
                 />
                 <div
                   className="hs-dropdown-menu duration mt-2 hidden min-w-[15rem] divide-y divide-gray-200 rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100"
@@ -177,7 +174,14 @@ const DocumentListTable = ({ type }: PropsType) => {
   }, [table.getState().pagination.pageIndex])
 
   const onRowClick = (row: any) => {
-    console.log('clicked', row)
+    // check if button not click then open
+    if (
+      window.document
+        .getElementById('hs-dropdown-with-title')
+        ?.contains(window.document.activeElement)
+    )
+      return
+
     setDocumentId(row.original.id)
     if (documentId) refetchDocumentById()
     open()
