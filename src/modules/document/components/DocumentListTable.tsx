@@ -15,6 +15,7 @@ import Button from '@/components/Button'
 import DropdownItem from '@/components/Dropdown/DropdownItem'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
+import TableInfoBox from '@/components/TableInfoBox'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import TimelineDescriptionBox from '@/modules/timeline/components/TimelineDescriptionBox'
 import { useUserStore } from '@/stores/userStore'
@@ -78,36 +79,14 @@ const DocumentListTable = ({ type }: PropsType) => {
         </div>
       ),
       cell: (info) => (
-        <div>
-          <p>
-            <span className="mr-2 font-semibold text-blue-500">
-              {info.row.original.title}
-            </span>
-            วันที่สร้างเอกสาร TEST
-          </p>
-          <div className="flex gap-2">
-            <p className="flex items-center gap-2 text-sm">
-              สร้างโดย
-              <img
-                src={info.row.original.userCreated?.profileImg}
-                alt="create-by-img"
-                className="h-5 w-5 rounded-full"
-              />
-              {info.row.original.userCreated?.nameTh}
-            </p>
-            {info.row.original.operator && (
-              <p className="flex items-center gap-2 text-sm">
-                ดำเนินการโดย
-                <img
-                  src={info.row.original.operator?.profileImg}
-                  alt="create-by-img"
-                  className="h-5 w-5 rounded-full"
-                />
-                {info.row.original.operator?.nameTh}
-              </p>
-            )}
-          </div>
-        </div>
+        <TableInfoBox
+          title={info.row.original.title}
+          createdAt={info.row.original.createdAt}
+          createdBy={info.row.original.userCreated.nameTh}
+          createdByImg={info.row.original.userCreated.profileImg}
+          updatedBy={info.row.original.operator?.nameTh ?? ''}
+          updatedByImg={info.row.original.operator?.profileImg ?? ''}
+        />
       ),
     },
     {
