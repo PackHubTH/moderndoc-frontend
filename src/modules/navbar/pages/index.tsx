@@ -1,26 +1,48 @@
 import MainLogo from '@/components/MainLogo'
+import useLogin from '@/modules/user/hooks/api/useLogin'
 import { useUserStore } from '@/stores/userStore'
+import { useGoogleLogin } from '@react-oauth/google'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { UserRole } from 'types/user'
 import bellIcon from '../assets/bell.svg'
 import LoginButton from '../components/LoginButton'
 import ProfileButton from '../components/ProfileButton'
 
 const Navbar = () => {
-  const { isLogin, setIsLogin, user, logout } = useUserStore()
+  const { isLogin, setIsLogin, user, logout, setEmail, setUser } =
+    useUserStore()
 
   const navigate = useNavigate()
 
-  // const handleLogin = useGoogleLogin({
-  //   onSuccess: async ({ code }) => {
-  //     console.log('code', code)
-  //     //TODO: send code to backend for authentication
-  //     setIsLogin(true)
-  //   },
-  //   flow: 'auth-code',
-  // })
+  const { mutate: login } = useLogin()
 
-  const handleLogin = () => {
-    navigate('/login')
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (data) => {
+      handleAccessTokenLogin(data.access_token)
+    },
+  })
+
+  const handleAccessTokenLogin = (accessToken: string) => {
+    login(accessToken, {
+      onSuccess: (data) => {
+        if (
+          !data ||
+          (data.data?.role !== UserRole.ADMIN && !data.data?.isFinishRegister)
+        ) {
+          setEmail((data.data as any)?.email ?? data.data?.emails[0])
+          return navigate('/create-profile', { replace: true })
+        }
+
+        setUser(data.data, data.data.token!)
+        setIsLogin(true)
+        navigate('/')
+      },
+      onError: (error) => {
+        console.log(error)
+        toast.error('เข้าสู่ระบบไม่สำเร็จ')
+      },
+    })
   }
 
   return (
@@ -72,7 +94,7 @@ const Navbar = () => {
             {isLogin ? (
               <ProfileButton profileImg={user.profileImg} name={user.nameEn} />
             ) : (
-              <LoginButton onClick={handleLogin} />
+              <LoginButton onClick={handleGoogleLogin} />
             )}
             <button
               onClick={() => {
