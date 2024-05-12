@@ -12,6 +12,7 @@ import { GetDocumentById } from '@/modules/document/types/response'
 import { DocumentStatus } from '@/modules/document/types/types'
 import { useUserStore } from '@/stores/userStore'
 import { formatFullDatetime } from '@/utils/formatUtils'
+import { IoDocumentText } from 'react-icons/io5'
 
 type PropsType = {
   data: GetDocumentById
@@ -119,19 +120,24 @@ const TimelineDescriptionBox = ({ data, isSidebar }: PropsType) => {
             <>
               <h1 className="font-semibold">ไทม์ไลน์</h1>
               {data?.documentTimelines.map((timeline) => (
-                <div key={timeline.id} className="space-y-2 p-5">
-                  <p className="text-xs">
-                    {/* {timeline.status} {formatFullDatetime(timeline.createdAt)} */}
-                    {getTimelineStatus(
-                      timeline.documentStatus,
-                      timeline.status,
-                      timeline.updatedBy,
-                      data.createdBy,
-                      data.operatorId
-                    )}{' '}
-                    {formatFullDatetime(timeline.createdAt)}
-                  </p>
-                  <p className="text-xs">{timeline.userUpdatedBy.nameTh}</p>
+                <div key={timeline.id} className="flex items-center gap-2">
+                  <IoDocumentText size={32} className="text-blue-500" />
+                  <div className="space-y-1 py-2">
+                    <p className="text-sm">
+                      {getTimelineStatus(
+                        timeline.documentStatus,
+                        timeline.status,
+                        timeline.updatedBy,
+                        timeline.userId,
+                        data.createdBy,
+                        data.operatorId
+                      )}{' '}
+                      <span className="ml-2 text-xs text-gray-400">
+                        {formatFullDatetime(timeline.createdAt)}
+                      </span>
+                    </p>
+                    <p className="text-xs">{timeline.userUpdatedBy.nameTh}</p>
+                  </div>
                 </div>
               ))}
             </>

@@ -118,8 +118,9 @@ export const getStatusBadgeProps = (
 
 export const getTimelineStatus = (
   documentStatus: DocumentStatus,
-  userStatus: DocumentSentStatus,
-  userId: string,
+  senderStatus: DocumentSentStatus,
+  senderId: string,
+  receiverId: string,
   createdById: string,
   operatorId: string
 ) => {
@@ -134,24 +135,53 @@ export const getTimelineStatus = (
   }
   if (
     documentStatus === DocumentStatus.PROCESSING &&
-    userStatus === DocumentSentStatus.PROCESSING &&
-    userId !== createdById &&
-    userId !== operatorId
+    senderStatus === DocumentSentStatus.WAITING &&
+    senderId === createdById
   ) {
-    return 'พิจารณาเอกสาร'
+    return 'รอตรวจสอบเอกสาร'
   }
   if (
-    userId === createdById &&
     documentStatus === DocumentStatus.PROCESSING &&
-    userStatus === DocumentSentStatus.RETURNING
+    senderStatus === DocumentSentStatus.WAITING &&
+    senderId === operatorId
+  ) {
+    return 'รอพิจารณาเอกสาร'
+  }
+  if (
+    documentStatus === DocumentStatus.PROCESSING &&
+    senderStatus === DocumentSentStatus.RETURNING &&
+    senderId === operatorId
+  ) {
+    return 'รอแก้ไขเอกสาร'
+  }
+  if (
+    documentStatus === DocumentStatus.PROCESSING &&
+    senderStatus === DocumentSentStatus.PROCESSING &&
+    senderId === operatorId
+  ) {
+    return 'ตรวจสอบเอกสาร'
+  }
+  if (
+    documentStatus === DocumentStatus.PROCESSING &&
+    senderStatus === DocumentSentStatus.PROCESSING &&
+    senderId !== createdById &&
+    senderId !== operatorId
+  ) {
+    return 'พิจารณาอนุมัติ'
+  }
+  if (
+    senderId === createdById &&
+    documentStatus === DocumentStatus.PROCESSING &&
+    senderStatus === DocumentSentStatus.RETURNING
   ) {
     return 'แก้ไขเอกสาร'
   }
   if (
     documentStatus === DocumentStatus.PROCESSING &&
-    userStatus === DocumentSentStatus.PROCESSING
+    senderStatus === DocumentSentStatus.PROCESSING &&
+    senderId === createdById
   ) {
-    return 'ตรวจสอบเอกสาร'
+    return 'แก้ไขเอกสาร'
   }
   // if (
   //   documentStatus === DocumentStatus.PROCESSING &&

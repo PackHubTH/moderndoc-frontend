@@ -496,8 +496,9 @@ const DocumentEditor = ({ type }: PropsType) => {
             </DocumentAccordion>
             <DocumentAccordion title={'การแสดงความคิดเห็น'}>
               {documentData &&
-                documentData?.data?.documentTimelines.map(
-                  (timeline: any, index) => (
+                documentData?.data?.documentTimelines
+                  .filter((timeline: any) => timeline.message)
+                  .map((timeline: any, index) => (
                     <div className="px-4">
                       <ProfileBox
                         name={timeline.userUpdatedBy.nameTh}
@@ -513,8 +514,7 @@ const DocumentEditor = ({ type }: PropsType) => {
                         <RichTextInputDisplay value={timeline.message} />
                       </div>
                     </div>
-                  )
-                )}
+                  ))}
             </DocumentAccordion>
           </div>
         )}
