@@ -1,5 +1,5 @@
 import { User } from '@/modules/user/hooks/types'
-import { UserRole } from 'types/user'
+import { Level, UserRole } from 'types/user'
 
 const autoFillData = [
   { label: 'ชื่อ-นามสกุล', value: 'name' },
@@ -13,16 +13,57 @@ const autoFillData = [
   { label: 'อาจารย์ที่ปรึกษา', value: 'teacher' },
 ]
 
+const educationLevelMapper: Record<Level, string> = {
+  [Level.BACHELOR]: 'ปริญญาตรี',
+  [Level.MASTER]: 'ปริญญาโท',
+  [Level.DOCTOR]: 'ปริญญาเอก',
+}
+
+const getUserDepartment = (user: User) => {
+  switch (user.role) {
+    case UserRole.STAFF:
+      return user.staff?.staffDepartments?.[0]?.department?.name
+    case UserRole.TEACHER:
+      return user.teacher?.teacherDepartments?.[0]?.department?.name
+    case UserRole.STUDENT:
+      return user.student?.course?.department?.name
+  }
+}
+
+const getUserFacultyName = (user: User) => {
+  switch (user.role) {
+    case UserRole.STAFF:
+      return user.staff?.staffDepartments?.[0]?.department?.faculty?.name
+    case UserRole.TEACHER:
+      return user.teacher?.teacherDepartments?.[0]?.department?.faculty?.name
+    case UserRole.STUDENT:
+      return user.student?.course?.department?.faculty?.name
+  }
+}
+
+const getUserCourseName = (user: User) => {
+  switch (user.role) {
+    case UserRole.STUDENT:
+      return user.student?.course?.name
+    default:
+      return ''
+  }
+}
+
 export const parseUserDatatoAutofill = (user: User, role?: any): any => {
   console.log('before parseuser', user, user.role)
   if (!user || user.role !== UserRole.STUDENT) return {}
 
+  let educationLevel = user?.student?.course?.level
+    ? educationLevelMapper[user.student.course.level]
+    : ''
+
   return {
     name: user.nameTh,
-    educationLevel: 'ระดับการศึกษา',
-    faculty: 'คณะ',
-    major: 'ภาค/สาขาวิชา',
-    course: 'หลักสูตร',
+    educationLevel: educationLevel,
+    faculty: getUserFacultyName(user),
+    major: getUserDepartment(user),
+    course: getUserCourseName(user),
     studentNumber: user.student.studentNumber,
     email: user.emails[user.defaultEmailIndex],
     phone: user.phones[user.defaultPhoneIndex],

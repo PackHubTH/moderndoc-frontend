@@ -12,6 +12,7 @@ export type Course = {
   name: string
   departmentId: string
   level: Level
+  department?: Department
 }
 
 export type Department = {
@@ -33,6 +34,7 @@ export type Student = {
   courseId: string
   advisorId?: string
   studentNumber: string
+  course?: Course
   advisor?: Advisor
   isApproved: ApprovalStatus
 }
