@@ -49,7 +49,7 @@ const DocumentCanvas = ({
     const isHasPage = canvasSizes.findIndex((page) => page.id === id) !== -1
     const isHasCanvas = canvasList.findIndex((page) => page.id === id) !== -1
     console.log('isHasPage', isHasPage, 'isHasCanvas', isHasCanvas, element)
-    console.log('type', type)
+    console.log('type', type, 'isEditable', isEditable)
     if (isHasPage && !isHasCanvas) {
       initCanvas(
         id,

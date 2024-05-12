@@ -185,6 +185,13 @@ const DocumentListTable = ({ type }: PropsType) => {
 
   return (
     <div className="flex">
+      <Button
+        label="สร้างเอกสาร"
+        variant="green"
+        onClick={() => {
+          navigate('/create-document/f5fb00e4-7d45-43a8-9781-dbb72833c4a4')
+        }}
+      />
       <div className="flex-1 p-2">
         <TableDisplay
           table={table}

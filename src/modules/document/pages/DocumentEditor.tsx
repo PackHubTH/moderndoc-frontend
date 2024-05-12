@@ -58,7 +58,7 @@ import { DocumentStatus } from '../types/types'
 import { convertCanvasToPdf } from '../utils/downloadUtils'
 
 type PropsType = {
-  type: 'create' | 'edit' | 'document-view'
+  type: 'document-create' | 'document-edit' | 'document-view'
 }
 
 const DocumentEditor = ({ type }: PropsType) => {
@@ -170,7 +170,7 @@ const DocumentEditor = ({ type }: PropsType) => {
               />
             </>
           )}
-          {type === 'create' ? (
+          {type === 'document-create' ? (
             <CreateDocumentModal
               departmentId={templateData?.data?.departmentId ?? ''}
               isOpen={isProcessModalOpen}
@@ -206,7 +206,7 @@ const DocumentEditor = ({ type }: PropsType) => {
       {/*  */}
       {/* Main */}
       {type !== 'document-view' && (
-        <DocumentToolbar isEdit={type === 'edit'}>
+        <DocumentToolbar isEdit={type === 'document-edit'}>
           <ToolbarButton icon={<FaA />} id={ButtonId.Text} label="Text" />
           <div className="hs-dropdown relative inline-flex">
             <div id="hs-dropdown-custom-icon-trigger">
@@ -382,7 +382,12 @@ const DocumentEditor = ({ type }: PropsType) => {
               })}
           </Document>
         </div> */}
-        <div css={[type === 'edit' ? tw`w-3/4` : tw`w-full`, tw`relative`]}>
+        <div
+          css={[
+            type === 'document-edit' ? tw`w-3/4` : tw`w-full`,
+            tw`relative`,
+          ]}
+        >
           {/* canvas section */}
           {/* <div className="absolute bottom-16 right-8 z-20">
             <Button
@@ -399,7 +404,7 @@ const DocumentEditor = ({ type }: PropsType) => {
           <div
             css={[
               tw`flex justify-center overflow-auto bg-[#f1f2f5]`,
-              type === 'document-view' || type === 'edit'
+              type === 'document-view' || type === 'document-edit'
                 ? tw`h-[calc(100vh-92px)]`
                 : tw`h-[calc(100vh-140px)]`,
             ]}
@@ -419,17 +424,20 @@ const DocumentEditor = ({ type }: PropsType) => {
                           templateData?.data?.element?.data[page - 1]
                         }
                         type={
-                          type === 'edit' ? 'document-edit' : 'document-create'
+                          type === 'document-edit'
+                            ? 'document-edit'
+                            : 'document-create'
                         }
                         isEditable={
-                          (user.id === documentData?.data?.createdBy ||
+                          ((user.id === documentData?.data?.createdBy ||
                             (documentData?.data?.documentSents.find(
                               (sent: any) =>
                                 sent.receiverId === user.id && sent.editable
                             )
                               ? true
                               : false)) &&
-                          type !== 'document-view'
+                            type !== 'document-view') ||
+                          type === 'document-create'
                         }
                       />
                       <Page
@@ -448,7 +456,7 @@ const DocumentEditor = ({ type }: PropsType) => {
           {/*  */}
         </div>
         {/* sidebar */}
-        {type === 'edit' && (
+        {type === 'document-edit' && (
           <div
             className="hs-accordion-group w-1/4 overflow-y-auto"
             data-hs-accordion-always-open

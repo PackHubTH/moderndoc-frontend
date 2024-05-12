@@ -32,11 +32,11 @@ function App() {
         <Route index element={<Home />} />
         <Route
           path="/create-document/:templateId"
-          element={<DocumentEditor type="create" />}
+          element={<DocumentEditor type="document-create" />}
         />
         <Route
           path="/edit-document/:documentId"
-          element={<DocumentEditor type="edit" />}
+          element={<DocumentEditor type="document-edit" />}
         />
         <Route
           path="/view-document/:documentId"
