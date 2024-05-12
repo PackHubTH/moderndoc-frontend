@@ -166,7 +166,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
         <div css={[activeObject ? tw`w-3/4` : tw`w-full`]}>
           <DocumentToolbar>
             <ToolbarButton
-              icon={<FaFileSignature size={20} />}
+              icon={<FaFileSignature />}
               id={ButtonId.AutoFill}
               label="Create Autofill"
             />
@@ -371,7 +371,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
             data-hs-accordion-always-open
           >
             <DocumentAccordion title="ตั้งค่า Form Field">
-              <div>
+              <div className="p-4">
                 <h1 className="font-semibold">ประเภท (Type)</h1>
                 <Dropdown
                   label={
@@ -421,7 +421,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
                   ]}
                 />
               </div>
-              <div>
+              <div className="p-4">
                 {autoFillData.find(
                   (data) => data.value === activeObject?.elName
                 )?.label && (

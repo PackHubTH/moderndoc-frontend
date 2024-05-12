@@ -8,11 +8,11 @@ type PropsType = {
 
 const Dropdown: React.FC<PropsType> = ({ dropdownSection, label }) => {
   return (
-    <div className="hs-dropdown relative z-20 inline-flex">
+    <div className="hs-dropdown relative z-30 inline-flex">
       <button
         id="hs-dropdown-with-title"
         type="button"
-        className="hs-dropdown-toggle inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50 "
+        className="hs-dropdown-toggle z-20 inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50 "
       >
         {label}
         <svg
@@ -32,7 +32,7 @@ const Dropdown: React.FC<PropsType> = ({ dropdownSection, label }) => {
       </button>
 
       <div
-        className="hs-dropdown-menu duration mt-2 hidden min-w-[15rem] divide-y divide-gray-200 rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100"
+        className="hs-dropdown-menu duration z-30 mt-2 hidden min-w-[15rem] divide-y divide-gray-200 rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:z-30 hs-dropdown-open:opacity-100 "
         aria-labelledby="hs-dropdown-with-title"
       >
         {dropdownSection.map((section) => (

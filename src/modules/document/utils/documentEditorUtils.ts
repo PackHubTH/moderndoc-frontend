@@ -51,24 +51,24 @@ const addAutoFill = (
     textAlign: 'center',
     createdBy: useUserStore.getState().user?.id,
   })
-  const rect = new Fabric.Rect({
-    top: y,
-    left: x,
-    width: 200,
-    height: 40,
-    fill: 'rgb(0, 0, 0)',
-    borderColor: 'red',
-    strokeWidth: 1,
-    createdBy: useUserStore.getState().user?.id,
-  })
-  const group = new Fabric.Group([rect, fabricText], {
-    left: x,
-    top: y,
-    angle: 0,
-    width: 200,
-    height: 20,
-    selectable: true,
-  })
+  // const rect = new Fabric.Rect({
+  //   top: y,
+  //   left: x,
+  //   width: 200,
+  //   height: 40,
+  //   fill: 'rgb(0, 0, 0)',
+  //   borderColor: 'red',
+  //   strokeWidth: 1,
+  //   createdBy: useUserStore.getState().user?.id,
+  // })
+  // const group = new Fabric.Group([rect, fabricText], {
+  //   left: x,
+  //   top: y,
+  //   angle: 0,
+  //   width: 200,
+  //   height: 20,
+  //   selectable: true,
+  // })
   canvasList.forEach((item) => {
     item.canvas.discardActiveObject()
     item.canvas.renderAll()
