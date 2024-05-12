@@ -1,3 +1,7 @@
+import {
+  getStatusBadgeProps,
+  getTimelineStatus,
+} from '@/modules/document/utils/statusUtils'
 import { useEffect, useState } from 'react'
 import { Document, Page } from 'react-pdf'
 
@@ -6,16 +10,15 @@ import useGetFile from '@/hooks/useGetFile'
 import ProfileBox from '@/modules/document/components/ProfileBox'
 import { GetDocumentById } from '@/modules/document/types/response'
 import { DocumentStatus } from '@/modules/document/types/types'
-import { getStatusBadgeProps } from '@/modules/document/utils/statusUtils'
 import { useUserStore } from '@/stores/userStore'
 import { formatFullDatetime } from '@/utils/formatUtils'
 
 type PropsType = {
   data: GetDocumentById
+  isSidebar?: boolean
 }
 
-const TimelineDescriptionBox = ({ data }: PropsType) => {
-  console.log('data', data)
+const TimelineDescriptionBox = ({ data, isSidebar }: PropsType) => {
   const { data: file, refetch: refetchFile } = useGetFile(
     data?.templateFile ?? ''
   )
@@ -30,19 +33,10 @@ const TimelineDescriptionBox = ({ data }: PropsType) => {
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setPageTotal(numPages)
   }
-  // const onPageLoadSuccess = (pageNumber: number) => {
-  //   const pages = canvasRef.current?.children[0]
-  //   if (pages)
-  //     setCanvasSize(
-  //       `${pageNumber - 1}`,
-  //       pages.children[pageNumber - 1].clientHeight,
-  //       pages.children[pageNumber - 1].clientWidth
-  //     )
-  // }
 
   if (data)
     return (
-      <div className="mt-4 rounded-lg border-2">
+      <div className={!isSidebar ? 'mt-4 rounded-lg border-2' : ''}>
         <div className="bg-gray-100 px-6 py-3 font-semibold text-blue-500">
           รายละเอียดเอกสาร
         </div>
@@ -58,7 +52,7 @@ const TimelineDescriptionBox = ({ data }: PropsType) => {
               />
             </Document>
           </div>
-          <div className="grid grid-cols-2 gap-1 break-all p-5">
+          <div className="my-5 grid grid-cols-2 gap-1 break-all">
             <p>จำนวนหน้า</p>
             <p>{pageTotal}</p>
             <p>สร้างเมื่อ</p>
@@ -92,36 +86,56 @@ const TimelineDescriptionBox = ({ data }: PropsType) => {
             }
             profileImg={data.userCreated.profileImg}
           />
-
-          <h1 className="font-semibold">ผู้รับเอกสาร</h1>
-          {data?.operator?.emails && (
-            <ProfileBox
-              name={data?.operator?.nameTh}
-              email={
-                data?.operator?.emails[data?.operator?.defaultEmailIndex] ?? ''
-              }
-              profileImg={data?.operator?.profileImg}
-            />
-          )}
-          <h1 className="font-semibold">ผู้อนุมัติหรือผู้ที่เกี่ยวข้อง</h1>
-          {data?.documentSents.map((sent, index) => (
-            <div key={index}>
+          {data?.operator && (
+            <>
+              <h1 className="font-semibold">ผู้รับเอกสาร</h1>
               <ProfileBox
-                name={sent.receiver.nameTh}
-                email={sent.receiver.emails[sent.receiver.defaultEmailIndex]}
-                profileImg={sent.receiver.profileImg}
+                name={data?.operator?.nameTh}
+                email={
+                  data?.operator?.emails[data?.operator?.defaultEmailIndex] ??
+                  ''
+                }
+                profileImg={data?.operator?.profileImg}
               />
-            </div>
-          ))}
-          <h1 className="font-semibold">ไทม์ไลน์</h1>
-          {data?.documentTimelines.map((timeline) => (
-            <div key={timeline.id} className="space-y-2 p-5">
-              <p className="text-xs">
-                {timeline.status} {formatFullDatetime(timeline.createdAt)}
-              </p>
-              <p className="text-xs">{timeline.userUpdatedBy.nameTh}</p>
-            </div>
-          ))}
+            </>
+          )}
+          {data?.documentSents.length > 0 && (
+            <>
+              <h1 className="font-semibold">ผู้อนุมัติหรือผู้ที่เกี่ยวข้อง</h1>
+              {data?.documentSents.map((sent, index) => (
+                <div key={index}>
+                  <ProfileBox
+                    name={sent.receiver.nameTh}
+                    email={
+                      sent.receiver.emails[sent.receiver.defaultEmailIndex]
+                    }
+                    profileImg={sent.receiver.profileImg}
+                  />
+                </div>
+              ))}
+            </>
+          )}
+          {data?.documentTimelines.length > 0 && (
+            <>
+              <h1 className="font-semibold">ไทม์ไลน์</h1>
+              {data?.documentTimelines.map((timeline) => (
+                <div key={timeline.id} className="space-y-2 p-5">
+                  <p className="text-xs">
+                    {/* {timeline.status} {formatFullDatetime(timeline.createdAt)} */}
+                    {getTimelineStatus(
+                      timeline.documentStatus,
+                      timeline.status,
+                      timeline.updatedBy,
+                      data.createdBy,
+                      data.operatorId
+                    )}{' '}
+                    {formatFullDatetime(timeline.createdAt)}
+                  </p>
+                  <p className="text-xs">{timeline.userUpdatedBy.nameTh}</p>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </div>
     )

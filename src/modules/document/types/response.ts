@@ -1,4 +1,4 @@
-import { Document } from './types'
+import { Document, DocumentSentStatus, DocumentStatus } from './types'
 
 export interface CreateDocument {
   id: string
@@ -105,12 +105,13 @@ export interface GetDocumentById {
 }
 interface DocumentTimeline {
   documentId: string
+  documentStatus: DocumentStatus
   message: string
   updatedBy: string
   createdAt: string
   userId: string
   id: string
-  status: string
+  status: DocumentSentStatus
   userUpdatedBy: Receiver
 }
 interface DocumentSent {

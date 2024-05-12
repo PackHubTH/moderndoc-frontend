@@ -5,6 +5,7 @@ export type Template = {
   templateFile: string
   exampleFile: string | null
   description: string
+  createdAt: string
   createdBy: string
   updatedBy: string
   lastUpdatedAt: Date

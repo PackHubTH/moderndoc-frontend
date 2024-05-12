@@ -116,6 +116,64 @@ export const getStatusBadgeProps = (
   return { variant: 'waiting' as VariantType, label: '-' }
 }
 
+export const getTimelineStatus = (
+  documentStatus: DocumentStatus,
+  userStatus: DocumentSentStatus,
+  userId: string,
+  createdById: string,
+  operatorId: string
+) => {
+  if (documentStatus === DocumentStatus.DRAFT) {
+    return 'ฉบับร่าง'
+  }
+  if (documentStatus === DocumentStatus.COMPLETED) {
+    return 'เสร็จสิ้นแล้ว'
+  }
+  if (documentStatus === DocumentStatus.CANCELED) {
+    return 'ยกเลิกแล้ว'
+  }
+  if (
+    documentStatus === DocumentStatus.PROCESSING &&
+    userStatus === DocumentSentStatus.PROCESSING &&
+    userId !== createdById &&
+    userId !== operatorId
+  ) {
+    return 'พิจารณาเอกสาร'
+  }
+  if (
+    userId === createdById &&
+    documentStatus === DocumentStatus.PROCESSING &&
+    userStatus === DocumentSentStatus.RETURNING
+  ) {
+    return 'แก้ไขเอกสาร'
+  }
+  if (
+    documentStatus === DocumentStatus.PROCESSING &&
+    userStatus === DocumentSentStatus.PROCESSING
+  ) {
+    return 'ตรวจสอบเอกสาร'
+  }
+  // if (
+  //   documentStatus === DocumentStatus.PROCESSING &&
+  //   userStatus === DocumentSentStatus.COMPLETED &&
+  //   userId !== createdById &&
+  //   userId !== operatorId
+  // ) {
+  //   return 'อยู่ระหว่างตรวจสอบเอกสาร'
+  // }
+  // if (userId !== createdById && userStatus === DocumentSentStatus.RETURNING) {
+  //   return 'อยู่ระหว่างแก้ไขเอกสาร'
+  // }
+  // if (
+  //   documentStatus === DocumentStatus.PROCESSING &&
+  //   userStatus === DocumentSentStatus.PROCESSING
+  // ) {
+  //   return 'อยู่ระหว่างผู้อนุมัติพิจารณาเอกสาร'
+  // }
+
+  return '-'
+}
+
 export const shouldShowAction = (
   status: string,
   documentSentStatus: string

@@ -36,6 +36,7 @@ import RichTextInputDisplay from '@/components/RichTextInputDisplay'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetFile from '@/hooks/useGetFile'
 import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
+import TimelineDescriptionBox from '@/modules/timeline/components/TimelineDescriptionBox'
 import { useUserStore } from '@/stores/userStore'
 import { BsDistributeHorizontal } from 'react-icons/bs'
 import { IoEyeOutline } from 'react-icons/io5'
@@ -384,7 +385,7 @@ const DocumentEditor = ({ type }: PropsType) => {
         </div> */}
         <div
           css={[
-            type === 'document-edit' ? tw`w-3/4` : tw`w-full`,
+            type !== 'document-create' ? tw`w-3/4` : tw`w-full`,
             tw`relative`,
           ]}
         >
@@ -504,6 +505,11 @@ const DocumentEditor = ({ type }: PropsType) => {
                   )
                 )}
             </DocumentAccordion>
+          </div>
+        )}
+        {type === 'document-view' && documentData && (
+          <div className="w-1/4 overflow-y-auto">
+            <TimelineDescriptionBox data={documentData?.data} isSidebar />
           </div>
         )}
       </div>
