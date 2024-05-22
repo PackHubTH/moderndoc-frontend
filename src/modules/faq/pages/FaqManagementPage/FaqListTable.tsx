@@ -30,6 +30,8 @@ const FaqListTable = () => {
   const navigate = useNavigate()
   const { setFaq } = useFaqStore()
 
+  const { filterDepartmentIds, filterTagIds } = useFaqStore()
+
   const [faqType, setFaqType] = useState<'department' | 'all'>('department')
 
   const {
@@ -60,14 +62,21 @@ const FaqListTable = () => {
   } = useGetDepartmentFaqs(
     paginationState.pageIndex + 1,
     '',
-    userData?.data?.role === UserRole.ADMIN
+    userData?.data?.role === UserRole.ADMIN,
+    filterTagIds,
+    filterDepartmentIds
   )
 
   const {
     data: publicFaqs,
     refetch: refetchPublicFaqs,
     isFetched: publicFaqsIsFetched,
-  } = useGetPublicFaqsPagination(paginationState.pageIndex + 1)
+  } = useGetPublicFaqsPagination(
+    paginationState.pageIndex + 1,
+    undefined,
+    filterTagIds,
+    filterDepartmentIds
+  )
 
   const faqsData = useMemo(() => {
     if (faqType === 'department') {
@@ -75,7 +84,7 @@ const FaqListTable = () => {
     } else {
       return publicFaqs
     }
-  }, [departmentFaqs, publicFaqs, faqType])
+  }, [departmentFaqs, publicFaqs, faqType, filterTagIds, filterDepartmentIds])
 
   const refetch = useMemo(() => {
     if (faqType === 'department') {
@@ -83,7 +92,7 @@ const FaqListTable = () => {
     } else {
       return refetchPublicFaqs
     }
-  }, [faqType])
+  }, [faqType, filterTagIds, filterDepartmentIds])
 
   const columns: ColumnDef<Faq>[] = [
     {

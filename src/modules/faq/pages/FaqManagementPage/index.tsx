@@ -1,8 +1,12 @@
 import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
 import { useDisclosure } from '@/hooks/useDisclosure'
-import { FaPlus } from 'react-icons/fa6'
+import { Popover } from '@headlessui/react'
+import { FaFilter, FaPlus } from 'react-icons/fa6'
+import { blue } from 'tailwindcss/colors'
 import CreateFaqModal from '../../components/CreateFaqModal'
+import FaqFilter from '../../components/FaqFilter'
+import useFaqStore from '../../stores/useFaqStore'
 import FaqListTable from './FaqListTable'
 import GroupManagementModal from './GroupManagementModal'
 
@@ -17,6 +21,13 @@ const FaqManagementPage = () => {
     open: openGroupManagementModal,
     close: closeGroupManagementModal,
   } = useDisclosure()
+
+  const {
+    filterDepartmentIds,
+    setFilterDepartmentIds,
+    filterTagIds,
+    setFilterTagIds,
+  } = useFaqStore()
 
   return (
     <>
@@ -34,6 +45,23 @@ const FaqManagementPage = () => {
             variant="yellow"
             onClick={openGroupManagementModal}
           />
+          <Popover className="relative">
+            <Popover.Button>
+              <Button
+                variant="white"
+                label="Filter"
+                leftIcon={<FaFilter size={16} color={blue[300]} />}
+              />
+            </Popover.Button>
+            <Popover.Panel className="absolute z-10 rounded-lg bg-white p-2 shadow-lg">
+              <FaqFilter
+                departmentIds={filterDepartmentIds}
+                tagIds={filterTagIds}
+                setDepartmentIds={setFilterDepartmentIds}
+                setTagIds={setFilterTagIds}
+              />
+            </Popover.Panel>
+          </Popover>
         </div>
         <FaqListTable />
       </PageContainer>

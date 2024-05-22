@@ -17,8 +17,8 @@ const useGetPublicFaqs = (
           params: {
             page: pageParam,
             search,
-            tagId,
-            departmentId,
+            tagIds: [tagId],
+            departmentIds: [departmentId],
           },
         }
       )
