@@ -6,10 +6,11 @@ import { GetFaqsListResponse } from '../types'
 const useGetPublicFaqsPagination = (
   page?: number,
   search?: string,
-  tagId?: string
+  tagIds?: string[],
+  departmentIds?: string[]
 ) => {
   return useQuery(
-    ['public-faqs', page, search, tagId],
+    ['public-faqs', page, search, tagIds, departmentIds],
     async ({ pageParam = 1 }) => {
       const response = await moderndocApi.get<ApiResponse<GetFaqsListResponse>>(
         '/faq',
@@ -17,7 +18,8 @@ const useGetPublicFaqsPagination = (
           params: {
             page,
             search,
-            tagId,
+            tagIds,
+            departmentIds,
           },
         }
       )

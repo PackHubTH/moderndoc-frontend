@@ -6,21 +6,29 @@ import { GetFaqsListResponse } from '../types'
 const useGetDepartmentFaqs = (
   page: number,
   search: string = '',
-  isAdmin: boolean = false
+  isAdmin: boolean = false,
+  tagIds?: string[],
+  departmentIds?: string[]
 ) => {
   const path = isAdmin ? '/faq' : '/faq/department'
   const queryKey = isAdmin ? 'admin-faqs' : 'department-faqs'
-  const context = useQuery([queryKey, page, search], async () => {
-    const response = await moderndocApi.get<ApiResponse<GetFaqsListResponse>>(
-      path,
-      {
-        params: {
-          page,
-        },
-      }
-    )
-    return response.data
-  })
+  const context = useQuery(
+    [queryKey, page, search, tagIds, departmentIds],
+    async () => {
+      const response = await moderndocApi.get<ApiResponse<GetFaqsListResponse>>(
+        path,
+        {
+          params: {
+            page,
+            search,
+            tagIds,
+            departmentIds,
+          },
+        }
+      )
+      return response.data
+    }
+  )
 
   return context
 }
