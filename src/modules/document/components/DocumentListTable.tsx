@@ -85,9 +85,9 @@ const DocumentListTable = ({ type }: PropsType) => {
         <TableInfoBox
           title={info.row.original.title}
           createdAt={info.row.original.createdAt}
-          createdBy={info.row.original.userCreated.nameTh}
+          userCreatedBy={info.row.original.userCreated.nameTh}
           createdByImg={info.row.original.userCreated.profileImg}
-          updatedBy={info.row.original.operator?.nameTh ?? ''}
+          userUpdatedBy={info.row.original.operator?.nameTh ?? ''}
           updatedByImg={info.row.original.operator?.profileImg ?? ''}
         />
       ),

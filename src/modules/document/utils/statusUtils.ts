@@ -183,23 +183,6 @@ export const getTimelineStatus = (
   ) {
     return 'แก้ไขเอกสาร'
   }
-  // if (
-  //   documentStatus === DocumentStatus.PROCESSING &&
-  //   userStatus === DocumentSentStatus.COMPLETED &&
-  //   userId !== createdById &&
-  //   userId !== operatorId
-  // ) {
-  //   return 'อยู่ระหว่างตรวจสอบเอกสาร'
-  // }
-  // if (userId !== createdById && userStatus === DocumentSentStatus.RETURNING) {
-  //   return 'อยู่ระหว่างแก้ไขเอกสาร'
-  // }
-  // if (
-  //   documentStatus === DocumentStatus.PROCESSING &&
-  //   userStatus === DocumentSentStatus.PROCESSING
-  // ) {
-  //   return 'อยู่ระหว่างผู้อนุมัติพิจารณาเอกสาร'
-  // }
 
   return '-'
 }

@@ -83,13 +83,9 @@ const TimelineListTable = () => {
       cell: (info) => (
         <TableInfoBox
           title={info.row.original.document.title}
-          createdAt={new Date(info.row.original.createdAt).toLocaleDateString()}
-          createdBy={info.row.original.document?.userCreated?.nameTh ?? ''}
-          createdByImg={
-            info.row.original.document?.userCreated?.profileImg ?? ''
-          }
-          updatedBy={info.row.original.document?.operator?.nameTh ?? ''}
-          updatedByImg={info.row.original.document?.operator?.profileImg ?? ''}
+          createdAt={info.row.original.document.createdAt}
+          userCreatedBy={info.row.original.document?.userCreated}
+          userUpdatedBy={info.row.original.userUpdatedBy}
         />
       ),
     },
