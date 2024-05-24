@@ -7,6 +7,7 @@ import Select from '@/components/Select'
 import Tabs from '@/components/Tabs'
 import Tag from '@/components/Tag'
 import { useDisclosure } from '@/hooks/useDisclosure'
+import DocumentCanvas from '@/modules/document/components/DocumentCanvas'
 import { RiEyeCloseFill } from 'react-icons/ri'
 
 const TestPage = () => {
@@ -91,6 +92,11 @@ const TestPage = () => {
           { value: '1', label: 'ยกเลิกเอกสาร' },
         ]}
       />
+
+      <div className="h-[400px] w-[400px] bg-yellow-200">
+        test
+        <DocumentCanvas id="test" type="document-create" element={{}} />
+      </div>
     </div>
   )
 }

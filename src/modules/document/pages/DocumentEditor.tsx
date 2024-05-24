@@ -26,7 +26,6 @@ import {
   setTextItalic,
   setTextSpacing,
 } from '../utils/documentEditorUtils'
-import { convertCanvasToPdf } from '../utils/downloadUtils'
 
 import mock_signature_1 from '@/assets/mock_signature_1.png'
 import mock_signature_2 from '@/assets/mock_signature_2.png'
@@ -58,6 +57,7 @@ import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 import { DocumentStatus } from '../types/types'
+import { convertCanvasToPdf } from '../utils/downloadUtils'
 
 type PropsType = {
   type: 'document-create' | 'document-edit' | 'document-view'
@@ -218,13 +218,13 @@ const DocumentEditor = ({ type }: PropsType) => {
       {type !== 'document-view' && (
         <DocumentToolbar isEdit={type === 'document-edit'}>
           <ToolbarButton icon={<FaA />} id={ButtonId.Text} label="Text" />
+          <ToolbarButton icon={<FaPenFancy />} id={ButtonId.Pen} label="Pen" />
           <div className="hs-dropdown relative inline-flex">
             <div id="hs-dropdown-custom-icon-trigger">
               <ToolbarButton
                 icon={<FaPenFancy />}
-                id={ButtonId.Pen}
+                id={ButtonId.Sign}
                 label="Sign"
-                onClick={() => console.log('test')}
               />
             </div>
             <div
@@ -440,9 +440,9 @@ const DocumentEditor = ({ type }: PropsType) => {
                         }
                         isEditable={
                           ((user.id === documentData?.data?.createdBy ||
-                            (documentData?.data?.documentSents.find(
+                            (documentData?.data?.documentSents.some(
                               (sent: any) =>
-                                sent.receiverId === user.id && sent.editable
+                                sent.receiverId === user.id && sent.isEditable
                             )
                               ? true
                               : false)) &&

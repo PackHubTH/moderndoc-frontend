@@ -173,6 +173,13 @@ const deleteField = (
   }
 }
 
+const drawingCanvas = (canvasList: CanvasProps[]) => {
+  canvasList.forEach((item) => {
+    item.canvas.isDrawingMode = true
+    item.canvas.freeDrawingBrush = new Fabric.PencilBrush(item.canvas)
+  })
+}
+
 interface DataProps {
   [key: string]: any
 }
@@ -193,8 +200,10 @@ const initCanvas = (
   isEditable: boolean,
   user?: DataProps
 ) => {
-  console.log('initCanvas')
+  console.log('initCanvas', isEditable)
   const newCanvas = new Fabric.Canvas(id)
+  // newCanvas.isDrawingMode = true
+  // newCanvas.freeDrawingBrush = new Fabric.PencilBrush(newCanvas)
 
   const originalToObject = newCanvas.toObject.bind(newCanvas)
 
@@ -229,15 +238,10 @@ const initCanvas = (
         selectable: isEditable,
         evented: isEditable,
       })
-
-      // set scale based on device ratio
-      // obj.set({
-      //   scaleX: window.devicePixelRatio,
-      //   scaleY: window.devicePixelRatio,
-      // })
     })
     newCanvas.renderAll()
   })
+  console.log('inited', newCanvas)
   setCanvasList(id, newCanvas)
 }
 
@@ -264,7 +268,9 @@ const mouseHandler = (
         obj.set({ selectable: true })
         obj.set({ evented: true })
       }
+      obj.controls.deleteIcon = deleteIcon
     })
+    canvas.isDrawingMode = false
   }
 
   // set fill color of all object to none if not have text inside
@@ -292,7 +298,7 @@ const mouseHandler = (
       break
     case ActiveToolbarButton.Pen:
       console.log('pen')
-      // addImg(canvas, 'https://via.placeholder.com/150', option.x, option.y)
+      drawingCanvas(canvasList)
       break
     case ActiveToolbarButton.Date:
       console.log('date')

@@ -15,7 +15,7 @@ interface DocumentCanvasProps {
 
 const DocumentCanvas = ({
   id,
-  isEditable,
+  isEditable = true,
   element,
   type,
 }: DocumentCanvasProps) => {
@@ -23,14 +23,11 @@ const DocumentCanvas = ({
   const canvasSizes = useDocumentStore((state) => state.canvasSizes)
   const isPreview = useDocumentStore((state) => state.isPreview)
   const setCanvasList = useDocumentStore((state) => state.setCanvasList)
-  const canvasListRef = useRef(canvasList)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const activeButton = useDocumentToolbarStore((state) => state.activeButton)
   const setActiveButton = useDocumentToolbarStore(
     (state) => state.setActiveButton
   )
   const activeObject = useDocumentToolbarStore((state) => state.activeObject)
-  const activeObjectRef = useRef(activeObject)
   const setActiveObject = useDocumentToolbarStore(
     (state) => state.setActiveObject
   )
@@ -41,23 +38,27 @@ const DocumentCanvas = ({
 
   const user = useUserStore((state) => state.user)
 
+  const canvasListRef = useRef(canvasList)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const activeObjectRef = useRef(activeObject)
+
   useEffect(() => {
     canvasListRef.current = canvasList
   }, [canvasList])
 
   useEffect(() => {
-    // pdf should be loaded first before canvas from Fabric.js
-    const isHasPage = canvasSizes.findIndex((page) => page.id === id) !== -1
-    const isHasCanvas = canvasList.findIndex((page) => page.id === id) !== -1
+    const isHasPage = canvasSizes.some((page) => page.id === id)
+    const isHasCanvas = canvasList.some((page) => page.id === id)
     console.log('isHasPage', isHasPage, 'isHasCanvas', isHasCanvas, element)
     console.log('type', type, 'isEditable', isEditable)
+
     if (isHasPage && !isHasCanvas) {
       initCanvas(
         id,
         element ?? {},
         setCanvasList,
         type,
-        isEditable ?? true,
+        isEditable,
         parseUserDatatoAutofill(user)
       )
     }
@@ -66,7 +67,6 @@ const DocumentCanvas = ({
       const cleanup = async () => {
         const canvasEntry = canvasList.find((page) => page.id === id)
         if (canvasEntry && canvasEntry.canvas) {
-          // await canvasEntry.canvas.dispose()
           canvasEntry.canvas.clear()
           resetCanvasList(id)
         }
@@ -78,6 +78,7 @@ const DocumentCanvas = ({
 
   useEffect(() => {
     const canvas = canvasList.find((page) => page.id === id)?.canvas
+
     const handler = (option: any) => {
       console.log(
         'mouse down',
@@ -85,16 +86,18 @@ const DocumentCanvas = ({
         activeButton,
         isPreview
       )
-      if (canvas)
+      if (canvas) {
         mouseHandler(canvasList, canvas, activeButton, setActiveButton, {
-          isEditable: isEditable ?? true,
+          isEditable,
           isPreview,
           text: '',
           type,
           x: option.absolutePointer.x,
           y: option.absolutePointer.y,
         })
+      }
     }
+
     const handler2 = (option: any) => {
       console.log('selected', option)
       if (option.selected.length === 1) {
@@ -104,10 +107,8 @@ const DocumentCanvas = ({
         setActiveObject(obj)
       }
     }
-    const handler3 = (option: any) => {
-      // set background color of active object to none
-      // canvas?.getActiveObject()?.set('backgroundColor', '#000000')
 
+    const handler3 = () => {
       setActiveObject(null)
     }
 
@@ -123,6 +124,7 @@ const DocumentCanvas = ({
       canvas.on('selection:cleared', handler3)
       canvas.on('selection:updated', handler2)
       canvas.on('object:modified', handler4)
+
       return () => {
         canvas.off('mouse:down', handler)
         canvas.off('selection:created', handler2)
@@ -131,13 +133,23 @@ const DocumentCanvas = ({
         canvas.off('object:modified', handler4)
       }
     }
-  }, [activeButton, canvasList, id, isPreview])
+  }, [
+    activeButton,
+    canvasList,
+    id,
+    isPreview,
+    isEditable,
+    setActiveButton,
+    setActiveObject,
+    setActiveCanvasId,
+  ])
 
   console.log('selected obj', activeObject)
   console.log(
     'canvas size',
     canvasSizes.find((page) => page.id === id)
   )
+
   return (
     <div className="absolute z-10">
       <canvas
