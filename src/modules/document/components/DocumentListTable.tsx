@@ -50,6 +50,7 @@ const DocumentListTable = ({ type }: PropsType) => {
     data: document,
     refetch: refetchAllDocument,
     isFetched,
+    isRefetching,
   } = useGetAllDocument(paginationState.pageIndex + 1, type)
   const [documentId, setDocumentId] = useState('')
   const { data: documentData, refetch: refetchDocumentById } =
@@ -189,7 +190,7 @@ const DocumentListTable = ({ type }: PropsType) => {
     open()
   }
 
-  if (!isFetched) return <Loading />
+  if (!isFetched || isRefetching) return <Loading />
 
   return (
     <div className="flex">
