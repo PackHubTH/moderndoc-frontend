@@ -47,7 +47,7 @@ const addAutoFill = (
     width: 200,
     minWidth: 20,
     backgroundColor: '#DBEAFE',
-
+    elName: 'text',
     textAlign: 'center',
     createdBy: useUserStore.getState().user?.id,
   })
@@ -229,6 +229,12 @@ const initCanvas = (
         selectable: isEditable,
         evented: isEditable,
       })
+
+      // set scale based on device ratio
+      // obj.set({
+      //   scaleX: window.devicePixelRatio,
+      //   scaleY: window.devicePixelRatio,
+      // })
     })
     newCanvas.renderAll()
   })
@@ -260,6 +266,14 @@ const mouseHandler = (
       }
     })
   }
+
+  // set fill color of all object to none if not have text inside
+  canvas.forEachObject((obj: any) => {
+    if (obj.text && !obj.elName) {
+      obj.set({ backgroundColor: '' })
+    }
+  })
+
   switch (activeButton) {
     case ActiveToolbarButton.AutoFill:
       console.log('autofill')

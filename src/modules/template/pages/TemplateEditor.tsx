@@ -115,6 +115,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   console.log('editor active object', activeObject?.elName)
   console.log('templateFile', templateFile)
   console.log('templateedit data', templateEdit?.data)
+  console.log('ratio', window.devicePixelRatio)
   return (
     <div>
       {/* Header */}
@@ -345,6 +346,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
                           pageNumber={page}
                           renderTextLayer={false}
                           renderAnnotationLayer={false}
+                          // scale={window.devicePixelRatio}
                           scale={1}
                           className="my-2 border-black"
                           onLoadSuccess={() => onPageLoadSuccess(page)}
@@ -397,13 +399,13 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
                           onClick: () => {
                             setActiveObject({
                               ...activeObject,
-                              elName: '',
+                              elName: 'text',
                               text: 'text',
                             }),
                               setAutoFillType(
                                 canvasList,
                                 activeCanvasId,
-                                '',
+                                'text',
                                 'text'
                               )
                           },

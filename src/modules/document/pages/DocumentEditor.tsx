@@ -26,6 +26,7 @@ import {
   setTextItalic,
   setTextSpacing,
 } from '../utils/documentEditorUtils'
+import { convertCanvasToPdf } from '../utils/downloadUtils'
 
 import mock_signature_1 from '@/assets/mock_signature_1.png'
 import mock_signature_2 from '@/assets/mock_signature_2.png'
@@ -57,7 +58,6 @@ import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
 import { ActiveToolbarButton as ButtonId } from '../types/ToolbarButton'
 import { DocumentStatus } from '../types/types'
-import { convertCanvasToPdf } from '../utils/downloadUtils'
 
 type PropsType = {
   type: 'document-create' | 'document-edit' | 'document-view'
@@ -96,7 +96,9 @@ const DocumentEditor = ({ type }: PropsType) => {
     (documentData?.data?.templateFile || templateData?.data?.templateFile) ?? ''
   )
 
-  const [documentScale, setDocumentScale] = useState(1)
+  const [documentScale, setDocumentScale] = useState(
+    window.devicePixelRatio || 1
+  )
 
   useEffect(() => {
     if (!file) refetchFile()
@@ -158,11 +160,17 @@ const DocumentEditor = ({ type }: PropsType) => {
               <Button
                 label="Download"
                 leftIcon={<FaDownload />}
-                onClick={() =>
-                  convertCanvasToPdf(
-                    file?.data ?? '',
-                    Array.from({ length: pageTotal }, (v, k) => k.toString())
-                  )
+                onClick={
+                  () =>
+                    convertCanvasToPdf(
+                      file?.data ?? '',
+                      Array.from({ length: pageTotal }, (v, k) => k.toString())
+                    )
+                  // embedElementToPdf(
+                  //   file?.data ?? '',
+                  //   documentData?.data?.element?.data ||
+                  //     templateData?.data?.element?.data
+                  // )
                 }
               />
               <Button
@@ -446,7 +454,8 @@ const DocumentEditor = ({ type }: PropsType) => {
                         pageNumber={page}
                         renderTextLayer={false}
                         renderAnnotationLayer={false}
-                        scale={documentScale}
+                        // scale={documentScale}
+                        scale={1}
                         className="my-2 border-black"
                         onLoadSuccess={() => onPageLoadSuccess(page)}
                       />

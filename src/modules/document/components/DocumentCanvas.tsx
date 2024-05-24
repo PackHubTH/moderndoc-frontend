@@ -90,6 +90,7 @@ const DocumentCanvas = ({
           isEditable: isEditable ?? true,
           isPreview,
           text: '',
+          type,
           x: option.absolutePointer.x,
           y: option.absolutePointer.y,
         })
@@ -133,6 +134,10 @@ const DocumentCanvas = ({
   }, [activeButton, canvasList, id, isPreview])
 
   console.log('selected obj', activeObject)
+  console.log(
+    'canvas size',
+    canvasSizes.find((page) => page.id === id)
+  )
   return (
     <div className="absolute z-10">
       <canvas
