@@ -42,7 +42,7 @@ const addAutoFill = (
   const fabricText = new Fabric.Textbox('', {
     top: y,
     left: x,
-    fontSize: 14,
+    fontSize: 12,
     fill: 'rgb(0, 0, 0)',
     width: 200,
     minWidth: 20,
@@ -96,7 +96,7 @@ const addField = (
   const fabricText = new Fabric.Textbox(text, {
     top: y,
     left: x,
-    fontSize: 20,
+    fontSize: 12,
     fill: 'rgb(0, 0, 0)',
     width: 200,
     minWidth: 20,

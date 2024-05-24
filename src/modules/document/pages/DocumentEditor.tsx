@@ -269,7 +269,7 @@ const DocumentEditor = ({ type }: PropsType) => {
           {activeObject && activeObject.fontSize ? (
             <div className="ms-8 space-x-2">
               <Dropdown
-                label={activeObject?.fontSize?.toString() ?? '16'}
+                label={activeObject?.fontSize?.toString() ?? '12'}
                 dropdownSection={[
                   {
                     lists: [8, 12, 16, 20, 24, 48, 72].map((size) => ({
