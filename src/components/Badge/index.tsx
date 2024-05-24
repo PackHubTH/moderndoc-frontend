@@ -1,7 +1,8 @@
+import { BadgeType, VariantType } from './types'
+
 import React from 'react'
 import colors from 'tailwindcss/colors'
 import tw from 'twin.macro'
-import { BadgeType, VariantType } from './types'
 
 type PropsType = {
   label: string
@@ -14,6 +15,10 @@ const Badge: React.FC<PropsType> = ({ label, onClick, variant }) => {
     action: {
       color: colors.amber[500],
       bgColor: colors.amber[100],
+    },
+    processing: {
+      color: colors.white,
+      bgColor: colors.amber[500],
     },
     waiting: {
       color: colors.blue[500],

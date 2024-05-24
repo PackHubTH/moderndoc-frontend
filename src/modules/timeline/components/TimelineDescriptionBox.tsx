@@ -1,6 +1,7 @@
 import {
   getStatusBadgeProps,
   getTimelineStatus,
+  shouldShowAction,
 } from '@/modules/document/utils/statusUtils'
 import { useEffect, useState } from 'react'
 import { Document, Page } from 'react-pdf'
@@ -88,6 +89,12 @@ const TimelineDescriptionBox = ({ data, isSidebar }: PropsType) => {
             email={
               data.userCreated.emails[data.userCreated.defaultEmailIndex] ?? ''
             }
+            isProcessing={shouldShowAction(
+              data.status,
+              data.documentSents?.find(
+                (sent) => sent.receiverId === data.createdBy
+              )?.status ?? ''
+            )}
             profileImg={data.userCreated.profileImg}
           />
           {data?.operator && (
@@ -99,6 +106,12 @@ const TimelineDescriptionBox = ({ data, isSidebar }: PropsType) => {
                   data?.operator?.emails[data?.operator?.defaultEmailIndex] ??
                   ''
                 }
+                isProcessing={shouldShowAction(
+                  data.status,
+                  data.documentSents?.find(
+                    (sent) => sent.receiverId === data?.operatorId
+                  )?.status ?? ''
+                )}
                 profileImg={data?.operator?.profileImg}
               />
             </>
@@ -113,6 +126,7 @@ const TimelineDescriptionBox = ({ data, isSidebar }: PropsType) => {
                     email={
                       sent.receiver.emails[sent.receiver.defaultEmailIndex]
                     }
+                    isProcessing={sent.status === DocumentStatus.PROCESSING}
                     profileImg={sent.receiver.profileImg}
                   />
                 </div>
