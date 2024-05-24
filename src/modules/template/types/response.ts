@@ -35,6 +35,10 @@ export interface GetTemplateById {
 export interface Operator {
   id: string
   nameTh: string
+  profileImg: string
+  emails: string[]
+  defaultEmailIndex: number
+  isTemplateOperator?: boolean
 }
 interface Element {
   data: any

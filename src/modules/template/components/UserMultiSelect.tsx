@@ -1,5 +1,7 @@
+import Select, { components } from 'react-select'
+
 import { FaInfoCircle } from 'react-icons/fa'
-import Select from 'react-select'
+import ProfileOptionBox from './ProfileOptionBox'
 
 interface UserMultiSelectProps {
   label: string
@@ -16,10 +18,25 @@ const UserMultiSelect = ({
   onChange,
   placeholder,
 }: UserMultiSelectProps) => {
+  const customOption = (props: any) => {
+    return (
+      <components.Option {...props}>
+        <ProfileOptionBox
+          email={props.data.email}
+          label={props.data.label}
+          profileImg={props.data.profileImg}
+          isTemplateOperator={props.data.isTemplateOperator}
+        />
+      </components.Option>
+    )
+  }
   return (
     <div>
       <h1 className="mb-2 text-sm font-medium text-gray-800">{label}</h1>
       <Select
+        components={{
+          Option: customOption,
+        }}
         placeholder={placeholder}
         styles={{
           control: (provided) => ({
@@ -40,7 +57,12 @@ const UserMultiSelect = ({
         options={options?.map((user) => ({
           value: user.id,
           label: user.nameTh,
+          email: user.email,
+          profileImg: user.profileImg,
+          isTemplateOperator: user.isTemplateOperator ?? false,
         }))}
+        getOptionLabel={(option) => option.label}
+        getOptionValue={(option) => option.value}
         onChange={(selected) => {
           onChange(selected.map((item) => item.value))
         }}

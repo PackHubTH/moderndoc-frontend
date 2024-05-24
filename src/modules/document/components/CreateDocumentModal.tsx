@@ -2,21 +2,21 @@ import { useEffect, useMemo, useState } from 'react'
 
 import AutocompleteInput from '@/components/AutocompleteInput'
 import Button from '@/components/Button'
-import { Controller } from 'react-hook-form'
-import { CreateDocumentForm } from '../hooks/useCreateDocumentForm/validation'
-import { DocumentStatus } from '../types/types'
 import Modal from '@/components/Modal'
-import { Operator } from '@/modules/template/types/response'
 import RadioGroup from '@/components/RadioGroup'
 import RichTextInput from '@/components/RichTextInput'
-import { getJson } from '../utils/documentEditorUtils'
+import { Operator } from '@/modules/template/types/response'
+import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
+import { Controller } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import useAssignOperator from '../hooks/api/useAssignOperator'
 import useCreateDocument from '../hooks/api/useCreateDocument'
 import useCreateDocumentForm from '../hooks/useCreateDocumentForm'
+import { CreateDocumentForm } from '../hooks/useCreateDocumentForm/validation'
 import { useDocumentStore } from '../stores/documentStore'
-import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
-import { useNavigate } from 'react-router-dom'
+import { DocumentStatus } from '../types/types'
+import { getJson } from '../utils/documentEditorUtils'
 
 type PropsType = {
   departmentId: string
@@ -52,21 +52,20 @@ const CreateDocumentModal: React.FC<PropsType> = ({
   }, [isOpen])
 
   const operators = useMemo(() => {
+    suggestOperators.forEach((operator) => {
+      operator.isTemplateOperator = true
+    })
+
     if (!userList) return suggestOperators
-    const filterStaffList = userList.data
-      .filter(
-        (user) => !suggestOperators.some((operator) => operator.id === user.id)
-      )
-      .map((user) => ({
-        id: user.id,
-        nameTh: user.nameTh + ' *',
-      }))
+
+    const filterStaffList = userList.data.filter(
+      (user) => !suggestOperators.some((operator) => operator.id === user.id)
+    )
     return [...suggestOperators, ...filterStaffList]
   }, [userList, suggestOperators])
 
   const onProcessSubmit = async (data: CreateDocumentForm) => {
     try {
-      console.log('Process', getJson(canvasList))
       createDocument(
         {
           templateId,
@@ -110,7 +109,6 @@ const CreateDocumentModal: React.FC<PropsType> = ({
   }
 
   const onNonProcessSubmit = async () => {
-    console.log('nonProcess', getJson(canvasList))
     try {
       createDocument(
         {
@@ -160,9 +158,13 @@ const CreateDocumentModal: React.FC<PropsType> = ({
               }}
               value={searchOperator}
               options={
-                operators?.map((operator) => ({
+                operators?.map((operator: any) => ({
                   label: operator.nameTh,
                   value: operator.id,
+                  defaultEmailIndex: operator.defaultEmailIndex,
+                  emails: operator.emails,
+                  isTemplateOperator: operator.isTemplateOperator,
+                  profileImg: operator.profileImg,
                 })) ?? []
               }
             />
