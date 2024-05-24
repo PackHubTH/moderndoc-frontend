@@ -1,7 +1,6 @@
 import {
   getJson,
   hexToRgb,
-  previewCanvas,
   rgbToHex,
   setAutoFillType,
   setFontFamily,
@@ -85,7 +84,6 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   const setActiveObject = useDocumentToolbarStore(
     (state) => state.setActiveObject
   )
-  const [isPreview, setIsPreview] = useState(false)
   const [pageTotal, setPageTotal] = useState(0)
 
   useEffect(() => {
@@ -136,13 +134,7 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
           </h1>
         </div>
         <div className="flex gap-4">
-          <PreviewButton
-            isPreview={isPreview}
-            setIsPreview={() => {
-              setIsPreview(!isPreview)
-              previewCanvas(canvasList, setCanvasList, isPreview)
-            }}
-          />
+          <PreviewButton />
           <Button
             disabled={templateFile ? false : true}
             label={

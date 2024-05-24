@@ -21,6 +21,7 @@ const DocumentCanvas = ({
 }: DocumentCanvasProps) => {
   const canvasList = useDocumentStore((state) => state.canvasList)
   const canvasSizes = useDocumentStore((state) => state.canvasSizes)
+  const isPreview = useDocumentStore((state) => state.isPreview)
   const setCanvasList = useDocumentStore((state) => state.setCanvasList)
   const canvasListRef = useRef(canvasList)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -78,10 +79,16 @@ const DocumentCanvas = ({
   useEffect(() => {
     const canvas = canvasList.find((page) => page.id === id)?.canvas
     const handler = (option: any) => {
-      console.log('mouse down', option?.absolutePointer, activeButton)
+      console.log(
+        'mouse down',
+        option?.absolutePointer,
+        activeButton,
+        isPreview
+      )
       if (canvas)
         mouseHandler(canvasList, canvas, activeButton, setActiveButton, {
           isEditable: isEditable ?? true,
+          isPreview,
           text: '',
           x: option.absolutePointer.x,
           y: option.absolutePointer.y,
@@ -97,6 +104,9 @@ const DocumentCanvas = ({
       }
     }
     const handler3 = (option: any) => {
+      // set background color of active object to none
+      // canvas?.getActiveObject()?.set('backgroundColor', '#000000')
+
       setActiveObject(null)
     }
 
@@ -120,7 +130,7 @@ const DocumentCanvas = ({
         canvas.off('object:modified', handler4)
       }
     }
-  }, [activeButton, canvasList, id])
+  }, [activeButton, canvasList, id, isPreview])
 
   console.log('selected obj', activeObject)
   return (

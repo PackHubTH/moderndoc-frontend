@@ -100,7 +100,7 @@ const addField = (
     fill: 'rgb(0, 0, 0)',
     width: 200,
     minWidth: 20,
-    backgroundColor: '#DBEAFE',
+    backgroundColor: text ? '' : '#DBEAFE',
     borderRadius: '16px',
     textAlign: 'center',
     createdBy: useUserStore.getState().user?.id,
@@ -235,27 +235,6 @@ const initCanvas = (
   setCanvasList(id, newCanvas)
 }
 
-const previewCanvas = (
-  canvasList: CanvasProps[],
-  setCanvasList: (id: string, canvas: Fabric.Canvas) => void,
-  isPreview: boolean
-) => {
-  console.log('previewCanvas')
-  canvasList.forEach((item, index) => {
-    item.canvas.forEachObject((obj: any) => {
-      console.log('obj preview', obj)
-      item.canvas.discardActiveObject()
-      if (isPreview) {
-        obj.set({ selectable: false, evented: false })
-      } else {
-        obj.set({ selectable: true, evented: true })
-      }
-    })
-    setCanvasList(item.id, item.canvas)
-    item.canvas.renderAll()
-  })
-}
-
 const mouseHandler = (
   canvasList: CanvasProps[],
   canvas: Fabric.Canvas,
@@ -264,7 +243,7 @@ const mouseHandler = (
   option?: any
 ) => {
   console.log('mouseHandler')
-  if (activeButton !== ActiveToolbarButton.Default) {
+  if (activeButton !== ActiveToolbarButton.Default || option?.isPreview) {
     canvas.forEachObject((obj: any) => {
       obj.set({ selectable: false })
       obj.set({ evented: false })
@@ -593,7 +572,6 @@ export {
   hexToRgb,
   initCanvas,
   mouseHandler,
-  previewCanvas,
   rgbToHex,
   saveCanvas,
   setAutoFillType,
