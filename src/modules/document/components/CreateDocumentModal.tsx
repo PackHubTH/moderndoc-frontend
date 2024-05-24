@@ -8,6 +8,7 @@ import RichTextInput from '@/components/RichTextInput'
 import { Operator } from '@/modules/template/types/response'
 import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
 import { Controller } from 'react-hook-form'
+import { FaInfoCircle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import useAssignOperator from '../hooks/api/useAssignOperator'
@@ -141,33 +142,39 @@ const CreateDocumentModal: React.FC<PropsType> = ({
           control={methods.control}
           name="operatorUserId"
           render={({ field: { onChange } }) => (
-            <AutocompleteInput
-              label="เลือกผู้รับเอกสาร"
-              placeholder="เลือกหรือค้นหารายชื่อ"
-              onChange={(e) => {
-                const name = operators.find((operator) => operator.id === e)
-                  ?.nameTh
-                onChange(e)
-                setSearchOperator(name ?? '')
-              }}
-              onSearch={(e) => {
-                setSearchOperator(e)
-                const name = operators.find((operator) => operator.id === e)
-                  ?.nameTh
-                if (!name) onChange('')
-              }}
-              value={searchOperator}
-              options={
-                operators?.map((operator: any) => ({
-                  label: operator.nameTh,
-                  value: operator.id,
-                  defaultEmailIndex: operator.defaultEmailIndex,
-                  emails: operator.emails,
-                  isTemplateOperator: operator.isTemplateOperator,
-                  profileImg: operator.profileImg,
-                })) ?? []
-              }
-            />
+            <div>
+              <AutocompleteInput
+                label="เลือกผู้รับเอกสาร"
+                placeholder="เลือกหรือค้นหารายชื่อ"
+                onChange={(e) => {
+                  const name = operators.find((operator) => operator.id === e)
+                    ?.nameTh
+                  onChange(e)
+                  setSearchOperator(name ?? '')
+                }}
+                onSearch={(e) => {
+                  setSearchOperator(e)
+                  const name = operators.find((operator) => operator.id === e)
+                    ?.nameTh
+                  if (!name) onChange('')
+                }}
+                value={searchOperator}
+                options={
+                  operators?.map((operator: any) => ({
+                    label: operator.nameTh,
+                    value: operator.id,
+                    defaultEmailIndex: operator.defaultEmailIndex,
+                    emails: operator.emails,
+                    isTemplateOperator: operator.isTemplateOperator,
+                    profileImg: operator.profileImg,
+                  })) ?? []
+                }
+              />
+              <p className="mt-2 flex items-center gap-2 text-xs">
+                <FaInfoCircle className="text-amber-500" />
+                กรุณาเลือกรายชื่อที่ติดดาว (ถ้ามี)
+              </p>
+            </div>
           )}
         />
         <Controller
@@ -232,26 +239,29 @@ const CreateDocumentModal: React.FC<PropsType> = ({
       }
       content={
         <div className="flex flex-col gap-5 px-6">
-          <RadioGroup
-            label="เลือกดำเนินการ"
-            options={[
-              { value: DocumentStatus.PROCESSING, label: 'ส่งเอกสาร' },
-              {
-                value: DocumentStatus.DRAFT,
-                label: 'บันทึกฉบับร่าง',
-              },
-              { value: DocumentStatus.COMPLETED, label: 'เสร็จสิ้นทันที' },
-            ]}
-            value={documentStatus}
-            onChange={setDocumentStatus}
-          />
+          <div>
+            <RadioGroup
+              label="เลือกดำเนินการ"
+              options={[
+                { value: DocumentStatus.PROCESSING, label: 'ส่งเอกสาร' },
+                {
+                  value: DocumentStatus.DRAFT,
+                  label: 'บันทึกฉบับร่าง',
+                },
+                { value: DocumentStatus.COMPLETED, label: 'เสร็จสิ้นทันที' },
+              ]}
+              value={documentStatus}
+              onChange={setDocumentStatus}
+            />
+            {documentStatus === DocumentStatus.COMPLETED && (
+              <p className="ml-5 flex gap-2 text-xs">
+                <FaInfoCircle className="text-amber-500" size={16} />
+                เอกสารจะถูกบันทึกไว้ในระบบ โดยมีสถานะเสร็จสิ้นแล้ว
+                ท่านจะไม่สามารถเปลี่ยนแปลง หรือดำเนินการเอกสารต่อได้
+              </p>
+            )}
+          </div>
           {renderCreateDocumentForm()}
-          {documentStatus === DocumentStatus.COMPLETED && (
-            <p>
-              เอกสารจะถูกบันทึกไว้ในระบบ โดยมีสถานะเสร็จสิ้นแล้ว
-              ท่านจะไม่สามารถเปลี่ยนแปลง หรือดำเนินการเอกสารต่อได้
-            </p>
-          )}
         </div>
       }
     />

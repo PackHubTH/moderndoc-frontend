@@ -8,6 +8,7 @@ import RichTextInput from '@/components/RichTextInput'
 import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
 import { useUserStore } from '@/stores/userStore'
 import { Controller } from 'react-hook-form'
+import { FaInfoCircle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { UserRole } from 'types/user'
@@ -204,32 +205,44 @@ const ActionDocumentModal: React.FC<PropsType> = ({
       }
       content={
         <div className="flex flex-col gap-5 px-6">
-          {userRole === UserRole.STAFF && (
-            <RadioGroup
-              label="เลือกดำเนินการ"
-              options={[
-                { value: DocumentAction.SEND_TO_REVIEW, label: 'ส่งต่อเอกสาร' },
-                {
-                  value: DocumentAction.SEND_BACK_TO_OWNER,
-                  label: 'แจ้งผู้ส่งแก้ไขเอกสาร',
-                },
-                { value: DocumentAction.COMPLETE, label: 'ดำเนินการเสร็จสิ้น' },
-                { value: DocumentAction.REJECT, label: 'ยกเลิกเอกสาร' },
-              ]}
-              value={documentAction}
-              onChange={setDocumentAction}
-            />
-          )}
+          <div>
+            {userRole === UserRole.STAFF && (
+              <RadioGroup
+                label="เลือกดำเนินการ"
+                options={[
+                  {
+                    value: DocumentAction.SEND_TO_REVIEW,
+                    label: 'ส่งต่อเอกสาร',
+                  },
+                  {
+                    value: DocumentAction.SEND_BACK_TO_OWNER,
+                    label: 'แจ้งผู้ส่งแก้ไขเอกสาร',
+                  },
+                  {
+                    value: DocumentAction.COMPLETE,
+                    label: 'ดำเนินการเสร็จสิ้น',
+                  },
+                  { value: DocumentAction.REJECT, label: 'ยกเลิกเอกสาร' },
+                ]}
+                value={documentAction}
+                onChange={setDocumentAction}
+              />
+            )}
+            {documentAction === DocumentAction.COMPLETE && (
+              <p className="ml-5 flex gap-2 text-xs">
+                <FaInfoCircle className="text-amber-500" size={16} />
+                เอกสารจะถูกบันทึกไว้ในระบบ โดยมีสถานะเสร็จสิ้นแล้ว
+                ท่านจะไม่สามารถเปลี่ยนแปลง หรือดำเนินการเอกสารต่อได้
+              </p>
+            )}
+            {documentAction === DocumentAction.REJECT && (
+              <p className="ml-5 flex gap-2 text-xs">
+                <FaInfoCircle className="text-amber-500" size={12} />
+                เอกสารจะถูกยกเลิก ท่านจะไม่สามารถดำเนินการเอกสารต่อได้
+              </p>
+            )}
+          </div>
           {renderActionDocumentForm()}
-          {documentAction === DocumentAction.COMPLETE && (
-            <p>
-              เอกสารจะถูกบันทึกไว้ในระบบ โดยมีสถานะเสร็จสิ้นแล้ว
-              ท่านจะไม่สามารถเปลี่ยนแปลง หรือดำเนินการเอกสารต่อได้
-            </p>
-          )}
-          {documentAction === DocumentAction.REJECT && (
-            <p>เอกสารจะถูกยกเลิก ท่านจะไม่สามารถดำเนินการเอกสารต่อได้</p>
-          )}
         </div>
       }
     />
