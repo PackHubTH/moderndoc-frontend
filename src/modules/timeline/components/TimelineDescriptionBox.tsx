@@ -1,6 +1,5 @@
 import {
   getStatusBadgeProps,
-  getTimelineStatus,
   shouldShowAction,
 } from '@/modules/document/utils/statusUtils'
 import { useEffect, useState } from 'react'
@@ -15,6 +14,7 @@ import { DocumentStatus } from '@/modules/document/types/types'
 import { useUserStore } from '@/stores/userStore'
 import { formatFullDatetime } from '@/utils/formatUtils'
 import { IoDocumentText } from 'react-icons/io5'
+import { getTimelineStatus } from '../utils/timelineStatus'
 
 type PropsType = {
   data: GetDocumentById
