@@ -73,6 +73,7 @@ const TimelineListTable = () => {
           }
           icon={
             <img
+              className="w-5"
               src={
                 getTimelineStatusBadge(
                   info.row.original.documentStatus,
