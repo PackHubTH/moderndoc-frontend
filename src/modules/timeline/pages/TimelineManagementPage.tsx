@@ -2,10 +2,6 @@ import PageContainer from '@/components/PageContainer'
 import TextInput from '@/components/TextInput'
 import TimelineListTable from '../components/TimelineListTable'
 
-// import TemplateInfoBox from '../components/TemplateInfoBox'
-// import TemplateListTable from '../components/TemplateListTable'
-// import UploadModal from '../components/UploadModal'
-
 const TimelineManagementPage: React.FC = () => {
   return (
     <PageContainer className="space-y-8 p-7">

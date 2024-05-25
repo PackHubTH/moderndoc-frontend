@@ -1,4 +1,5 @@
-import { DocumentStatus } from '@/modules/document/types/types'
+import { Document, DocumentStatus } from '@/modules/document/types/types'
+import { User } from '@/modules/user/hooks/types'
 import { DocumentSentStatus } from './types'
 
 export interface GetAllTimeline {
@@ -17,15 +18,5 @@ export interface Timeline {
   id: string
   status: DocumentSentStatus
   document: Document
-}
-interface Document {
-  title: string
-  description: string
-  userCreated: UserCreated
-  operator: UserCreated
-}
-interface UserCreated {
-  nameTh: string
-  nameEn: string
-  profileImg: string
+  userUpdatedBy: User
 }

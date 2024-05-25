@@ -19,3 +19,9 @@ export const formatFullDatetime = (datetime: string | Date) => {
     locale: th,
   })
 }
+
+export const formatDate = (datetime: string | Date) => {
+  return format(datetime, 'dd MMM yy', {
+    locale: th,
+  })
+}

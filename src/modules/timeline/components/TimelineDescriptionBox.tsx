@@ -1,6 +1,5 @@
 import {
   getStatusBadgeProps,
-  getTimelineStatus,
   shouldShowAction,
 } from '@/modules/document/utils/statusUtils'
 import { useEffect, useState } from 'react'
@@ -14,7 +13,10 @@ import { GetDocumentById } from '@/modules/document/types/response'
 import { DocumentStatus } from '@/modules/document/types/types'
 import { useUserStore } from '@/stores/userStore'
 import { formatFullDatetime } from '@/utils/formatUtils'
-import { IoDocumentText } from 'react-icons/io5'
+import {
+  getTimelineStatus,
+  getTimelineStatusBadge,
+} from '../utils/timelineStatus'
 
 type PropsType = {
   data: GetDocumentById
@@ -137,8 +139,21 @@ const TimelineDescriptionBox = ({ data, isSidebar }: PropsType) => {
             <>
               <h1 className="font-semibold">ไทม์ไลน์</h1>
               {data?.documentTimelines.map((timeline) => (
-                <div key={timeline.id} className="flex items-center gap-2">
-                  <IoDocumentText size={32} className="text-blue-500" />
+                <div key={timeline.id} className="flex items-center gap-3">
+                  {
+                    <img
+                      className="w-6"
+                      src={
+                        getTimelineStatusBadge(
+                          timeline.documentStatus,
+                          timeline.status,
+                          timeline.updatedBy,
+                          timeline.userId
+                        ).icon
+                      }
+                      alt="icon"
+                    />
+                  }
                   <div className="space-y-1 py-2">
                     <p className="text-sm">
                       {getTimelineStatus(

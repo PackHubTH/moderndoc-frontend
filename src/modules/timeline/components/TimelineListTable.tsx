@@ -13,11 +13,11 @@ import TableInfoBox from '@/components/TableInfoBox'
 import TableStatusBox from '@/components/TableStatusBox'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetDocumentById from '@/modules/document/hooks/api/useGetDocumentById'
-import { getTimelineStatusBadge } from '@/modules/document/utils/statusUtils'
 import { FaRegEnvelope } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
 import useGetAllTimeline from '../hooks/api/useGetAllTimeline'
 import { Timeline } from '../types/response'
+import { getTimelineStatusBadge } from '../utils/timelineStatus'
 import TimelineDescriptionBox from './TimelineDescriptionBox'
 import TimelineStatusBox from './TimelineStatusBox'
 
@@ -35,8 +35,6 @@ const TimelineListTable = () => {
   const [documentId, setDocumentId] = useState('')
   const { data: documentData, refetch } = useGetDocumentById(documentId)
 
-  console.log('timeline', timeline?.data)
-  console.log('documentData', documentData?.data?.documentTimelines)
   const columns: ColumnDef<Timeline>[] = [
     {
       id: 'index',
@@ -73,6 +71,20 @@ const TimelineListTable = () => {
               info.row.original.userId
             ).label
           }
+          icon={
+            <img
+              className="w-5"
+              src={
+                getTimelineStatusBadge(
+                  info.row.original.documentStatus,
+                  info.row.original.status,
+                  info.row.original.updatedBy,
+                  info.row.original.userId
+                ).icon
+              }
+              alt="icon"
+            />
+          }
         />
       ),
     },
@@ -83,13 +95,9 @@ const TimelineListTable = () => {
       cell: (info) => (
         <TableInfoBox
           title={info.row.original.document.title}
-          createdAt={new Date(info.row.original.createdAt).toLocaleDateString()}
-          createdBy={info.row.original.document?.userCreated?.nameTh ?? ''}
-          createdByImg={
-            info.row.original.document?.userCreated?.profileImg ?? ''
-          }
-          updatedBy={info.row.original.document?.operator?.nameTh ?? ''}
-          updatedByImg={info.row.original.document?.operator?.profileImg ?? ''}
+          createdAt={info.row.original.document.createdAt}
+          userCreatedBy={info.row.original.document?.userCreated}
+          userUpdatedBy={info.row.original.userUpdatedBy}
         />
       ),
     },

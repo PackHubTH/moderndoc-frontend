@@ -1,3 +1,5 @@
+import { User } from '@/modules/user/hooks/types'
+
 export enum DocumentAction {
   SEND_BACK_TO_OWNER = 'SEND_BACK_TO_OWNER',
   SEND_TO_OPERATOR = 'SEND_TO_OPERATOR',
@@ -36,8 +38,8 @@ export type Document = {
   lastUpdatedAt: string
   operatorId: string
   description: string
-  userCreated: UserCreated
-  operator: UserCreated
+  userCreated: User
+  operator: User
   documentSents: DocumentSent[]
 }
 export type DocumentSent = {
@@ -50,11 +52,4 @@ export type DocumentSent = {
   id: string
 }
 
-type UserCreated = {
-  nameTh: string
-  nameEn: string
-  emails: string[]
-  defaultEmailIndex: number
-  profileImg: string
-}
 interface Element {}

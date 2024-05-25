@@ -1,4 +1,4 @@
-import { formatFullDatetime } from '@/utils/formatUtils'
+import { formatDate } from '@/utils/formatUtils'
 import Badge from '../Badge'
 import { VariantType } from '../Badge/types'
 
@@ -12,9 +12,7 @@ const TableStatusBox = ({ label, variant, updatedAt }: PropsType) => {
   return (
     <div className="flex flex-col items-end gap-2">
       <Badge label={label} variant={variant} />
-      <p className="text-gray-400">
-        อัปเดตล่าสุดเมื่อ {formatFullDatetime(updatedAt)}
-      </p>
+      <p className="text-gray-400">อัพเดตล่าสุดเมื่อ {formatDate(updatedAt)}</p>
     </div>
   )
 }
