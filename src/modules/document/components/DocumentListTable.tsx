@@ -186,15 +186,16 @@ const DocumentListTable = ({ type }: PropsType) => {
                       info.row.original.documentSents?.find(
                         (sent) => sent.receiverId === user.id
                       )?.status ?? ''
-                    ) && (
-                      <div id="delete-modal">
-                        <DropdownItem
-                          displayText="ลบเอกสาร"
-                          icon={<HiTrash className="text-red-500" />}
-                          onClick={openDelete}
-                        />
-                      </div>
-                    )}
+                    ) &&
+                      user.id === info.row.original.createdBy && (
+                        <div id="delete-modal">
+                          <DropdownItem
+                            displayText="ลบเอกสาร"
+                            icon={<HiTrash className="text-red-500" />}
+                            onClick={openDelete}
+                          />
+                        </div>
+                      )}
                     <Modal
                       isOpen={isDeleteOpen}
                       variant="confirm"
