@@ -14,7 +14,7 @@ import TableStatusBox from '@/components/TableStatusBox'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetDocumentById from '@/modules/document/hooks/api/useGetDocumentById'
 import { FaRegEnvelope } from 'react-icons/fa6'
-import { useNavigate } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import useGetAllTimeline from '../hooks/api/useGetAllTimeline'
 import { Timeline } from '../types/response'
 import { getTimelineStatusBadge } from '../utils/timelineStatus'
@@ -22,15 +22,18 @@ import TimelineDescriptionBox from './TimelineDescriptionBox'
 import TimelineStatusBox from './TimelineStatusBox'
 
 const TimelineListTable = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const search = searchParams.get('search') ?? ''
+
   const { isOpen, open } = useDisclosure()
-  const navigate = useNavigate()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
 
   const { data: timeline, isFetched } = useGetAllTimeline(
-    paginationState.pageIndex + 1
+    paginationState.pageIndex + 1,
+    search
   )
   const [documentId, setDocumentId] = useState('')
   const { data: documentData, refetch } = useGetDocumentById(documentId)
