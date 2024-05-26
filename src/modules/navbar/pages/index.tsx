@@ -5,13 +5,11 @@ import { useGoogleLogin } from '@react-oauth/google'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { UserRole } from 'types/user'
-import bellIcon from '../assets/bell.svg'
 import LoginButton from '../components/LoginButton'
 import ProfileButton from '../components/ProfileButton'
 
 const Navbar = () => {
-  const { isLogin, setIsLogin, user, logout, setEmail, setUser } =
-    useUserStore()
+  const { isLogin, setIsLogin, user, setEmail, setUser } = useUserStore()
 
   const navigate = useNavigate()
 
@@ -87,23 +85,18 @@ const Navbar = () => {
         </div>
         <div
           id="navbar-collapse-with-animation"
-          className="hs-collapse hidden grow basis-full overflow-hidden transition-all duration-300 sm:block"
+          className="hs-collapse hidden grow basis-full overflow-visible transition-all duration-300 sm:block"
         >
           <div className="mt-5 flex h-[72px] flex-col gap-x-0 gap-y-4 sm:mt-0 sm:flex-row sm:items-center sm:justify-end sm:gap-x-7 sm:gap-y-0 sm:ps-7">
-            <img alt="bell-icon" src={bellIcon} />
             {isLogin ? (
-              <ProfileButton profileImg={user.profileImg} name={user.nameEn} />
+              <ProfileButton
+                profileImg={user.profileImg}
+                name={user.nameEn}
+                email={user.emails[0]}
+              />
             ) : (
               <LoginButton onClick={handleGoogleLogin} />
             )}
-            <button
-              onClick={() => {
-                logout()
-                navigate('/')
-              }}
-            >
-              logout
-            </button>
           </div>
         </div>
       </nav>
