@@ -1,10 +1,16 @@
 import { useEffect, useRef } from 'react'
-import { initCanvas, mouseHandler } from '../utils/documentEditorUtils'
+import { addImg, initCanvas, mouseHandler } from '../utils/documentEditorUtils'
 
 import { useUserStore } from '@/stores/userStore'
 import { parseUserDatatoAutofill } from '@/utils/parserUtils'
+import { useDrop } from 'react-dnd'
 import { useDocumentStore } from '../stores/documentStore'
 import { useDocumentToolbarStore } from '../stores/documentToolbarStore'
+import { ActiveToolbarButton } from '../types/ToolbarButton'
+
+interface DnDItem {
+  src: string
+}
 
 interface DocumentCanvasProps {
   id: string
@@ -144,14 +150,40 @@ const DocumentCanvas = ({
     setActiveCanvasId,
   ])
 
+  const [{ canDrop, isOver }, drop] = useDrop(() => ({
+    accept: 'sign',
+    drop: (item: DnDItem, monitor) => {
+      console.log(item, id)
+      const canvas = canvasListRef.current.find((page) => page.id === id)
+        ?.canvas
+      const m = monitor.getClientOffset()
+      const c = canvasRef.current?.getBoundingClientRect()
+      const posX = m!.x - c!.x
+      const posY = m!.y - c!.y
+      console.log('pos', posX, posY)
+      console.log(monitor.getClientOffset())
+      console.log(canvasRef.current?.getBoundingClientRect())
+      if (canvas) {
+        addImg(canvas, item.src, posX, posY)
+        setActiveButton(ActiveToolbarButton.Default)
+      }
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  }))
+
   console.log('selected obj', activeObject)
   console.log(
     'canvas size',
     canvasSizes.find((page) => page.id === id)
   )
 
+  const isActive = canDrop && isOver
+  console.log('isActive', isActive)
   return (
-    <div className="absolute z-10">
+    <div className="absolute z-10" ref={drop}>
       <canvas
         id={id}
         ref={canvasRef}

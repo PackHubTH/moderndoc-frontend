@@ -22,16 +22,15 @@ import {
   FaFileSignature,
   FaItalic,
   FaPenFancy,
-  FaPlus,
+  FaSignature,
 } from 'react-icons/fa6'
 import { Document, Page } from 'react-pdf'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import mock_signature_1 from '@/assets/mock_signature_1.png'
-import mock_signature_2 from '@/assets/mock_signature_2.png'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
 import MainLogo from '@/components/MainLogo'
+import SignatureBox from '@/components/SignatureBox'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import DocumentAccordion from '@/modules/document/components/DocumentAccordion'
 import DocumentCanvas from '@/modules/document/components/DocumentCanvas'
@@ -42,6 +41,7 @@ import { useDocumentStore } from '@/modules/document/stores/documentStore'
 import { useDocumentToolbarStore } from '@/modules/document/stores/documentToolbarStore'
 import { ActiveToolbarButton as ButtonId } from '@/modules/document/types/ToolbarButton'
 import { useTemplateStore } from '@/stores/templateStore'
+import { useUserStore } from '@/stores/userStore'
 import { BsDistributeHorizontal } from 'react-icons/bs'
 import tw from 'twin.macro'
 import useGetFile from '../../../hooks/useGetFile'
@@ -84,6 +84,8 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   const setActiveObject = useDocumentToolbarStore(
     (state) => state.setActiveObject
   )
+  const user = useUserStore((state) => state.user)
+
   const [pageTotal, setPageTotal] = useState(0)
 
   useEffect(() => {
@@ -164,36 +166,26 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
               label="Create Autofill"
             />
             <ToolbarButton icon={<FaA />} id={ButtonId.Text} label="Text" />
+            <ToolbarButton
+              icon={<FaPenFancy />}
+              id={ButtonId.Pen}
+              label="Pen"
+            />
             <div className="hs-dropdown relative inline-flex">
               <div id="hs-dropdown-custom-icon-trigger">
                 <ToolbarButton
-                  icon={<FaPenFancy />}
-                  id={ButtonId.Pen}
+                  icon={<FaSignature />}
+                  id={ButtonId.Sign}
                   label="Sign"
-                  onClick={() => console.log('test')}
                 />
               </div>
               <div
                 className="hs-dropdown-menu duration min-w-60 z-20 mt-2 hidden rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:border dark:border-neutral-700 dark:bg-neutral-800"
                 aria-labelledby="hs-dropdown-custom-icon-trigger"
               >
-                <div className="m-2 flex justify-center rounded-md border-2">
-                  <img
-                    src={mock_signature_1}
-                    alt="sig-1"
-                    className="max-h-[96px]"
-                  />
-                </div>
-                <div className="m-2 flex justify-center rounded-md border-2">
-                  <img
-                    src={mock_signature_2}
-                    alt="sig-2"
-                    className="max-h-[96px]"
-                  />
-                </div>
-                <div className="m-2 flex justify-center rounded-md border-4 border-dashed p-2 text-blue-500">
-                  <FaPlus size={32} />
-                </div>
+                {user.signatures.map((signature) => (
+                  <SignatureBox src={signature} />
+                ))}
               </div>
             </div>
             <ToolbarButton

@@ -12,7 +12,7 @@ import {
   FaPenFancy,
   FaRegCalendarAlt,
 } from 'react-icons/fa'
-import { FaA, FaPlus } from 'react-icons/fa6'
+import { FaA, FaSignature } from 'react-icons/fa6'
 import { Document, Page } from 'react-pdf'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
@@ -27,13 +27,12 @@ import {
   setTextSpacing,
 } from '../utils/documentEditorUtils'
 
-import mock_signature_1 from '@/assets/mock_signature_1.png'
-import mock_signature_2 from '@/assets/mock_signature_2.png'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import Dropdown from '@/components/Dropdown'
 import MainLogo from '@/components/MainLogo'
 import RichTextInputDisplay from '@/components/RichTextInputDisplay'
+import SignatureBox from '@/components/SignatureBox'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetFile from '@/hooks/useGetFile'
 import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
@@ -60,7 +59,7 @@ import { DocumentStatus } from '../types/types'
 import { convertCanvasToPdf } from '../utils/downloadUtils'
 
 type PropsType = {
-  type: 'document-create' | 'document-edit' | 'document-view'
+  type: 'document-copy' | 'document-create' | 'document-edit' | 'document-view'
 }
 
 const DocumentEditor = ({ type }: PropsType) => {
@@ -180,9 +179,8 @@ const DocumentEditor = ({ type }: PropsType) => {
               />
             </>
           )}
-          {type === 'document-create' ? (
+          {type === 'document-create' || type === 'document-copy' ? (
             <CreateDocumentModal
-              departmentId={templateData?.data?.departmentId ?? ''}
               isOpen={isProcessModalOpen}
               suggestOperators={templateData?.data?.operators ?? []}
               templateId={templateId}
@@ -222,7 +220,7 @@ const DocumentEditor = ({ type }: PropsType) => {
           <div className="hs-dropdown relative inline-flex">
             <div id="hs-dropdown-custom-icon-trigger">
               <ToolbarButton
-                icon={<FaPenFancy />}
+                icon={<FaSignature />}
                 id={ButtonId.Sign}
                 label="Sign"
               />
@@ -231,23 +229,12 @@ const DocumentEditor = ({ type }: PropsType) => {
               className="hs-dropdown-menu duration min-w-60 z-20 mt-2 hidden rounded-lg bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:border dark:border-neutral-700 dark:bg-neutral-800"
               aria-labelledby="hs-dropdown-custom-icon-trigger"
             >
-              <div className="m-2 flex justify-center rounded-md border-2">
-                <img
-                  src={mock_signature_1}
-                  alt="sig-1"
-                  className="max-h-[96px]"
-                />
-              </div>
-              <div className="m-2 flex justify-center rounded-md border-2">
-                <img
-                  src={mock_signature_2}
-                  alt="sig-2"
-                  className="max-h-[96px]"
-                />
-              </div>
-              <div className="m-2 flex justify-center rounded-md border-4 border-dashed p-2 text-blue-500">
+              {user.signatures.map((signature) => (
+                <SignatureBox src={signature} />
+              ))}
+              {/* <div className="m-2 flex justify-center rounded-md border-4 border-dashed p-2 text-blue-500">
                 <FaPlus size={32} />
-              </div>
+              </div> */}
             </div>
           </div>
           <ToolbarButton
@@ -370,7 +357,7 @@ const DocumentEditor = ({ type }: PropsType) => {
       )}
       <div className="flex h-[calc(100vh-140px)]">
         {/* <div className="p-4">
-          <Document file={file?.data}>
+          <Document  ={file?.data}>
             {Array.apply(null, Array(pageTotal))
               .map((x, i) => i + 1)
               .map((page) => {
@@ -394,7 +381,9 @@ const DocumentEditor = ({ type }: PropsType) => {
         </div> */}
         <div
           css={[
-            type !== 'document-create' ? tw`w-3/4` : tw`w-full`,
+            type !== 'document-create' && type !== 'document-copy'
+              ? tw`w-3/4`
+              : tw`w-full`,
             tw`relative`,
           ]}
         >
@@ -447,7 +436,8 @@ const DocumentEditor = ({ type }: PropsType) => {
                               ? true
                               : false)) &&
                             type !== 'document-view') ||
-                          type === 'document-create'
+                          type === 'document-create' ||
+                          type === 'document-copy'
                         }
                       />
                       <Page
