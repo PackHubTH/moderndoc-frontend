@@ -1,12 +1,13 @@
 import * as Fabric from 'fabric'
 
 import { useUserStore } from '@/stores/userStore'
-import { PDFDocument } from 'pdf-lib'
+import { format } from 'date-fns'
+import { th } from 'date-fns/locale'
 import { CanvasProps } from '../types/DocumentField'
 import { ActiveToolbarButton } from '../types/ToolbarButton'
 
 // add delete icon controls
-const deleteIcon = new Fabric.Control({
+export const deleteIcon = new Fabric.Control({
   x: 0.5,
   y: -0.5,
   offsetY: 16,
@@ -51,6 +52,8 @@ const addAutoFill = (
     textAlign: 'center',
     createdBy: useUserStore.getState().user?.id,
   })
+  fabricText.setControlsVisibility({ mt: false, mb: false })
+
   // const rect = new Fabric.Rect({
   //   top: y,
   //   left: x,
@@ -105,7 +108,7 @@ const addField = (
     textAlign: 'center',
     createdBy: useUserStore.getState().user?.id,
   })
-
+  fabricText.setControlsVisibility({ mt: false, mb: false })
   fabricText.controls.deleteIcon = deleteIcon
 
   canvas.add(fabricText)
@@ -152,6 +155,7 @@ const addImg = (
         scaleY: isCheck ? 0.05 : 1,
         createdBy: useUserStore.getState().user?.id,
       })
+      fabricImg.setControlsVisibility({ mt: false, mb: false })
       fabricImg.controls.deleteIcon = deleteIcon
       canvas.add(fabricImg)
     }
@@ -202,8 +206,6 @@ const initCanvas = (
 ) => {
   console.log('initCanvas', isEditable)
   const newCanvas = new Fabric.Canvas(id)
-  // newCanvas.isDrawingMode = true
-  // newCanvas.freeDrawingBrush = new Fabric.PencilBrush(newCanvas)
 
   const originalToObject = newCanvas.toObject.bind(newCanvas)
 
@@ -257,6 +259,7 @@ const mouseHandler = (
     canvas.forEachObject((obj: any) => {
       obj.set({ selectable: false })
       obj.set({ evented: false })
+      obj.setControlsVisibility({ mt: false, mb: false })
     })
     canvas.discardActiveObject()
   } else {
@@ -268,6 +271,7 @@ const mouseHandler = (
         obj.set({ selectable: true })
         obj.set({ evented: true })
       }
+      obj.setControlsVisibility({ mt: false, mb: false })
       obj.controls.deleteIcon = deleteIcon
     })
     canvas.isDrawingMode = false
@@ -304,7 +308,9 @@ const mouseHandler = (
       console.log('date')
       addField(
         canvas,
-        new Date().toLocaleDateString(),
+        format(new Date(), 'dd MMM yyyy', {
+          locale: th,
+        }),
         option.x,
         option.y,
         setActiveButton
@@ -330,79 +336,6 @@ const mouseHandler = (
   }
 
   canvas.renderAll()
-}
-
-const saveCanvas = async (canvasList: CanvasProps[], file: any) => {
-  console.log('saveCanvas')
-  let jsonList: any = []
-  canvasList.forEach((item, index) => {
-    console.log('canvas', item)
-    // remove active object
-    // item.canvas.remove(item.canvas.getActiveObject() as Fabric.Object)
-
-    // change color of active object
-    // const activeObject = item.canvas.getActiveObject()
-    // if (activeObject) {
-    //   activeObject.set('fill', 'yellow')
-    //   item.canvas.renderAll()
-    // }
-    const json = JSON.stringify(item.canvas.toJSON())
-    console.log('json', json)
-    jsonList.push(json)
-  })
-
-  // Step 1: Retrieve the file from the input
-  // const file = event.target.files[0];
-  // const file = exampleFile
-  if (!file) {
-    return
-  }
-
-  // Step 2: Convert the file into an ArrayBuffer
-  const arrayBuffer = await fetch(file).then((res) => {
-    if (res.ok) return res.arrayBuffer()
-    throw new Error('Failed to fetch PDF.')
-  })
-
-  // Step 3: Load into PDFDocument
-  const pdfDoc = await PDFDocument.load(arrayBuffer)
-  const pages = pdfDoc.getPages()
-  const firstPage = pages[0]
-
-  // Modify your PDF here
-  // firstPage.drawText('This text was added with pdf-lib!', {
-  //   x: 5,
-  //   y: firstPage.getHeight() - 40,
-  //   size: 12,
-  // })
-  // draw text based on json
-  jsonList.forEach((json: any, i: number) => {
-    // log object from json
-    console.log('jsonnn', JSON.parse(json))
-    JSON.parse(json).objects?.forEach((obj: any) => {
-      console.log('obj', obj)
-      pages[i].drawText(obj.text, {
-        x: obj.left,
-        y: pages[i].getHeight() - obj.top,
-        size: obj.fontSize,
-        maxWidth: obj.width,
-        lineHeight: 16,
-        // font: 'Times New Roman',
-        // color: obj.fill as Color,
-      })
-    })
-  })
-
-  // Step 4: Serialize the PDFDocument to bytes
-  const pdfBytes = await pdfDoc.save()
-  console.log('pdfBytes', pdfBytes)
-
-  // Step 5: Prompt the user to download the modified PDF
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' })
-  const link = document.createElement('a')
-  link.href = window.URL.createObjectURL(blob)
-  link.download = 'modified_document.pdf'
-  link.click()
 }
 
 const setTextAlign = (canvasList: CanvasProps[], id: string, align: string) => {
@@ -593,7 +526,6 @@ export {
   initCanvas,
   mouseHandler,
   rgbToHex,
-  saveCanvas,
   setAutoFillType,
   setFontFamily,
   setFontSize,

@@ -20,7 +20,6 @@ import { DocumentStatus } from '../types/types'
 import { getJson } from '../utils/documentEditorUtils'
 
 type PropsType = {
-  departmentId: string
   isOpen: boolean
   suggestOperators: Operator[]
   templateId: string
@@ -28,7 +27,6 @@ type PropsType = {
 }
 
 const CreateDocumentModal: React.FC<PropsType> = ({
-  departmentId,
   isOpen,
   suggestOperators,
   templateId,

@@ -26,20 +26,20 @@ const TableInfoBox = ({
         <p className="flex items-center gap-2 text-sm text-[#888888]">
           สร้างโดย
           <img
-            src={userCreatedBy.profileImg}
+            src={userCreatedBy?.profileImg ?? ''}
             alt="create-by-img"
             className="h-5 w-5 rounded-full"
           />
-          <span className="text-[#797979]">{userCreatedBy.nameTh}</span>
+          <span className="text-[#797979]">{userCreatedBy?.nameTh ?? ''}</span>
         </p>
         <p className="flex items-center gap-2 text-sm text-[#888888]">
           ส่งโดย
           <img
-            src={userUpdatedBy.profileImg}
+            src={userUpdatedBy?.profileImg ?? ''}
             alt="create-by-img"
             className="h-5 w-5 rounded-full"
           />
-          <span className="text-[#797979]">{userUpdatedBy.nameTh}</span>
+          <span className="text-[#797979]">{userUpdatedBy?.nameTh ?? ''}</span>
         </p>
       </div>
     </div>

@@ -7,13 +7,14 @@ import {
 } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import { FaCopy, FaEye } from 'react-icons/fa'
-import { Document, DocumentStatus } from '../types/types'
+import { Document, DocumentAction, DocumentStatus } from '../types/types'
 import { getStatusBadgeProps, shouldShowAction } from '../utils/statusUtils'
 
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import DropdownItem from '@/components/Dropdown/DropdownItem'
 import Loading from '@/components/Loading'
+import Modal from '@/components/Modal'
 import TableDisplay from '@/components/TableDisplay'
 import Pagination from '@/components/TableDisplay/Pagination'
 import TableInfoBox from '@/components/TableInfoBox'
@@ -24,6 +25,8 @@ import { formatFullDatetime } from '@/utils/formatUtils'
 import { FaRegEnvelope } from 'react-icons/fa6'
 import { HiTrash } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import useActionDocument from '../hooks/api/useActionDocument'
 import useGetAllDocument from '../hooks/api/useGetAllDocument'
 import useGetDocumentById from '../hooks/api/useGetDocumentById'
 
@@ -38,7 +41,13 @@ interface PropsType {
 }
 
 const DocumentListTable = ({ type }: PropsType) => {
+  const { mutate: actionDocument } = useActionDocument()
   const { isOpen, open, close } = useDisclosure()
+  const {
+    isOpen: isDeleteOpen,
+    open: openDelete,
+    close: closeDelete,
+  } = useDisclosure()
   const navigate = useNavigate()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -55,6 +64,33 @@ const DocumentListTable = ({ type }: PropsType) => {
   const [documentId, setDocumentId] = useState('')
   const { data: documentData, refetch: refetchDocumentById } =
     useGetDocumentById(documentId)
+
+  const deleteDocument = (data: Document) => {
+    try {
+      actionDocument(
+        {
+          documentId: data.id,
+          element: data.element,
+          action: DocumentAction.REJECT,
+          message: '',
+          receiverId: data.createdBy,
+        },
+        {
+          onSuccess: () => {
+            toast('ดำเนินการเอกสารสำเร็จ', { type: 'success' })
+            setTimeout(() => closeDelete(), 2000)
+          },
+          onError: (error) => {
+            toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, {
+              type: 'error',
+            })
+          },
+        }
+      )
+    } catch (error) {
+      toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, { type: 'error' })
+    }
+  }
 
   const columns: ColumnDef<Document>[] = [
     {
@@ -85,10 +121,8 @@ const DocumentListTable = ({ type }: PropsType) => {
         <TableInfoBox
           title={info.row.original.title}
           createdAt={info.row.original.createdAt}
-          userCreatedBy={info.row.original.userCreated.nameTh}
-          createdByImg={info.row.original.userCreated.profileImg}
-          userUpdatedBy={info.row.original.operator?.nameTh ?? ''}
-          updatedByImg={info.row.original.operator?.profileImg ?? ''}
+          userCreatedBy={info.row.original.userCreated}
+          userUpdatedBy={info.row.original.operator}
         />
       ),
     },
@@ -147,9 +181,49 @@ const DocumentListTable = ({ type }: PropsType) => {
                       displayText="คัดลอก"
                       icon={<FaCopy className="text-blue-500" />}
                     />
-                    <DropdownItem
-                      displayText="ลบเอกสาร"
-                      icon={<HiTrash className="text-red-500" />}
+                    {shouldShowAction(
+                      info.row.original.status,
+                      info.row.original.documentSents?.find(
+                        (sent) => sent.receiverId === user.id
+                      )?.status ?? ''
+                    ) && (
+                      <div id="delete-modal">
+                        <DropdownItem
+                          displayText="ลบเอกสาร"
+                          icon={<HiTrash className="text-red-500" />}
+                          onClick={openDelete}
+                        />
+                      </div>
+                    )}
+                    <Modal
+                      isOpen={isDeleteOpen}
+                      variant="confirm"
+                      onClose={closeDelete}
+                      title="ยืนยันการลบเอกสาร"
+                      width="600px"
+                      content={
+                        <p className="text-s">
+                          รายการดังกล่าวยังไม่มีผู้ดำเนินการต่อ
+                          หากทำการลบจะไม่สามารถกู้คืนได้
+                        </p>
+                      }
+                      leftIcon={<HiTrash className="text-red-500" />}
+                      actions={
+                        <div className="flex gap-4">
+                          <Button
+                            label="ยกเลิก"
+                            variant="outline-gray"
+                            onClick={closeDelete}
+                          />
+                          <Button
+                            label="ลบ"
+                            variant="red"
+                            onClick={() => {
+                              deleteDocument(info.row.original)
+                            }}
+                          />
+                        </div>
+                      }
                     />
                   </div>
                 </div>
@@ -181,6 +255,9 @@ const DocumentListTable = ({ type }: PropsType) => {
     if (
       window.document
         .getElementById('hs-dropdown-with-title')
+        ?.contains(window.document.activeElement) ||
+      window.document
+        .getElementById('delete-modal')
         ?.contains(window.document.activeElement)
     )
       return
@@ -194,13 +271,6 @@ const DocumentListTable = ({ type }: PropsType) => {
 
   return (
     <div className="flex">
-      {/* <Button
-        label="สร้างเอกสาร"
-        variant="green"
-        onClick={() => {
-          navigate('/create-document/f5fb00e4-7d45-43a8-9781-dbb72833c4a4')
-        }}
-      /> */}
       <div className="flex-1 p-2">
         <TableDisplay
           table={table}
