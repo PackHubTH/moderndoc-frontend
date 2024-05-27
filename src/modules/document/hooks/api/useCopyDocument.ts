@@ -5,15 +5,15 @@ import { CreateDocument } from '../../types/response'
 import { DocumentStatus } from '../../types/types'
 
 type Params = {
-  templateId: string
+  templateFile: string
   element: any
   documentStatus: DocumentStatus
 }
 
-const useCreateDocument = () => {
-  const context = useMutation(['create-document'], async (data: Params) => {
+const useCopyDocument = () => {
+  const context = useMutation(['copy-document'], async (data: Params) => {
     const response = await moderndocApi.post<ApiResponse<CreateDocument>>(
-      '/document',
+      '/document/copy',
       data
     )
     return response.data
@@ -22,4 +22,4 @@ const useCreateDocument = () => {
   return context
 }
 
-export default useCreateDocument
+export default useCopyDocument

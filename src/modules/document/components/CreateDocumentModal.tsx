@@ -12,6 +12,7 @@ import { FaInfoCircle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import useAssignOperator from '../hooks/api/useAssignOperator'
+import useCopyDocument from '../hooks/api/useCopyDocument'
 import useCreateDocument from '../hooks/api/useCreateDocument'
 import useCreateDocumentForm from '../hooks/useCreateDocumentForm'
 import { CreateDocumentForm } from '../hooks/useCreateDocumentForm/validation'
@@ -23,6 +24,8 @@ type PropsType = {
   isOpen: boolean
   suggestOperators: Operator[]
   templateId: string
+  templateFile: string
+  type: string
   close: () => void
 }
 
@@ -30,10 +33,13 @@ const CreateDocumentModal: React.FC<PropsType> = ({
   isOpen,
   suggestOperators,
   templateId,
+  templateFile,
+  type,
   close,
 }: PropsType) => {
   const { mutate: assignOperator } = useAssignOperator()
   const { mutate: createDocument } = useCreateDocument()
+  const { mutate: copyDocument } = useCopyDocument()
   const { methods } = useCreateDocumentForm()
   const canvasList = useDocumentStore((state) => state.canvasList)
   const navigate = useNavigate()
@@ -51,9 +57,12 @@ const CreateDocumentModal: React.FC<PropsType> = ({
   }, [isOpen])
 
   const operators = useMemo(() => {
-    suggestOperators.forEach((operator) => {
-      operator.isTemplateOperator = true
-    })
+    if (!suggestOperators && !userList) return []
+
+    if (suggestOperators && suggestOperators.length > 0)
+      suggestOperators.forEach((operator) => {
+        operator.isTemplateOperator = true
+      })
 
     if (!userList) return suggestOperators
 
@@ -65,43 +74,80 @@ const CreateDocumentModal: React.FC<PropsType> = ({
 
   const onProcessSubmit = async (data: CreateDocumentForm) => {
     try {
-      createDocument(
-        {
-          templateId,
-          element: {
-            data: getJson(canvasList),
+      if (type === 'document-create')
+        createDocument(
+          {
+            templateId,
+            element: {
+              data: getJson(canvasList),
+            },
+            documentStatus,
           },
-          documentStatus,
-        },
-        {
-          onSuccess: (res) => {
-            assignOperator(
-              {
-                documentId: res.data.id,
-                operatorUserId: data.operatorUserId,
-                message: data.message,
-                isEditable: data.isEditable,
-              },
-              {
-                onSuccess: () => {
-                  toast('สร้างเอกสารสำเร็จ', { type: 'success' })
-                  setTimeout(() => navigate('/document-management'), 2000)
+          {
+            onSuccess: (res) => {
+              assignOperator(
+                {
+                  documentId: res.data.id,
+                  operatorUserId: data.operatorUserId,
+                  message: data.message,
+                  isEditable: data.isEditable,
                 },
-                onError: (error) => {
-                  toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
-                    type: 'error',
-                  })
+                {
+                  onSuccess: () => {
+                    toast('สร้างเอกสารสำเร็จ', { type: 'success' })
+                    setTimeout(() => navigate('/document-management'), 2000)
+                  },
+                  onError: (error) => {
+                    toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+                      type: 'error',
+                    })
+                  },
+                }
+              )
+            },
+            onError: (error) => {
+              toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+                type: 'error',
+              })
+            },
+          }
+        )
+      else
+        copyDocument(
+          {
+            templateFile,
+            element: { data: getJson(canvasList) },
+            documentStatus,
+          },
+          {
+            onSuccess: (res) => {
+              assignOperator(
+                {
+                  documentId: res.data.id,
+                  operatorUserId: data.operatorUserId,
+                  message: data.message,
+                  isEditable: data.isEditable,
                 },
-              }
-            )
-          },
-          onError: (error) => {
-            toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
-              type: 'error',
-            })
-          },
-        }
-      )
+                {
+                  onSuccess: () => {
+                    toast('คัดลอกเอกสารสำเร็จ', { type: 'success' })
+                    setTimeout(() => navigate('/document-management'), 2000)
+                  },
+                  onError: (error) => {
+                    toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+                      type: 'error',
+                    })
+                  },
+                }
+              )
+            },
+            onError: (error) => {
+              toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+                type: 'error',
+              })
+            },
+          }
+        )
     } catch (error) {
       toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
     }
@@ -109,24 +155,44 @@ const CreateDocumentModal: React.FC<PropsType> = ({
 
   const onNonProcessSubmit = async () => {
     try {
-      createDocument(
-        {
-          templateId,
-          element: { data: getJson(canvasList) },
-          documentStatus,
-        },
-        {
-          onSuccess: () => {
-            toast('สร้างเอกสารสำเร็จ', { type: 'success' })
-            setTimeout(() => navigate('/document-management'), 2000)
+      if (type === 'document-create')
+        createDocument(
+          {
+            templateId,
+            element: { data: getJson(canvasList) },
+            documentStatus,
           },
-          onError: (error) => {
-            toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
-              type: 'error',
-            })
+          {
+            onSuccess: () => {
+              toast('สร้างเอกสารสำเร็จ', { type: 'success' })
+              setTimeout(() => navigate('/document-management'), 2000)
+            },
+            onError: (error) => {
+              toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+                type: 'error',
+              })
+            },
+          }
+        )
+      else
+        copyDocument(
+          {
+            templateFile,
+            element: { data: getJson(canvasList) },
+            documentStatus,
           },
-        }
-      )
+          {
+            onSuccess: () => {
+              toast('คัดลอกเอกสารสำเร็จ', { type: 'success' })
+              setTimeout(() => navigate('/document-management'), 2000)
+            },
+            onError: (error) => {
+              toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
+                type: 'error',
+              })
+            },
+          }
+        )
     } catch (error) {
       toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, { type: 'error' })
     }
@@ -145,14 +211,14 @@ const CreateDocumentModal: React.FC<PropsType> = ({
                 label="เลือกผู้รับเอกสาร"
                 placeholder="เลือกหรือค้นหารายชื่อ"
                 onChange={(e) => {
-                  const name = operators.find((operator) => operator.id === e)
+                  const name = operators?.find((operator) => operator.id === e)
                     ?.nameTh
                   onChange(e)
                   setSearchOperator(name ?? '')
                 }}
                 onSearch={(e) => {
                   setSearchOperator(e)
-                  const name = operators.find((operator) => operator.id === e)
+                  const name = operators?.find((operator) => operator.id === e)
                     ?.nameTh
                   if (!name) onChange('')
                 }}

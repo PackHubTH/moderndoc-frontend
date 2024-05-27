@@ -54,7 +54,7 @@ function App() {
       <Routes>
         <Route index element={<Home />} />
         <Route
-          path="/copy-document/:copyId"
+          path="/copy-document/:documentId"
           element={<DocumentEditor type="document-copy" />}
         />
         <Route

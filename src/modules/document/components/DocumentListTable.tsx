@@ -180,6 +180,9 @@ const DocumentListTable = ({ type }: PropsType) => {
                     <DropdownItem
                       displayText="คัดลอก"
                       icon={<FaCopy className="text-blue-500" />}
+                      onClick={() =>
+                        navigate(`/copy-document/${info.row.original.id}`)
+                      }
                     />
                     {shouldShowAction(
                       info.row.original.status,

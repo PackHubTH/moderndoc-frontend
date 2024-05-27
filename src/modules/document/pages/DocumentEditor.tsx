@@ -36,6 +36,7 @@ import SignatureBox from '@/components/SignatureBox'
 import { useDisclosure } from '@/hooks/useDisclosure'
 import useGetFile from '@/hooks/useGetFile'
 import useGetTemplateById from '@/modules/template/hooks/api/useGetTemplateById'
+import { Operator } from '@/modules/template/types/response'
 import TimelineDescriptionBox from '@/modules/timeline/components/TimelineDescriptionBox'
 import { useUserStore } from '@/stores/userStore'
 import { BsDistributeHorizontal } from 'react-icons/bs'
@@ -179,8 +180,25 @@ const DocumentEditor = ({ type }: PropsType) => {
           {type === 'document-create' || type === 'document-copy' ? (
             <CreateDocumentModal
               isOpen={isProcessModalOpen}
-              suggestOperators={templateData?.data?.operators ?? []}
+              suggestOperators={
+                (templateData?.data?.operators ||
+                  (documentData?.data.operator
+                    ? ([
+                        {
+                          ...documentData?.data?.operator,
+                          id: documentData?.data?.operatorId,
+                        },
+                      ] as Operator[])
+                    : [])) ??
+                []
+              }
+              templateFile={
+                (templateData?.data?.templateFile ||
+                  documentData?.data?.templateFile) ??
+                ''
+              }
               templateId={templateId}
+              type={type}
               close={closeProcessModal}
             />
           ) : documentData?.data?.status === DocumentStatus.DRAFT ? (
