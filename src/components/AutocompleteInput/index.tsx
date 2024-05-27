@@ -1,6 +1,6 @@
 import ProfileOptionBox from '@/modules/template/components/ProfileOptionBox'
 import { Combobox } from '@headlessui/react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import tw from 'twin.macro'
 
 type PropsType = {
@@ -33,13 +33,17 @@ const AutocompleteInput: React.FC<PropsType> = ({
   placeholder = 'กรุณาเลือก...',
   disabled,
 }) => {
+  const comboBoxButtonRef = useRef<HTMLButtonElement>(null)
   const [query, setQuery] = useState('')
 
-  const filteredOptions = options.filter(
-    (option) =>
-      option.label.toLowerCase().includes(query.toLowerCase()) ||
-      option.value.toLowerCase().includes(query.toLowerCase())
-  )
+  const filteredOptions =
+    query === ''
+      ? options
+      : options.filter(
+          (option) =>
+            option.label.toLowerCase().includes(query.toLowerCase()) ||
+            option.value.toLowerCase().includes(query.toLowerCase())
+        )
 
   return (
     <Combobox value={value} onChange={onChange} disabled={disabled}>
@@ -53,7 +57,7 @@ const AutocompleteInput: React.FC<PropsType> = ({
         <Combobox.Input
           id={label}
           css={[
-            tw`block w-full rounded-full border-gray-200 px-4 py-3 text-sm text-gray-500 focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50`,
+            tw`block w-full rounded-full border-gray-200 px-4 py-3 text-sm text-gray-500 focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 `,
             isError &&
               tw`border-red-500 focus:border-red-500 focus:ring-red-500`,
           ]}
@@ -63,7 +67,12 @@ const AutocompleteInput: React.FC<PropsType> = ({
             setQuery(e.target.value)
             onSearch?.(e.target.value)
           }}
+          onClick={(e) => {
+            e.stopPropagation()
+            comboBoxButtonRef.current?.click()
+          }}
         />
+        <Combobox.Button ref={comboBoxButtonRef} className="hidden" />
         <Combobox.Options>
           {[
             {
