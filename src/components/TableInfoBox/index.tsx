@@ -32,15 +32,19 @@ const TableInfoBox = ({
           />
           <span className="text-[#797979]">{userCreatedBy?.nameTh ?? ''}</span>
         </p>
-        <p className="flex items-center gap-2 text-sm text-[#888888]">
-          ส่งโดย
-          <img
-            src={userUpdatedBy?.profileImg ?? ''}
-            alt="create-by-img"
-            className="h-5 w-5 rounded-full"
-          />
-          <span className="text-[#797979]">{userUpdatedBy?.nameTh ?? ''}</span>
-        </p>
+        {userUpdatedBy && (
+          <p className="flex items-center gap-2 text-sm text-[#888888]">
+            ส่งโดย
+            <img
+              src={userUpdatedBy?.profileImg ?? ''}
+              alt="create-by-img"
+              className="h-5 w-5 rounded-full"
+            />
+            <span className="text-[#797979]">
+              {userUpdatedBy?.nameTh ?? ''}
+            </span>
+          </p>
+        )}
       </div>
     </div>
   )
