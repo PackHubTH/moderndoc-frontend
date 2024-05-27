@@ -141,13 +141,10 @@ const DocumentEditor = ({ type }: PropsType) => {
               templateData?.data?.description ||
               '-'
             }
-            fileName={
-              documentData?.data?.title || templateData?.data?.title || '-'
-            }
-            filePath={
+            file={
               documentData?.data?.exampleFile ||
               templateData?.data?.exampleFile ||
-              ''
+              '-'
             }
             isOpen={isGuidelineModalOpen}
             onClose={closeGuidelineModal}

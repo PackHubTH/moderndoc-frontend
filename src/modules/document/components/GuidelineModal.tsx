@@ -1,22 +1,30 @@
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
+import useGetFileMutate from '@/hooks/useGetFileMutate'
+import { getFilename } from '@/utils/fileUtils'
 import { IoEye } from 'react-icons/io5'
 
 type PropsType = {
   description: string
-  fileName: string
-  filePath: string
+  file: string
   isOpen: boolean
   onClose: VoidFunction
 }
 
 const GuidelineModal: React.FC<PropsType> = ({
   description,
-  fileName,
-  filePath,
+  file,
   isOpen,
   onClose,
 }) => {
+  const { mutateAsync: getFile } = useGetFileMutate()
+
+  const onOpenFile = async () => {
+    const url = await getFile(file)
+
+    window.open(url.data, '_blank')
+  }
+
   return (
     <Modal
       actions={<Button label="ปิด" variant="gray" onClick={onClose} />}
@@ -35,12 +43,12 @@ const GuidelineModal: React.FC<PropsType> = ({
               <p>ชื่อเอกสาร</p>
               <p>ดูข้อมูล</p>
             </div>
-            <div className="flex items-center justify-between p-4">
-              <p>{fileName}</p>
-              <IoEye
-                className="cursor-pointer text-blue-500"
-                onClick={() => console.log(filePath)}
-              />
+            <div
+              className="flex cursor-pointer items-center justify-between p-4"
+              onClick={onOpenFile}
+            >
+              <p>{file !== '' ? getFilename(file) : '-'}</p>
+              <IoEye className="cursor-pointer text-blue-500" />
             </div>
           </div>
         </div>
