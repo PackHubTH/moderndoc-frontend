@@ -15,7 +15,7 @@ const TableInfoBox = ({
   createdAt,
 }: PropsType) => {
   return (
-    <div>
+    <div className="w-full">
       <div className="flex gap-2">
         <h1 className="mr-2 font-semibold text-blue-500">{title}</h1>
         <p className="font-medium text-gray-400">

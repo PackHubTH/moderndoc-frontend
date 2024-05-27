@@ -41,7 +41,7 @@ const TimelineListTable = () => {
   const columns: ColumnDef<Timeline>[] = [
     {
       id: 'index',
-      size: 20,
+      size: 40,
       header: 'ที่',
       cell: (info) => (
         <span className="font-medium text-gray-500">
@@ -93,7 +93,7 @@ const TimelineListTable = () => {
     },
     {
       id: 'documentId',
-      size: 20,
+      size: 400,
       header: '',
       cell: (info) => (
         <TableInfoBox
@@ -106,6 +106,7 @@ const TimelineListTable = () => {
     },
     {
       id: 'templateLastUpdatedAt',
+      size: 160,
       header: '',
       cell: (info) => (
         <TableStatusBox
