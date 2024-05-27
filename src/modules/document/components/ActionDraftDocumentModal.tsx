@@ -10,7 +10,6 @@ import useGetUsersByName from '@/modules/user/hooks/api/useGetUsersByName'
 import { useUserStore } from '@/stores/userStore'
 import { Controller } from 'react-hook-form'
 import { FaInfoCircle } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import useActionDocument from '../hooks/api/useActionDocument'
 import useAssignOperator from '../hooks/api/useAssignOperator'
@@ -37,7 +36,6 @@ const ActionDraftDocumentModal = ({
   const { mutate: assignOperator } = useAssignOperator()
   const { methods } = useCreateDocumentForm()
   const canvasList = useDocumentStore((state) => state.canvasList)
-  const navigate = useNavigate()
   const [documentAction, setDocumentAction] = useState(
     DocumentAction.SEND_TO_OPERATOR
   )
@@ -77,7 +75,10 @@ const ActionDraftDocumentModal = ({
         {
           onSuccess: () => {
             toast('สร้างเอกสารสำเร็จ', { type: 'success' })
-            setTimeout(() => navigate('/document-management'), 2000)
+            setTimeout(
+              () => (window.location.href = '/document-management'),
+              2000
+            )
           },
           onError: (error) => {
             toast(`เกิดข้อผิดพลาดในการสร้าง Template ${error}`, {
@@ -97,14 +98,17 @@ const ActionDraftDocumentModal = ({
         {
           documentId,
           element: { data: getJson(canvasList) },
-          action: DocumentAction.COMPLETE,
+          action: documentAction,
           message: '',
           receiverId: userId,
         },
         {
           onSuccess: () => {
             toast('ดำเนินการเอกสารสำเร็จ', { type: 'success' })
-            setTimeout(() => navigate('/document-management'), 2000)
+            setTimeout(
+              () => (window.location.href = '/document-management'),
+              2000
+            )
           },
           onError: (error) => {
             toast(`เกิดข้อผิดพลาดในการดำเนินการเอกสาร ${error}`, {
@@ -218,6 +222,7 @@ const ActionDraftDocumentModal = ({
               label="เลือกดำเนินการ"
               options={[
                 { value: DocumentAction.SEND_TO_OPERATOR, label: 'ส่งเอกสาร' },
+                { value: DocumentAction.DRAFT, label: 'บันทึกฉบับร่าง' },
                 { value: DocumentAction.COMPLETE, label: 'เสร็จสิ้นทันที' },
               ]}
               value={documentAction}

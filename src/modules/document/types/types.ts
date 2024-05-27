@@ -1,6 +1,7 @@
 import { User } from '@/modules/user/hooks/types'
 
 export enum DocumentAction {
+  DRAFT = 'DRAFT',
   SEND_BACK_TO_OWNER = 'SEND_BACK_TO_OWNER',
   SEND_TO_OPERATOR = 'SEND_TO_OPERATOR',
   SEND_TO_REVIEW = 'SEND_TO_REVIEW',
