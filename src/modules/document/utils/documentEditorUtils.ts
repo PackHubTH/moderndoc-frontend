@@ -138,6 +138,7 @@ const addImg = (
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = function () {
+      // const scaleFactor = Math.max(200 / img.width, 96 / img.height)
       const fabricImg = new Fabric.Image(img, {
         top: y,
         left: x,
@@ -149,6 +150,9 @@ const addImg = (
         scaleY: isCheck ? 0.05 : 1,
         createdBy: useUserStore.getState().user?.id,
       })
+      const scaleFactor = Math.max(200 / fabricImg.width, 96 / fabricImg.height)
+      fabricImg.scaleX = scaleFactor
+      fabricImg.scaleY = scaleFactor
       fabricImg.setControlsVisibility({ mt: false, mb: false })
       fabricImg.controls.deleteIcon = deleteIcon
       canvas.add(fabricImg)
