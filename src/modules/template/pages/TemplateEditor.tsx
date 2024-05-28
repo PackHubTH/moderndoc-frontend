@@ -112,7 +112,6 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
       )
   }
 
-  console.log('editor active object', activeObject?.elName)
   return (
     <div>
       {/* Header */}
@@ -151,7 +150,6 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
         </div>
       </div>
       {/* Toolbar */}
-      {/* <ToolBarButtonGroup /> */}
       <div className="flex h-[calc(100vh-92px)]">
         <div css={[activeObject ? tw`w-3/4` : tw`w-full`]}>
           <DocumentToolbar>

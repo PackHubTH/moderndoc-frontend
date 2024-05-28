@@ -16,7 +16,6 @@ import { FaA, FaSignature } from 'react-icons/fa6'
 import { Document, Page } from 'react-pdf'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
-  getJson,
   hexToRgb,
   rgbToHex,
   setFontFamily,
@@ -263,7 +262,6 @@ const DocumentEditor = ({ type }: PropsType) => {
             label="Check"
           />
           <ToolbarButton
-            onClick={() => console.log(getJson(canvasList))}
             icon={<FaMousePointer />}
             id={ButtonId.Default}
             label="Select"

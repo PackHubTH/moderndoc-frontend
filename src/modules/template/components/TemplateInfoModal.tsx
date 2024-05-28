@@ -108,7 +108,6 @@ const TemplateInfoModal = ({
   }, [userData])
 
   useEffect(() => {
-    console.log('🚀 ~ useEffect ~ departmentData:', departmentData)
     if (departmentData) {
       setDepartmentSearch(departmentData.data.name)
     }

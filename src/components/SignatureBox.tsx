@@ -24,12 +24,6 @@ const SignatureBox = ({ src }: PropsType) => {
       item: {
         src: getFileName,
       },
-      end: (item, monitor) => {
-        const dropResult = monitor.getDropResult()
-        if (item && dropResult) {
-          console.log(`You dropped ${item.src} into ${dropResult}`)
-        }
-      },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
         handlerId: monitor.getHandlerId(),
@@ -38,7 +32,6 @@ const SignatureBox = ({ src }: PropsType) => {
     [getFileName]
   )
 
-  console.log('isDragging', isDragging)
   return (
     <div className="m-2 flex justify-center rounded-md border-2" ref={drag}>
       <img src={file?.data} alt="sig-1" className="max-h-[96px]" />

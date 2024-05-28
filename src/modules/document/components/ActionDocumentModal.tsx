@@ -102,7 +102,6 @@ const ActionDocumentModal: React.FC<PropsType> = ({
     }
   }
 
-  console.log('ActionDocumentModal', documentAction)
   const renderActionDocumentForm = () => {
     if (
       documentAction === DocumentAction.COMPLETE ||
@@ -175,7 +174,6 @@ const ActionDocumentModal: React.FC<PropsType> = ({
     )
   }
 
-  console.log('method', methods.formState.isValid, methods.formState)
   return (
     <Modal
       isOpen={isOpen}

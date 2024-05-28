@@ -1,10 +1,11 @@
+import { useEffect, useState } from 'react'
+
 import AutocompleteInput from '@/components/AutocompleteInput'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import RichTextInput from '@/components/RichTextInput'
 import Select from '@/components/Select'
 import TextInput from '@/components/TextInput'
-import { useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { IoIosSend } from 'react-icons/io'
 import { toast } from 'react-toastify'
@@ -34,7 +35,6 @@ const UserInviteModal: React.FC<PropsType> = ({ isOpen, onClose }) => {
         onClose()
       },
       onError: (error: any) => {
-        console.log('🚀 ~ inviteUser ~ error:', error)
         toast(
           `เกิดข้อผิดพลาดในการส่งคำเชิญ ${error?.response.data.error ?? ''}`,
           {

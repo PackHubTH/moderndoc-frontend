@@ -30,7 +30,6 @@ const embedElementToPdf = async (file: string, element: any) => {
     const obj = JSON.parse(el)
     const page = pdfDoc.getPages()[index]
 
-    console.log('page size', page.getSize())
     if (page) {
       obj.objects.forEach(async (o: any) => {
         console.log('drawtext on page', o.text, o.left, o.top, o.fontSize)

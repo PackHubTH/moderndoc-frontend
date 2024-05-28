@@ -1,8 +1,9 @@
+import { Controller, FormProvider } from 'react-hook-form'
+
 import Button from '@/components/Button'
 import PageContainer from '@/components/PageContainer'
 import useUploadFile from '@/hooks/useUploadFile'
 import { useEffect } from 'react'
-import { Controller, FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { UserRole } from 'types/user'
@@ -47,8 +48,6 @@ const EditUserInfo = () => {
       })
     }
   }, [userData])
-
-  console.log('field', methods.watch(), methods.formState)
 
   const onSubmit = async () => {
     const data = methods.getValues()

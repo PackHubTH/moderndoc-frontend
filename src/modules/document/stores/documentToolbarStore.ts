@@ -17,7 +17,6 @@ export const useDocumentToolbarStore = create<DocumentToolbarStore>((set) => ({
   setActiveButton: (button) => set({ activeButton: button }),
   setActiveCanvasId: (id) => set({ activeCanvasId: id }),
   setActiveObject: (object) => {
-    console.log('set active object', object)
     set({ activeObject: object })
   },
 }))

@@ -55,7 +55,6 @@ export const getUserCourseName = (user?: User) => {
 }
 
 export const parseUserDatatoAutofill = (user: User): any => {
-  console.log('before parseuser', user, user.role)
   if (!user) return {}
 
   let educationLevel = user?.student?.course?.level

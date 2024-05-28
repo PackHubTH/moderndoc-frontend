@@ -38,8 +38,6 @@ const addAutoFill = (
   y: number,
   setActiveButton: (button: ActiveToolbarButton) => void
 ) => {
-  console.log('addAutoFill')
-
   const fabricText = new Fabric.Textbox('', {
     top: y,
     left: x,
@@ -94,8 +92,6 @@ const addField = (
   y: number,
   setActiveButton: (button: ActiveToolbarButton) => void
 ) => {
-  console.log('addField')
-
   const fabricText = new Fabric.Textbox(text, {
     top: y,
     left: x,
@@ -138,8 +134,6 @@ const addImg = (
   y: number,
   isCheck?: boolean
 ) => {
-  console.log('addImg')
-
   if (canvas) {
     const img = new Image()
     img.crossOrigin = 'anonymous'
@@ -169,7 +163,6 @@ const deleteField = (
   setActiveButton: (button: ActiveToolbarButton) => void
 ) => {
   const activeObject = canvas.getActiveObject()
-  console.log('deleteField', activeObject)
   if (activeObject) {
     canvas.remove(activeObject)
     canvas.renderAll()
@@ -204,7 +197,6 @@ const initCanvas = (
   isEditable: boolean,
   user?: DataProps
 ) => {
-  console.log('initCanvas', isEditable)
   const newCanvas = new Fabric.Canvas(id)
 
   const originalToObject = newCanvas.toObject.bind(newCanvas)
@@ -219,7 +211,6 @@ const initCanvas = (
   newCanvas.loadFromJSON(json).then(() => {
     newCanvas.forEachObject((obj: any) => {
       if (type === 'document-create') {
-        console.log('creating this ', obj, user)
         if (obj?.elName && user && user[obj?.elName]) {
           obj.set({ text: user[obj?.elName] as string })
           // set background color to none
@@ -243,7 +234,6 @@ const initCanvas = (
     })
     newCanvas.renderAll()
   })
-  console.log('inited', newCanvas)
   setCanvasList(id, newCanvas)
 }
 
@@ -254,7 +244,6 @@ const mouseHandler = (
   setActiveButton: (button: ActiveToolbarButton) => void,
   option?: any
 ) => {
-  console.log('mouseHandler')
   if (activeButton !== ActiveToolbarButton.Default || option?.isPreview) {
     canvas.forEachObject((obj: any) => {
       obj.set({ selectable: false })
@@ -286,7 +275,6 @@ const mouseHandler = (
 
   switch (activeButton) {
     case ActiveToolbarButton.AutoFill:
-      console.log('autofill')
       addAutoFill(
         canvasList,
         canvas,
@@ -297,15 +285,12 @@ const mouseHandler = (
       )
       break
     case ActiveToolbarButton.Text:
-      console.log('text')
       addField(canvas, option.text, option.x, option.y, setActiveButton)
       break
     case ActiveToolbarButton.Pen:
-      console.log('pen')
       drawingCanvas(canvasList)
       break
     case ActiveToolbarButton.Date:
-      console.log('date')
       addField(
         canvas,
         format(new Date(), 'dd MMM yyyy', {
@@ -317,11 +302,9 @@ const mouseHandler = (
       )
       break
     case ActiveToolbarButton.Delete:
-      console.log('delete')
       deleteField(canvas, setActiveButton)
       break
     case ActiveToolbarButton.Correct:
-      console.log('correct')
       addImg(
         canvas,
         'https://www.pngall.com/wp-content/uploads/8/Check-Mark-PNG-File.png',
@@ -331,7 +314,6 @@ const mouseHandler = (
       )
       break
     default:
-      console.log('default')
       break
   }
 
@@ -345,7 +327,6 @@ const setTextAlign = (canvasList: CanvasProps[], id: string, align: string) => {
     const updatedObject = activeObject.set({
       textAlign: align,
     })
-    console.log('Updated Object', updatedObject)
     canvas.renderAll()
   }
 }
@@ -359,10 +340,9 @@ const setTextBold = (
   const activeObject = canvas?.getActiveObject()
 
   if (activeObject && canvas) {
-    const updatedObject = activeObject.set({
+    activeObject.set({
       fontWeight: activeObject.get('fontWeight') === 'bold' ? 'normal' : 'bold',
     })
-    console.log('Updated Object', updatedObject)
     // setActiveObject(updatedObject) // Updating state with the new object
     canvas.renderAll()
   }
@@ -420,8 +400,7 @@ const setAutoFillType = (
   const activeObject = canvas?.getActiveObject()
 
   if (activeObject && canvas) {
-    const updatedObject = activeObject.set({ elName, text })
-    console.log('Updated Object', updatedObject)
+    activeObject.set({ elName, text })
     canvas.renderAll()
   }
 }
@@ -472,7 +451,6 @@ const getJson = (canvasList: CanvasProps[]) => {
   const jsonList: any = []
   canvasList.forEach((item, index) => {
     const json = JSON.stringify(item.canvas.toJSON())
-    console.log('json', json)
     jsonList.push(json)
   })
   return jsonList

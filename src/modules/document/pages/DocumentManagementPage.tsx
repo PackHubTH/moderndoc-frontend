@@ -1,27 +1,11 @@
 import PageContainer from '@/components/PageContainer'
 import Tabs from '@/components/Tabs'
-import { useNavigate } from 'react-router-dom'
 import DocumentListTable from '../components/DocumentListTable'
 
-// import TemplateInfoBox from '../components/TemplateInfoBox'
-// import TemplateListTable from '../components/TemplateListTable'
-// import UploadModal from '../components/UploadModal'
-
 const DocumentManagementPage: React.FC = () => {
-  const navigate = useNavigate()
-
   return (
     <PageContainer className="space-y-8 p-7">
       <h1 className="text-2xl font-bold text-gray-600">รายการเอกสาร</h1>
-      {/* <div className="flex items-center justify-end">
-        <Button
-          label="สร้าง mock"
-          variant="green"
-          onClick={() => {
-            navigate('/create-document/7719fea9-efa1-4165-8f8a-6b90e16c5fe2')
-          }}
-        />
-      </div> */}
       <Tabs
         onSearch={(val) => console.log(val)}
         tabs={[

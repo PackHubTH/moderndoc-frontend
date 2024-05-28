@@ -55,8 +55,6 @@ const DocumentCanvas = ({
   useEffect(() => {
     const isHasPage = canvasSizes.some((page) => page.id === id)
     const isHasCanvas = canvasList.some((page) => page.id === id)
-    console.log('isHasPage', isHasPage, 'isHasCanvas', isHasCanvas, element)
-    console.log('type', type, 'isEditable', isEditable)
 
     if (isHasPage && !isHasCanvas) {
       initCanvas(
@@ -77,7 +75,6 @@ const DocumentCanvas = ({
           resetCanvasList(id)
         }
       }
-      console.log('cleanup')
       cleanup()
     }
   }, [canvasSizes])
@@ -86,12 +83,6 @@ const DocumentCanvas = ({
     const canvas = canvasList.find((page) => page.id === id)?.canvas
 
     const handler = (option: any) => {
-      console.log(
-        'mouse down',
-        option?.absolutePointer,
-        activeButton,
-        isPreview
-      )
       if (canvas) {
         mouseHandler(canvasList, canvas, activeButton, setActiveButton, {
           isEditable,
@@ -105,10 +96,8 @@ const DocumentCanvas = ({
     }
 
     const handler2 = (option: any) => {
-      console.log('selected', option)
       if (option.selected.length === 1) {
         const obj = option.selected[0]
-        console.log('obj', obj)
         setActiveCanvasId(id)
         setActiveObject(obj)
       }
@@ -119,7 +108,6 @@ const DocumentCanvas = ({
     }
 
     const handler4 = (option: any) => {
-      console.log('object:modified', option)
       const obj = option.target
       setActiveObject(obj)
     }
@@ -153,16 +141,12 @@ const DocumentCanvas = ({
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
     accept: 'sign',
     drop: (item: DnDItem, monitor) => {
-      console.log(item, id)
       const canvas = canvasListRef.current.find((page) => page.id === id)
         ?.canvas
       const m = monitor.getClientOffset()
       const c = canvasRef.current?.getBoundingClientRect()
       const posX = m!.x - c!.x
       const posY = m!.y - c!.y
-      console.log('pos', posX, posY)
-      console.log(monitor.getClientOffset())
-      console.log(canvasRef.current?.getBoundingClientRect())
       if (canvas) {
         addImg(canvas, item.src, posX, posY)
         setActiveButton(ActiveToolbarButton.Default)
@@ -174,14 +158,6 @@ const DocumentCanvas = ({
     }),
   }))
 
-  console.log('selected obj', activeObject)
-  console.log(
-    'canvas size',
-    canvasSizes.find((page) => page.id === id)
-  )
-
-  const isActive = canDrop && isOver
-  console.log('isActive', isActive)
   return (
     <div className="absolute z-10" ref={drop}>
       <canvas

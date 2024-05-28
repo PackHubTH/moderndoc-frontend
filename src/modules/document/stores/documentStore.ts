@@ -49,9 +49,7 @@ export const useDocumentStore = create<DocumentStore>((set) => ({
     })
   },
   setDropField: (id, x, y) => set({ dropField: { id, x, y } }),
-  // setIsPreview: (isPreview) => set({ isPreview }),
   setIsPreview: (isPreview) => {
-    console.log('set isPreview', isPreview)
     set({ isPreview })
   },
   setPageTotal: (pageTotal) => set({ pageTotal }),

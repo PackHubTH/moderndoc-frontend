@@ -29,17 +29,13 @@ const TemplateInfoBox = ({ data }: TemplateInfoBoxProps) => {
     setPageTotal(numPages)
   }
 
-  console.log('data', data)
-
   return (
-    // <div className="mt-4 w-[388px] overflow-hidden rounded-2xl border-[1px]">
     <div className="mt-4 rounded-lg border-2">
       <p className="bg-gray-100 px-6 py-3 font-semibold text-blue-500">
         {data.title}
       </p>
       {data && isFetched ? (
         <div className="space-y-5 p-5">
-          {/* <img src="https://placehold.jp/388x150.png" alt="template" /> */}
           <div className="flex h-36 justify-center overflow-hidden border-b-2">
             <Document file={file?.data} onLoadSuccess={onDocumentLoadSuccess}>
               <Page
