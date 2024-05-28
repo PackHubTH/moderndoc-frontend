@@ -1,5 +1,4 @@
 import {
-  getJson,
   hexToRgb,
   rgbToHex,
   setAutoFillType,
@@ -71,7 +70,6 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   const { templateId = '' } = useParams()
   const canvasRef = useRef<HTMLDivElement>(null)
   const canvasList = useDocumentStore((state) => state.canvasList)
-  const setCanvasList = useDocumentStore((state) => state.setCanvasList)
   const setCanvasSize = useDocumentStore((state) => state.setCanvasSize)
   const templateFileCreate = useTemplateStore((state) => state.templateFile)
   const { data: templateEdit } = useGetTemplateById(templateId)
@@ -115,9 +113,6 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
   }
 
   console.log('editor active object', activeObject?.elName)
-  console.log('templateFile', templateFile)
-  console.log('templateedit data', templateEdit?.data)
-  console.log('ratio', window.devicePixelRatio)
   return (
     <div>
       {/* Header */}
@@ -199,7 +194,6 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
               label="Check"
             />
             <ToolbarButton
-              onClick={() => console.log(getJson(canvasList))}
               icon={<FaMousePointer />}
               id={ButtonId.Default}
               label="Select"
@@ -315,7 +309,6 @@ const TemplateEditor = ({ type }: TemplateEditorProps) => {
           >
             {templateFile && (
               <Document
-                // file={templateFile}
                 file={templateFile}
                 onLoadSuccess={onDocumentLoadSuccess}
               >

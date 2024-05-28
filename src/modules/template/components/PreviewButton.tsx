@@ -1,6 +1,30 @@
 import { useDocumentStore } from '@/modules/document/stores/documentStore'
 import { Switch } from '@headlessui/react'
 
+const previewData = [
+  { label: 'อลัน สมิธ', value: 'name' },
+  { label: 'ปริญญาตรี', value: 'educationLevel' },
+  { label: 'วิศวกรรมศาสตร์', value: 'faculty' },
+  { label: 'วิศวกรรมคอมพิวเตอร์', value: 'major' },
+  { label: 'ภาคปกติ', value: 'course' },
+  { label: '63456789012', value: 'studentNumber' },
+  { label: '0987654321', value: 'phone' },
+  { label: 'test@gmail.com', value: 'email' },
+  { label: 'อ.ธงชัย ใจดี', value: 'teacher' },
+]
+
+const autoFillData = [
+  { label: 'ชื่อ-นามสกุล', value: 'name' },
+  { label: 'ระดับการศึกษา', value: 'educationLevel' },
+  { label: 'คณะ', value: 'faculty' },
+  { label: 'ภาค/สาขาวิชา', value: 'major' },
+  { label: 'หลักสูตร', value: 'course' },
+  { label: 'รหัสนักศึกษา', value: 'studentNumber' },
+  { label: 'เบอร์โทรศัพท์', value: 'phone' },
+  { label: 'E-mail', value: 'email' },
+  { label: 'อาจารย์ที่ปรึกษา', value: 'teacher' },
+]
+
 const PreviewButton = () => {
   const canvasList = useDocumentStore((state) => state.canvasList)
   const isPreview = useDocumentStore((state) => state.isPreview)
@@ -13,9 +37,23 @@ const PreviewButton = () => {
       item.canvas.forEachObject((obj: any) => {
         item.canvas.discardActiveObject()
         if (isPreview) {
-          obj.set({ editable: false, selectable: false, evented: false })
+          obj.set({
+            editable: false,
+            selectable: false,
+            evented: false,
+            backgroundColor: '#DBEAFE',
+          })
+          autoFillData.forEach((data) => {
+            if (obj.elName === data.value) {
+              obj.set({ text: data.label })
+            }
+          })
         } else {
-          obj.set({ editable: true, selectable: true, evented: true })
+          previewData.forEach((data) => {
+            if (obj.elName === data.value) {
+              obj.set({ text: data.label, backgroundColor: '' })
+            }
+          })
         }
       })
       setCanvasList(item.id, item.canvas)
